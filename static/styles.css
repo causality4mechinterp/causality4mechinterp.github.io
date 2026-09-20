@@ -868,6 +868,16 @@ a:hover {
   text-align: right;
 }
 
+.footer-thanks {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: #767f92;
+}
+
+.footer-thanks a {
+  color: #9aa3b5;
+}
+
 .footer-brand {
   margin: 0 0 0.35rem;
   font-family: var(--font-display);
