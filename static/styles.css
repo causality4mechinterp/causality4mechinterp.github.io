@@ -471,52 +471,6 @@ a:hover {
   color: var(--ink-soft);
 }
 
-/* Presenter list (bios) */
-.presenter-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.presenter-list li {
-  padding: 1.5rem 0;
-  border-top: 1px solid var(--line);
-}
-
-.presenter-list li:last-child {
-  border-bottom: 1px solid var(--line);
-}
-
-.presenter-list h3 {
-  margin: 0 0 0.3rem;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.presenter-list h3 a {
-  color: var(--hero-text);
-  text-decoration: none;
-}
-
-.presenter-list h3 a:hover {
-  color: var(--accent);
-}
-
-.presenter-affiliation {
-  margin: 0 0 0.6rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--muted);
-}
-
-.presenter-bio {
-  margin: 0;
-  color: var(--ink-soft);
-  max-width: 52rem;
-}
-
 /* People grids */
 .speakers {
   background: var(--paper-2);
