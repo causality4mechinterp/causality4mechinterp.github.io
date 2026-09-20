@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Causal Foundations for Interpretability · EMNLP 2026 Tutorial</title>
+  <meta name="description" content="Causal Foundations for Interpretability: What Your Methods Actually Identify — an EMNLP 2026 tutorial on the causal and identifiability foundations for judging interpretability claims." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="static/styles.css?v=1" />
+  <link rel="icon" href="static/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <div class="header-inner">
+      <a class="wordmark" href=".">Causality<span>4MechInterp</span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-visual" aria-hidden="true">
+        <svg class="hero-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#e8ecf4" />
+              <stop offset="45%" stop-color="#d4dced" />
+              <stop offset="100%" stop-color="#b8c4dc" />
+            </linearGradient>
+            <radialGradient id="glow" cx="70%" cy="35%" r="45%">
+              <stop offset="0%" stop-color="#f7f8fb" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#f7f8fb" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="1440" height="900" fill="url(#sky)" />
+          <rect width="1440" height="900" fill="url(#glow)" />
+
+          <g class="constellation" fill="none" stroke="#2a3550" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <g class="figure">
+              <path class="line" d="M180 460 L320 380 L460 480 L600 360" />
+              <path class="line" d="M320 380 L340 240" />
+            </g>
+            <g class="figure">
+              <path class="line" d="M700 300 L820 420 L940 300 L1060 420" />
+              <path class="line" d="M820 420 L820 560" />
+            </g>
+            <g class="figure faint">
+              <path class="line" d="M600 360 L700 300" />
+              <path class="line" d="M1060 420 L1180 340" />
+            </g>
+          </g>
+
+          <g class="nodes" fill="#1e3a8a">
+            <circle class="node" cx="180" cy="460" r="5" />
+            <circle class="node bright" cx="320" cy="380" r="7" />
+            <circle class="node" cx="460" cy="480" r="5" />
+            <circle class="node" cx="600" cy="360" r="6" />
+            <circle class="node" cx="340" cy="240" r="4" />
+            <circle class="node" cx="700" cy="300" r="6" />
+            <circle class="node bright" cx="820" cy="420" r="8" />
+            <circle class="node" cx="940" cy="300" r="6" />
+            <circle class="node" cx="1060" cy="420" r="6" />
+            <circle class="node" cx="820" cy="560" r="4" />
+            <circle class="node field" cx="1180" cy="340" r="3" />
+            <circle class="node field" cx="1300" cy="500" r="3" />
+            <circle class="node field" cx="240" cy="200" r="2.5" />
+            <circle class="node field" cx="1000" cy="600" r="3" />
+          </g>
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <p class="hero-venue">EMNLP 2026 · Tutorial</p>
+        <h1 id="hero-title">Causal Foundations for Interpretability</h1>
+        <p class="hero-lede">What your interpretability methods actually identify.</p>
+        <div class="hero-actions">
+          <a class="btn btn-ghost" href="#about">Learn more</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section about" id="about" data-reveal>
+      <div class="section-inner">
+        <h2>About</h2>
+        <p>
+          Interpretability findings regularly fail to generalise: a circuit found under one ablation
+          strategy disappears under another, a probe that detects a concept scores just as high when the
+          labels are randomly shuffled, two sparse autoencoders trained on the same activations yield
+          different, both-plausible feature dictionaries. This tutorial maps interpretability methods onto
+          Pearl's causal hierarchy — association, intervention, counterfactual — so a result can be matched
+          to the rung its evidence actually reaches, and asks the prior question of identifiability: what a
+          method can recover at all from the experiments one can run.
+        </p>
+        <p class="note">Full schedule, readings, and registration details are on their way — check back closer to the conference.</p>
+      </div>
+    </section>
+
+    <section class="section organizers" id="organizers" data-reveal>
+      <div class="section-inner">
+        <h2>Presenters</h2>
+        <ul class="person-grid">
+          <li>
+            <a href="https://shrutij01.github.io/">
+              <h3>Shruti Joshi</h3>
+              <p>Mila &amp; Université de Montréal</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://aaronmueller.github.io/">
+              <h3>Aaron Mueller</h3>
+              <p>Boston University</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://rpatrik96.github.io/">
+              <h3>Patrik Reizinger</h3>
+              <p>MPI-IS / ELLIS Tübingen</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.dsridhar.com/">
+              <h3>Dhanya Sridhar</h3>
+              <p>Mila &amp; Université de Montréal</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p class="footer-brand">Causal Foundations for Interpretability</p>
+        <p>EMNLP 2026 Tutorial</p>
+      </div>
+      <div class="footer-right">
+        <p class="footer-contact-label">Contact us</p>
+        <p class="footer-contact"><a href="mailto:causality4mechinterp@gmail.com">causality4mechinterp@gmail.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="static/script.js?v=1"></script>
+</body>
+</html>
