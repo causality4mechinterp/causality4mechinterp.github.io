@@ -437,6 +437,40 @@ a:hover {
   background: var(--accent);
 }
 
+/* Promo card */
+.promo {
+  background: var(--paper-2);
+}
+
+.promo-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  padding: 1.75rem 2rem;
+}
+
+.promo-card h3 {
+  margin: 0.35rem 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.promo-card h3 a {
+  color: var(--hero-text);
+  text-decoration: none;
+}
+
+.promo-card h3 a:hover {
+  color: var(--accent);
+}
+
+.promo-card p:last-child {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
 /* People grids */
 .speakers {
   background: var(--paper-2);
