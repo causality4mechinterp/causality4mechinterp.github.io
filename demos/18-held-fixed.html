@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is held fixed · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --ok:#3E8E5A; --bad:#B0356B;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --ok:#5FB37E; --bad:#D06A9E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --ok:#5FB37E; --bad:#D06A9E;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --ok:#3E8E5A; --bad:#B0356B;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1rem 2.5rem;
+  }
+  h1, h2, h3 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .kicker {
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 70ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a.back:focus-visible, button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+  @media (max-width: 640px) { header { flex-direction: column-reverse; } }
+
+  .stage {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.1rem 1.1rem 1rem; margin-bottom: 1.6rem;
+  }
+  .objection {
+    background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .6rem .85rem; font-size: .9rem; margin-bottom: .9rem;
+  }
+  .objection .lbl, .banner .lbl {
+    font-size: .64rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; margin-bottom: .15rem;
+  }
+  .cleanrun { font-size: .82rem; color: var(--ink-soft); margin-bottom: .8rem; font-variant-numeric: tabular-nums; }
+  .cleanrun b { color: var(--ink); }
+
+  .levels { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; align-items: start; }
+  @media (max-width: 900px) { .levels { grid-template-columns: 1fr; } }
+  .level { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); padding: .75rem .8rem .8rem; display: flex; flex-direction: column; min-width: 0; }
+  .level .pair { flex: 1; }
+  .level > .kicker { margin-bottom: .2rem; }
+  .level .lvlsum { font-size: .84rem; color: var(--ink-soft); margin-bottom: .65rem; max-width: 70ch; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+  @media (max-width: 640px) { .pair { grid-template-columns: 1fr; } }
+
+  .sliderrow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .7rem;
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: .5rem .75rem; margin-bottom: .7rem; font-size: .82rem; color: var(--ink-soft);
+  }
+  .sliderrow label { font-weight: 600; }
+  .sliderrow input[type="range"] { flex: 1 1 140px; max-width: 260px; accent-color: var(--purple); }
+  .sliderrow input[type="range"]:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+  .sliderrow output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); min-width: 3.2em; }
+  .sliderrow .shint { flex-basis: 100%; font-size: .72rem; color: var(--ink-mute); }
+
+  .op { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .65rem .7rem .7rem; display: flex; flex-direction: column; min-width: 0; }
+  .op h3 { font-size: .95rem; color: var(--purple); line-height: 1.25; margin-bottom: .3rem; }
+  .rungs { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin-bottom: .45rem; }
+  .rung {
+    display: inline-block; font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    border-radius: 999px; padding: .12rem .55rem; border: 1.5px solid currentColor;
+  }
+  .rung.r2 { color: var(--l2); } .rung.r3 { color: var(--l3); }
+  .rtxt { font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .q { font-size: .82rem; color: var(--ink); font-style: italic; margin-bottom: .45rem; min-height: 4.1em; }
+  .op svg { width: 100%; height: auto; display: block; margin: .1rem 0 .35rem; }
+  dl.facts { display: grid; grid-template-columns: auto 1fr; gap: .15rem .55rem; font-size: .74rem; margin-bottom: .55rem; }
+  dl.facts dt { color: var(--ink-mute); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; font-size: .62rem; padding-top: .14rem; }
+  dl.facts dd { color: var(--ink-soft); margin: 0; }
+  .result { margin-top: auto; border-top: 1px dashed var(--line); padding-top: .5rem; display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+  .result .y { font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .result .verdict { font-size: .82rem; font-weight: 700; color: var(--ink); }
+  .result .delta { font-size: .72rem; color: var(--ink-mute); font-variant-numeric: tabular-nums; flex-basis: 100%; }
+
+  /* DAG */
+  .edge { stroke: var(--ink-mute); stroke-width: 1.6; fill: none; }
+  .edge.zero { stroke-dasharray: 4 3; opacity: .55; }
+  .edge.clean { stroke: var(--purple); }
+  .node rect { fill: var(--card); stroke: var(--ink-mute); stroke-width: 1.3; }
+  .node text { fill: var(--ink); font-family: inherit; }
+  .node .val { fill: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .node.zeroed rect { stroke-dasharray: 4 3; fill: var(--panel); }
+  .node.recomputed rect { stroke: var(--l2); stroke-width: 2.2; }
+  .node.frozen rect { stroke: var(--purple); stroke-width: 2.2; fill: var(--purple-faint); }
+  .node.out rect { stroke: var(--ink); stroke-width: 1.8; }
+  .tag { fill: var(--ink-mute); font-size: 8.5px; font-family: inherit; }
+  .tag.l2 { fill: var(--l2); font-weight: 700; } .tag.pu { fill: var(--purple); font-weight: 700; }
+  .elabel { fill: var(--ink-soft); font-size: 8.5px; font-family: inherit; font-weight: 600; }
+  marker path { fill: var(--ink-mute); }
+  .legend { display: flex; gap: .4rem .9rem; flex-wrap: wrap; font-size: .72rem; color: var(--ink-soft); margin-top: .6rem; }
+  .legend .key { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em; vertical-align: -.1em; border: 2px solid; }
+  .key.k-zero { border-color: var(--ink-mute); border-style: dashed; }
+  .key.k-rec { border-color: var(--l2); }
+  .key.k-frz { border-color: var(--purple); background: var(--purple-faint); }
+
+  /* plane */
+  .axis { stroke: var(--line); stroke-width: 1.2; }
+  .axlab { fill: var(--ink-mute); font-size: 8.5px; font-family: inherit; }
+  .what { stroke: var(--purple); stroke-width: 2; }
+  .whatlab { fill: var(--purple); font-size: 9px; font-weight: 700; font-family: inherit; }
+  .truth { stroke: var(--ok); stroke-width: 1.6; stroke-dasharray: 5 3; }
+  .truthlab { fill: var(--ok); font-size: 8.5px; font-weight: 700; font-family: inherit; }
+  .proj { stroke: var(--ink-mute); stroke-width: 1.2; stroke-dasharray: 3 3; }
+  .pt { fill: var(--ink); }
+  .pt.after { fill: var(--purple); }
+  .pt.star { fill: var(--ok); }
+  .ptlab { fill: var(--ink); font-size: 8.5px; font-family: inherit; font-weight: 600; paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
+  .ptlab.after { fill: var(--purple); }
+  .ptlab.star { fill: var(--ok); }
+  .hidden { display: none; }
+  button.reveal {
+    font: inherit; font-size: .78rem; padding: .35rem .7rem; cursor: pointer; align-self: flex-start;
+    border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--ink-soft); margin-bottom: .5rem;
+  }
+  button.reveal[aria-pressed="true"] { background: var(--purple); color: var(--paper); border-color: var(--purple); }
+  .claim { font-size: .8rem; font-weight: 700; border-radius: 8px; padding: .35rem .55rem; border: 1.5px solid var(--line); color: var(--ink); margin-top: .45rem; }
+  .claim.ok { border-color: var(--ok); color: var(--ok); }
+  .claim.bad { border-color: var(--bad); color: var(--bad); }
+  .licensed { font-size: .78rem; color: var(--ink); margin-top: .45rem; }
+  .licensed .lbl, .claim .lbl { display: block; font-size: .62rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  .truthbox { font-size: .74rem; color: var(--ink-soft); margin-top: .35rem; font-variant-numeric: tabular-nums; }
+
+  .banner {
+    background: var(--hero); border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0; padding: .6rem .85rem; font-size: .88rem; color: var(--ink); margin-top: 1rem;
+  }
+  .banner p + p { margin-top: .35rem; }
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .8rem; max-width: 90ch; }
+
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote {
+    background: var(--panel); border-left: 3px solid var(--purple-mid);
+    border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem;
+  }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>Re-running a forward pass answers counterfactuals about heads but not about concepts</h1>
+      <p class="dek">On one biography with greedy decoding, zero-and-rerun and path patching are both exact and cheap, and each computes the counterfactual about activations as well as the intervention: they differ only in what they hold fixed. Rung three differs once the variable is gender read through a probe's direction, because the same rerun then answers a question about that direction, and only the alignment ties it to gender.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <div class="objection">
+      <div class="lbl">The objection</div>
+      “In an LLM you can just re-run it. Zero the activation, run the bio again, and the ‘what if I set a’ question and the ‘what would this bio have produced had a been different’ question get the same answer. What is the difference?”
+    </div>
+    <p class="cleanrun">Toy model, one biography x₀ (“She has spent twelve years caring for patients on a hospital ward …”). The model predicts the profession; y is the logit for nurse, and y &gt; 0 means “nurse”, y ≤ 0 “surgeon”. <b>Clean run:</b> a = 1.00, m = 1.30, g = 0.00, y = <b>1.02</b> → nurse.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="kicker">Level 1 · raw activations: the objection holds</div>
+        <p class="lvlsum">The bio is given and decoding is greedy, so the input and the weights fix every activation of the clean run. Each rerun below is an intervention on this bio (rung two, L2) and, for the same reason, the counterfactual about activations (rung three, L3): both are exact. They ask different things because they keep different nodes fixed. The <b>total effect</b> lets everything downstream of a respond; the <b>direct effect</b> counts only a's own path to the logit.</p>
+        <div class="sliderrow">
+          <label for="beta">Backup head G strength β</label>
+          <input type="range" id="beta" min="0" max="15" step="1" value="10" aria-describedby="beta-hint">
+          <output id="beta-out">1.0</output>
+          <span class="shint" id="beta-hint">G stays silent while the gender head is active and switches on when it goes quiet, like the backup heads found in circuit studies. Drag to change how hard it compensates.</span>
+        </div>
+        <div class="pair">
+          <div class="op" id="op1">
+            <h3>① Zero a, rerun the bio</h3>
+            <div class="rungs"><span class="rung r2">L2</span><span class="rung r3">L3</span><span class="rtxt">total effect · exact</span></div>
+            <p class="q">“If I zero a and run this bio again, does the model still predict nurse?”</p>
+            <svg id="dag1" viewBox="0 0 320 200" role="img" aria-label="Zero and rerun: the gender head's output a is zeroed, the MLP M and backup head G recompute from the zeroed value, and the nurse logit is read out."></svg>
+            <dl class="facts">
+              <dt>Holds fixed</dt><dd>the bio x₀ only; M and G recompute from a = 0</dd>
+              <dt>Cost</dt><dd>1 forward pass</dd>
+              <dt>To strengthen</dt><dd>run ② on the same bio, since a backup head can hide a's direct effect; rerun many bios before writing about bios in general</dd>
+            </dl>
+            <div class="result"><span class="y" id="y1">—</span><span class="verdict" id="v1"></span><span class="delta" id="d1"></span></div>
+          </div>
+          <div class="op" id="op2">
+            <h3>② Cut only a → logit, keep M and G</h3>
+            <div class="rungs"><span class="rung r2">L2</span><span class="rung r3">L3</span><span class="rtxt">direct effect · exact</span></div>
+            <p class="q">“Had a's own path to the logit carried zero, with M and G as they were in this run, would the model still have predicted nurse?”</p>
+            <svg id="dag2" viewBox="0 0 320 200" role="img" aria-label="Path patching: only the direct edge from the gender head to the logit carries zero; M and G keep their clean-run values; the nurse logit is read out."></svg>
+            <dl class="facts">
+              <dt>Holds fixed</dt><dd>x₀, and M and G at their clean-run values</dd>
+              <dt>Cost</dt><dd>2 forward passes: the clean run records M and G, the patched run reads y</dd>
+              <dt>To strengthen</dt><dd>name the nodes kept fixed in the sentence you write; rerun many bios before writing about bios in general</dd>
+            </dl>
+            <div class="result"><span class="y" id="y2">—</span><span class="verdict" id="v2"></span><span class="delta" id="d2"></span></div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><span class="key k-zero"></span>zeroed</span>
+          <span><span class="key k-rec"></span>recomputed from the zeroed a</span>
+          <span><span class="key k-frz"></span>kept at its clean-run value</span>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="kicker">Level 2 · a concept: where rung three differs</div>
+        <p class="lvlsum">Now the variable is gender, read through a linear probe's direction ŵ in a. Removing ŵ and rerunning (as in iterative nullspace projection, INLP, or amnesic probing) is just as cheap and just as exact; what it is about depends on ŵ.</p>
+        <div class="sliderrow">
+          <label for="theta">Alignment error θ</label>
+          <input type="range" id="theta" min="0" max="60" step="5" value="45" aria-describedby="theta-hint">
+          <output id="theta-out">45°</output>
+          <span class="shint" id="theta-hint">How far the probe's direction ŵ sits from the true gender direction, tilted toward the care and hospital words that travel with gender in these bios.</span>
+        </div>
+        <div class="op" id="op3">
+          <h3>③ Remove gender along ŵ</h3>
+          <div class="rungs"><span class="rung r3">L3</span><span class="rtxt">exact rerun · rests on the alignment</span></div>
+          <p class="q">“Had gender alone been removed from this bio's a, would the model still have predicted nurse?”</p>
+          <svg id="plane" viewBox="0 0 260 200" role="img" aria-label="The two-dimensional activation a. The clean point a, the probe direction w-hat, and the point a-tilde after projecting out w-hat. When revealed, the true gender and care-cue directions and the counterfactual point a-star."></svg>
+          <button class="reveal" id="reveal" aria-pressed="false">Show the true encoding</button>
+          <dl class="facts">
+            <dt>Operation</dt><dd>project a off ŵ, rerun</dd>
+            <dt>Cost</dt><dd>1 forward pass, as in ①</dd>
+            <dt>To strengthen</dt><dd>test ŵ on bios that change gender and nothing else; Part 3 pins the direction down and Part 4 tests the alignment</dd>
+          </dl>
+          <div class="result"><span class="y" id="y3">—</span><span class="verdict" id="v3"></span><span class="delta" id="d3"></span></div>
+          <p class="licensed" id="lic3"></p>
+          <div class="claim" id="claim3"></div>
+          <div class="truthbox hidden" id="truth3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="banner" aria-live="polite">
+      <div class="lbl">Reading the panels</div>
+      <p id="banner1"></p>
+      <p id="banner2"></p>
+    </div>
+
+    <p class="provenance">Toy model, fully deterministic: m = relu(1.2a + 0.1), g = β · relu(1 − a), y = 1.5a + 0.4m + 1.2g − 1.0, with a the output of the head that reads gender at layer ℓ. In ③ the downstream components are folded into a linear readout of a's two concept coordinates, y = 0.4r + 1.2s − 0.58, with gender r and the care cue s orthogonal in a and both equal to 1 on x₀. Built for this tutorial to illustrate the paper's L2/L3 distinction (“what is held fixed”) on the tutorial's Bias-in-Bios running example; it is neither an experiment from the paper nor a measured model.</p>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>At the level of raw activations the objection is right. With the bio given and greedy decoding, the forward pass is a fully specified causal model whose only outside input is the bio, and we have it. A counterfactual about activations on this bio is therefore one more forward pass, and it gives the same number as the intervention on this bio. Panels ① and ② are both exact on x₀. They differ in what they hold fixed: ① lets M and G respond to the zeroed a and measures a's total effect; ② keeps them at their clean-run values and measures a's direct effect, which here costs two passes. With the backup head on, they disagree about whether a matters for this nurse prediction, and neither is wrong. A sentence about this bio has to say which nodes stayed fixed, and a sentence about bios in general needs reruns on many bios.</p>
+    <p>Panel ③ asks the same kind of question about gender rather than a component, and here rung three differs. The intervention is still a single forward pass and still reproducible; rerunning it gives the same number every time. What changes is the meaning of the number: projecting a off ŵ answers “what if the ŵ-component were absent”, and that is the gender counterfactual only if ŵ is the gender direction. With ŵ tilted toward the care cue, removing it also removes the words the prediction leans on, so the prediction flips to surgeon and the run reads as “the model relies on gender”, while removing gender alone would have left it at nurse. Nothing in the rerun tells you which case you are in. What moves the claim up is outside evidence about ŵ: bios that change gender and nothing else, which Part 3 uses to pin the direction down and Part 4 turns into a test of the alignment. Sampling is the other place rung three differs, since the noise that picked each token is not fixed by the bio; a recorded seed makes that counterfactual computable again.</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“Activation patching provides interventional (L2) evidence, whereas counterfactuals (L3) additionally require specifying which variables are held fixed.”</p>
+      <cite>— arXiv:2602.16698, Call to Action, “Counterfactual Semantics for Safety”</cite>
+    </blockquote>
+    <blockquote>
+      <p>“Many probes ∈ 𝒢 can achieve the same accuracy while picking out different directions and predictive success alone does not tell us which direction (if any) the model actually uses.”</p>
+      <cite>— arXiv:2602.16698, appendix “Taxonomy for Characterising Interpretability Claims”, “Decodability ≠ Model Use”</cite>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Drag β from 0 to 1.5. Find the value at which ① stops agreeing with ②. A paper reports “zeroing this head does not change the prediction, so the model does not need it”: which panel produced that sentence, and which question did it leave unanswered?</li>
+      <li>Set θ to 0°, then to 45°. In both cases the logit moves when you remove ŵ. Write down the claim you would publish from each run before pressing “Show the true encoding”. Which bios, outside this single run, would have told the two directions apart?</li>
+      <li>Pick a claim from a probing, amnesic-probing or patching paper you know. Is its variable a component (a head, a neuron, an edge) or a concept read through a direction? If it is a component, say which of ① or ② it computed and which nodes stayed fixed. If it is a concept, name the alignment it rests on and the test that would strengthen it.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original interactive illustration for the EMNLP 2026 tutorial <i>Causal Foundations for Interpretability</i>, built on the position paper <a href="https://arxiv.org/abs/2602.16698">Causality is Key for Interpretability Claims to Generalise (arXiv:2602.16698)</a>. It illustrates the paper's distinction between interventional (L2) and counterfactual (L3) evidence on the tutorial's Bias-in-Bios running example; the network, biography and numbers above are a deterministic toy, not an experiment from the paper. tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const relu = v => Math.max(0, v);
+  const fmt = v => (v <= -0.005 ? '−' : '') + Math.abs(v).toFixed(2);
+  const sgn = v => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(2);
+  const verdict = y => (y > 0 ? 'nurse' : 'surgeon');
+
+  // ---------- toy network (a: output of the head that reads gender at layer ℓ) ----------
+  const mOf = a => relu(1.2 * a + 0.1);
+  const gOf = (a, beta) => beta * relu(1 - a);
+  const yOf = (a, m, g) => 1.5 * a + 0.4 * m + 1.2 * g - 1.0;
+  const A0 = 1.0, M0 = mOf(A0);
+  const clean = beta => yOf(A0, M0, gOf(A0, beta));
+
+  // ---------- concept level ----------
+  const PHI = 20 * Math.PI / 180;            // true gender axis, in unit coordinates
+  const readout = (r, s) => 0.4 * r + 1.2 * s - 0.58;  // r: gender, s: care cue
+
+  function el0(tag, cls, parent, text) {
+    const e = document.createElement(tag);
+    e.className = cls; e.textContent = text; parent.appendChild(e);
+    return e;
+  }
+  function el(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // ---------- DAG ----------
+  const NODES = {
+    x: { cx: 32, cy: 102, w: 52, name: 'x₀', sub: 'bio' },
+    h: { cx: 112, cy: 102, w: 82, name: 'gender head' },
+    m: { cx: 200, cy: 48, w: 64, name: 'MLP M' },
+    g: { cx: 200, cy: 156, w: 70, name: 'backup G' },
+    y: { cx: 282, cy: 102, w: 64, name: 'logit y' }
+  };
+  const NH = 38;
+  function port(a, b) {
+    // point on the border of node a, toward node b
+    const A = NODES[a], B = NODES[b];
+    const dx = B.cx - A.cx, dy = B.cy - A.cy;
+    const sx = (A.w / 2) / Math.abs(dx || 1e-9), sy = (NH / 2) / Math.abs(dy || 1e-9);
+    const s = Math.min(sx, sy);
+    return [A.cx + dx * s, A.cy + dy * s];
+  }
+  function buildDag(svg) {
+    const defs = el('defs', {}, svg);
+    const mk = el('marker', { id: svg.id + '-arr', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs);
+    el('path', { d: 'M0,0 L10,5 L0,10 z' }, mk);
+    const edges = {};
+    [['x', 'h'], ['h', 'm'], ['h', 'g'], ['h', 'y'], ['m', 'y'], ['g', 'y']].forEach(([a, b]) => {
+      const p = port(a, b), q = port(b, a);
+      edges[a + b] = el('line', { class: 'edge', x1: p[0], y1: p[1], x2: q[0], y2: q[1], 'marker-end': 'url(#' + svg.id + '-arr)' }, svg);
+    });
+    const nodes = {};
+    for (const k in NODES) {
+      const n = NODES[k];
+      const g = el('g', { class: 'node' + (k === 'y' ? ' out' : '') }, svg);
+      el('rect', { x: n.cx - n.w / 2, y: n.cy - NH / 2, width: n.w, height: NH, rx: 8 }, g);
+      el('text', { x: n.cx, y: n.cy - 3, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700 }, g, n.name);
+      const v = el('text', { class: 'val', x: n.cx, y: n.cy + 11, 'text-anchor': 'middle', 'font-size': 9.5 }, g, n.sub || '');
+      nodes[k] = { g, v };
+    }
+    const tags = {
+      m: el('text', { class: 'tag', x: NODES.m.cx, y: NODES.m.cy - NH / 2 - 6, 'text-anchor': 'middle' }, svg, ''),
+      g: el('text', { class: 'tag', x: NODES.g.cx, y: NODES.g.cy + NH / 2 + 13, 'text-anchor': 'middle' }, svg, '')
+    };
+    const elabel = el('text', { class: 'elabel', x: 200, y: 96, 'text-anchor': 'middle' }, svg, '');
+    return { edges, nodes, tags, elabel };
+  }
+  const dag1 = buildDag(document.getElementById('dag1'));
+  const dag2 = buildDag(document.getElementById('dag2'));
+
+  function setNode(d, k, cls, val) {
+    d.nodes[k].g.setAttribute('class', 'node' + (k === 'y' ? ' out' : '') + (cls ? ' ' + cls : ''));
+    d.nodes[k].v.textContent = val;
+  }
+
+  // ---------- plane ----------
+  const plane = document.getElementById('plane');
+  const O = [92, 168], S = 76;
+  const toXY = (a, b) => [O[0] + S * a, O[1] - S * b]; // unit coords → svg
+  const P = {};
+  (function buildPlane() {
+    el('line', { class: 'axis', x1: 8, y1: O[1], x2: 252, y2: O[1] }, plane);
+    el('line', { class: 'axis', x1: O[0], y1: 196, x2: O[0], y2: 6 }, plane);
+    el('text', { class: 'axlab', x: 250, y: O[1] + 12, 'text-anchor': 'end' }, plane, 'unit 1 of a');
+    el('text', { class: 'axlab', x: O[0] - 4, y: 14, 'text-anchor': 'end' }, plane, 'unit 2 of a');
+    P.truthG = el('g', { class: 'hidden' }, plane);
+    const ur = [Math.cos(PHI), Math.sin(PHI)], us = [-Math.sin(PHI), Math.cos(PHI)];
+    let a = toXY(-0.3 * ur[0], -0.3 * ur[1]), b = toXY(2.0 * ur[0], 2.0 * ur[1]);
+    el('line', { class: 'truth', x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, P.truthG);
+    el('text', { class: 'truthlab', x: b[0] - 42, y: b[1] + 25 }, P.truthG, 'true gender');
+    a = toXY(-0.3 * us[0], -0.3 * us[1]); b = toXY(1.95 * us[0], 1.95 * us[1]);
+    el('line', { class: 'truth', x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, P.truthG);
+    el('text', { class: 'truthlab', x: b[0] + 8, y: b[1] + 5 }, P.truthG, 'true care cue');
+    P.what = el('line', { class: 'what' }, plane);
+    P.whatlab = el('text', { class: 'whatlab' }, plane, 'ŵ (probe)');
+    P.proj = el('line', { class: 'proj' }, plane);
+    const h = [ur[0] + us[0], ur[1] + us[1]];
+    const hp = toXY(h[0], h[1]);
+    el('circle', { class: 'pt', cx: hp[0], cy: hp[1], r: 4 }, plane);
+    P.hlab = el('text', { class: 'ptlab' }, plane, 'a (clean)');
+    P.hxy = hp;
+    P.after = el('circle', { class: 'pt after', r: 4 }, plane);
+    P.afterlab = el('text', { class: 'ptlab after' }, plane, 'ã');
+    const st = toXY(us[0], us[1]);
+    el('circle', { class: 'pt star', cx: st[0], cy: st[1], r: 4 }, P.truthG);
+    el('text', { class: 'ptlab star', x: st[0] - 7, y: st[1] - 6, 'text-anchor': 'end' }, P.truthG, 'a*');
+    P.h = h; P.ur = ur; P.us = us;
+  })();
+
+  // ---------- state ----------
+  const beta = document.getElementById('beta'), theta = document.getElementById('theta');
+  const reveal = document.getElementById('reveal');
+  const $ = id => document.getElementById(id);
+
+  function render() {
+    const B = +beta.value / 10, T = +theta.value;
+    $('beta-out').textContent = B.toFixed(1);
+    $('theta-out').textContent = T + '°';
+    const y0 = clean(B);
+
+    // ① zero a and rerun
+    const m1 = mOf(0), g1 = gOf(0, B), y1 = yOf(0, m1, g1);
+    setNode(dag1, 'x', '', 'bio');
+    setNode(dag1, 'h', 'zeroed', 'a = 0');
+    setNode(dag1, 'm', 'recomputed', 'm = ' + fmt(m1));
+    setNode(dag1, 'g', 'recomputed', 'g = ' + fmt(g1));
+    setNode(dag1, 'y', '', 'y = ' + fmt(y1));
+    ['hm', 'hg', 'hy'].forEach(e => dag1.edges[e].setAttribute('class', 'edge zero'));
+    dag1.tags.m.textContent = 'recomputed'; dag1.tags.m.setAttribute('class', 'tag l2');
+    dag1.tags.g.textContent = g1 > 0 ? 'recomputed: backup fires' : 'recomputed';
+    dag1.tags.g.setAttribute('class', 'tag l2');
+    dag1.elabel.textContent = '';
+    $('y1').textContent = 'y = ' + fmt(y1);
+    $('v1').textContent = '→ ' + verdict(y1);
+    $('d1').textContent = 'total effect of a: ' + sgn(y1 - y0);
+
+    // ② path patch: a → y carries 0, M and G kept at clean values
+    const g0 = gOf(A0, B), y2 = yOf(0, M0, g0);
+    setNode(dag2, 'x', '', 'bio');
+    setNode(dag2, 'h', '', 'a = 1.00');
+    setNode(dag2, 'm', 'frozen', 'm = ' + fmt(M0));
+    setNode(dag2, 'g', 'frozen', 'g = ' + fmt(g0));
+    setNode(dag2, 'y', '', 'y = ' + fmt(y2));
+    dag2.edges.hy.setAttribute('class', 'edge zero');
+    dag2.edges.hm.setAttribute('class', 'edge clean');
+    dag2.edges.hg.setAttribute('class', 'edge clean');
+    dag2.tags.m.textContent = 'kept at clean run'; dag2.tags.m.setAttribute('class', 'tag pu');
+    dag2.tags.g.textContent = 'kept at clean run'; dag2.tags.g.setAttribute('class', 'tag pu');
+    dag2.elabel.textContent = 'carries a = 0';
+    $('y2').textContent = 'y = ' + fmt(y2);
+    $('v2').textContent = '→ ' + verdict(y2);
+    $('d2').textContent = 'direct effect of a: ' + sgn(y2 - y0);
+
+    // ③ concept: project a off ŵ
+    const ang = PHI + T * Math.PI / 180;
+    const w = [Math.cos(ang), Math.sin(ang)];
+    const h = P.h, dot = h[0] * w[0] + h[1] * w[1];
+    const hp = [h[0] - dot * w[0], h[1] - dot * w[1]];
+    const r = hp[0] * P.ur[0] + hp[1] * P.ur[1], s = hp[0] * P.us[0] + hp[1] * P.us[1];
+    const y3 = readout(r, s), yTrue = readout(0, 1);
+    const a = toXY(-0.35 * w[0], -0.35 * w[1]), b = toXY(2.15 * w[0], 2.15 * w[1]);
+    P.what.setAttribute('x1', a[0]); P.what.setAttribute('y1', a[1]);
+    P.what.setAttribute('x2', b[0]); P.what.setAttribute('y2', b[1]);
+    // label at the tip of ŵ: above-left for shallow directions, right of the tip for steep ones
+    if (20 + T < 50) {
+      P.whatlab.setAttribute('text-anchor', 'end');
+      P.whatlab.setAttribute('x', b[0] - 8); P.whatlab.setAttribute('y', b[1] - 4);
+    } else {
+      P.whatlab.setAttribute('text-anchor', 'start');
+      P.whatlab.setAttribute('x', b[0] + 6); P.whatlab.setAttribute('y', b[1] + 10);
+    }
+    const hs = toXY(h[0], h[1]), hps = toXY(hp[0], hp[1]);
+    P.proj.setAttribute('x1', hs[0]); P.proj.setAttribute('y1', hs[1]);
+    P.proj.setAttribute('x2', hps[0]); P.proj.setAttribute('y2', hps[1]);
+    P.after.setAttribute('cx', hps[0]); P.after.setAttribute('cy', hps[1]);
+    // a (clean): above-left while ŵ passes below-right of it (θ < 45°), right of it otherwise
+    if (T < 45) {
+      P.hlab.setAttribute('text-anchor', 'end');
+      P.hlab.setAttribute('x', P.hxy[0] - 7); P.hlab.setAttribute('y', P.hxy[1] - 5);
+    } else {
+      P.hlab.setAttribute('text-anchor', 'start');
+      P.hlab.setAttribute('x', P.hxy[0] + 7); P.hlab.setAttribute('y', P.hxy[1] - 3);
+    }
+    // ã sits left of the care-cue line for small θ: label it on the left there, right-below otherwise
+    if (T >= 35 && T < 45) {
+      // ã sits near where ŵ crosses the true-gender line: put the label in the free wedge to its left
+      P.afterlab.setAttribute('text-anchor', 'end');
+      P.afterlab.setAttribute('x', hps[0] - 9); P.afterlab.setAttribute('y', hps[1] + 3);
+    } else if (T < 45) {
+      P.afterlab.setAttribute('text-anchor', 'end');
+      P.afterlab.setAttribute('x', hps[0] - 8); P.afterlab.setAttribute('y', hps[1] + 10);
+    } else {
+      P.afterlab.setAttribute('text-anchor', 'start');
+      P.afterlab.setAttribute('x', hps[0] + 11); P.afterlab.setAttribute('y', hps[1] + 13);
+    }
+    $('y3').textContent = 'y = ' + fmt(y3);
+    $('v3').textContent = '→ ' + verdict(y3);
+    $('d3').textContent = 'the logit moves by ' + sgn(y3 - y0) + ' and rerunning gives the same number every time';
+    const needed = y3 <= 0;
+    const truthNeeded = yTrue <= 0;
+    const correct = needed === truthNeeded;
+    const shown = reveal.getAttribute('aria-pressed') === 'true';
+    P.truthG.setAttribute('class', shown ? '' : 'hidden');
+    const lic = $('lic3');
+    lic.innerHTML = '';
+    el0('span', 'lbl', lic, 'Supported by this run, about ŵ');
+    lic.appendChild(document.createTextNode('Removing ŵ from this bio’s a ' +
+      (needed ? 'changes the prediction to surgeon.' : 'moves the logit but does not change the prediction.')));
+    const claim = $('claim3');
+    claim.innerHTML = '';
+    el0('span', 'lbl', claim, 'Rung-three claim, about gender');
+    claim.appendChild(document.createTextNode('Had gender alone been removed, the prediction would have ' +
+      (needed ? 'flipped to surgeon' : 'stayed nurse') + '.' + (shown ? (correct ? '  ✓ true' : '  ✗ false') : '')));
+    claim.className = 'claim' + (shown ? (correct ? ' ok' : ' bad') : '');
+    const tb = $('truth3');
+    tb.className = 'truthbox' + (shown ? '' : ' hidden');
+    tb.textContent = 'Removing ŵ left gender at r = ' + fmt(r) + ' and the care cue at s = ' + fmt(s) +
+      '. Removing gender alone (a*) gives y = ' + fmt(yTrue) + ' → ' + verdict(yTrue) + '.';
+
+    // banner
+    let b1;
+    if ((y1 > 0) !== (y2 > 0)) {
+      b1 = 'At β = ' + B.toFixed(1) + ' ① and ② disagree: rerunning says the model predicts ' + verdict(y1) +
+        ' without a, because the backup head takes over; cutting only a’s own path says it predicts ' + verdict(y2) +
+        '. Both numbers are exact. They answer different questions because they keep different nodes fixed.';
+    } else {
+      b1 = 'At β = ' + B.toFixed(1) + ' the backup is too weak to compensate, so ① and ② agree on the prediction (' + verdict(y1) +
+        ') while their sizes differ (' + sgn(y1 - y0) + ' vs ' + sgn(y2 - y0) + '). Raise β past 0.8 to pull them apart.';
+    }
+    let b2;
+    if (T === 0) {
+      b2 = 'At θ = 0° ŵ is the gender direction, so ③ computes the gender counterfactual itself.';
+    } else if (correct) {
+      b2 = 'At θ = ' + T + '° the verdict still matches the truth, though ŵ also removes ' +
+        Math.round((1 - s) * 100) + '% of the care-cue coordinate. The run alone cannot tell you that.';
+    } else {
+      b2 = 'At θ = ' + T + '° the rerun still moves the logit, yet the counterfactual it answers is about ŵ, a mix of gender and the care cue. The claim is false, and nothing in the run shows it; bios that change gender and nothing else would.';
+    }
+    $('banner1').textContent = b1;
+    $('banner2').textContent = b2;
+  }
+
+  beta.addEventListener('input', render);
+  theta.addEventListener('input', render);
+  reveal.addEventListener('click', () => {
+    const on = reveal.getAttribute('aria-pressed') !== 'true';
+    reveal.setAttribute('aria-pressed', on ? 'true' : 'false');
+    reveal.textContent = on ? 'Hide the true encoding' : 'Show the true encoding';
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

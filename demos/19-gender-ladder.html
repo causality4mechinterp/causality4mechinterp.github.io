@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gender at each rung · EMNLP 2026 tutorial demo</title>
+<style>
+  :root {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --ok:#3E8E5A; --bad:#B0356B; --she:#5B4B9E; --he:#9E6A0C;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+      --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+      --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+      --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+      --ok:#5FB37E; --bad:#D06A9E; --she:#8F7BC4; --he:#BD831C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17131F; --panel:#201A2C; --hero:#2A2338; --card:#241E31;
+    --ink:#E9E4F2; --ink-soft:#BBB2CE; --ink-mute:#8A82A8;
+    --purple:#A99BDD; --purple-mid:#8F7BC4; --purple-soft:#4A3F71; --purple-faint:#332B49;
+    --magenta:#D06A9E; --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --line:#332B49;
+    --ok:#5FB37E; --bad:#D06A9E; --she:#8F7BC4; --he:#BD831C;
+  }
+  :root[data-theme="light"] {
+    --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
+    --ink:#2A2435; --ink-soft:#56506A; --ink-mute:#8A82A8;
+    --purple:#5B4B9E; --purple-mid:#8F7BC4; --purple-soft:#D5CBEA; --purple-faint:#E1DEEC;
+    --magenta:#B0356B; --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --line:#E1DEEC;
+    --ok:#3E8E5A; --bad:#B0356B; --she:#5B4B9E; --he:#9E6A0C;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Avenir Next', Avenir, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55; padding: 1.6rem 1rem 2.5rem;
+  }
+  h1, h2, h3 { font-family: Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .kicker { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+  header h1 { color: var(--purple); font-size: 1.65rem; line-height: 1.2; margin: .3rem 0 .35rem; }
+  header .dek { color: var(--ink-soft); max-width: 70ch; }
+  a.back {
+    color: var(--purple); text-decoration: none; font-size: .85rem; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; margin-top: .2rem;
+  }
+  a.back:hover { background: var(--hero); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--magenta); outline-offset: 2px; }
+  @media (max-width: 640px) { header { flex-direction: column-reverse; } }
+
+  .stage { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.1rem 1rem; margin-bottom: 1.6rem; }
+  .setup { font-size: .84rem; color: var(--ink-soft); margin-bottom: .8rem; max-width: 95ch; }
+  .setup b { color: var(--ink); }
+  .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .8rem 1.4rem; margin-bottom: .9rem; }
+  .group .kicker { font-size: .64rem; letter-spacing: .11em; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: .3rem; background: var(--panel); }
+  .seg button { font: inherit; font-size: .84rem; padding: .4rem .8rem; border: none; cursor: pointer; background: transparent; color: var(--ink-soft); }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  button.reveal { font: inherit; font-size: .84rem; padding: .4rem .85rem; cursor: pointer; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink-soft); }
+  button.reveal[aria-pressed="true"] { background: var(--purple); color: var(--paper); border-color: var(--purple); }
+  .slider { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .55rem; margin-top: .3rem; font-size: .82rem; color: var(--ink-soft); }
+  .slider input[type="range"] { width: 170px; accent-color: var(--purple); }
+  .slider output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); min-width: 2.6em; }
+  .chip { font: inherit; font-size: .74rem; padding: .18rem .55rem; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink-soft); cursor: pointer; }
+  .chip[aria-pressed="true"] { border-color: var(--purple); color: var(--purple); font-weight: 700; }
+  .worldnote { font-size: .78rem; color: var(--ink-mute); margin: -.35rem 0 .8rem; font-variant-numeric: tabular-nums; }
+  .worldnote b { color: var(--ink); }
+
+  [role="tablist"] { display: flex; flex-wrap: wrap; gap: .35rem; border-bottom: 1px solid var(--line); margin-bottom: .9rem; }
+  [role="tab"] {
+    font: inherit; font-size: .86rem; padding: .45rem .9rem; cursor: pointer; border: 1px solid var(--line); border-bottom: none;
+    border-radius: 10px 10px 0 0; background: var(--panel); color: var(--ink-soft); margin-bottom: -1px;
+  }
+  [role="tab"][aria-selected="true"] { background: var(--card); color: var(--ink); font-weight: 700; border-color: var(--line); border-bottom: 1px solid var(--card); }
+  [role="tab"] .rk { font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-right: .35rem; }
+  #tab1 .rk { color: var(--l1); } #tab2 .rk { color: var(--l2); } #tab3 .rk { color: var(--l3); }
+
+  .q { font-style: italic; color: var(--ink); margin-bottom: .2rem; }
+  .how { font-size: .82rem; color: var(--ink-soft); margin-bottom: .7rem; max-width: 95ch; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1rem; }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .7rem .8rem; }
+  svg { width: 100%; height: auto; display: block; }
+  .ax { stroke: var(--line); stroke-width: 1.2; }
+  .zero { stroke: var(--ink-mute); stroke-width: 1; stroke-dasharray: 4 3; }
+  .tick { fill: var(--ink-mute); font-size: 10px; font-family: inherit; font-variant-numeric: tabular-nums; }
+  .axl { fill: var(--ink-soft); font-size: 10.5px; font-family: inherit; font-weight: 600; }
+  .lab { fill: var(--ink); font-size: 11px; font-family: inherit; font-weight: 700; }
+  .she { fill: var(--she); } .he { fill: var(--he); }
+  .hollow { fill: none; stroke: var(--ink-mute); stroke-width: 1; }
+  .after { fill: var(--purple); }
+  .meanmk { stroke: var(--ink); stroke-width: 2.2; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: .5rem; margin-bottom: .7rem; }
+  .metric { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .45rem .6rem; }
+  .metric .v { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); line-height: 1.2; }
+  .metric .k { font-size: .7rem; color: var(--ink-mute); line-height: 1.3; }
+  .claims { display: flex; flex-direction: column; gap: .4rem; }
+  .claim { font-size: .82rem; border-radius: 8px; padding: .4rem .55rem; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+  .claim .t { font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: block; color: var(--ink-mute); }
+  .claim.ok { border-color: var(--ok); } .claim.ok .t { color: var(--ok); }
+  .claim.bad { border-color: var(--bad); } .claim.bad .t { color: var(--bad); }
+  .claim .truth { display: block; font-size: .74rem; color: var(--ink-soft); margin-top: .15rem; }
+  .next { margin-top: .9rem; background: var(--hero); border-left: 3px solid var(--purple); border-radius: 0 10px 10px 0; padding: .55rem .8rem; font-size: .88rem; }
+  .next b { color: var(--purple); }
+  .reading { font-size: .84rem; color: var(--ink-soft); margin-top: .6rem; }
+
+  table.rows { width: 100%; border-collapse: collapse; font-size: .78rem; font-variant-numeric: tabular-nums; margin-top: .3rem; }
+  table.rows th { text-align: left; font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; padding: .2rem .3rem; border-bottom: 1px solid var(--line); }
+  table.rows td { padding: .22rem .3rem; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+  table.rows tr.cur td { color: var(--ink); font-weight: 700; background: var(--purple-faint); }
+
+  .picker { display: flex; flex-wrap: wrap; gap: .35rem; margin: .2rem 0 .6rem; }
+  .bio { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .55rem .7rem; font-size: .84rem; margin-bottom: .6rem; }
+  .bio .meta { display: block; font-size: .72rem; color: var(--ink-mute); font-variant-numeric: tabular-nums; margin-top: .2rem; }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
+  @media (max-width: 760px) { .three { grid-template-columns: 1fr; } }
+  .num { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: .6rem .7rem; display: flex; flex-direction: column; gap: .3rem; }
+  .num h3 { font-size: .9rem; color: var(--purple); line-height: 1.25; }
+  .num .what { font-size: .76rem; color: var(--ink-soft); }
+  .num .y { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); line-height: 1.15; margin-top: auto; }
+  .num .y small { font-size: .78rem; font-weight: 600; color: var(--ink-soft); }
+  .badge { font-size: .72rem; border-radius: 8px; padding: .3rem .45rem; background: var(--panel); color: var(--ink-soft); border: 1px dashed var(--line); }
+  .badge.ok { border: 1.5px solid var(--ok); color: var(--ok); background: transparent; font-weight: 700; }
+  .badge.bad { border: 1.5px solid var(--bad); color: var(--bad); background: transparent; font-weight: 700; }
+  .num.target.locked .y { color: var(--ink-mute); font-size: 1rem; font-weight: 600; }
+  .cleanline { font-size: .82rem; color: var(--ink-soft); margin-bottom: .55rem; font-variant-numeric: tabular-nums; }
+  .cleanline b { color: var(--ink); }
+
+  .provenance { font-size: .76rem; color: var(--ink-mute); margin-top: .9rem; max-width: 95ch; }
+  section { max-width: 70ch; margin: 0 auto 1.5rem; }
+  section h2 { color: var(--purple); font-size: 1.05rem; margin-bottom: .5rem; }
+  section p { margin-bottom: .7rem; color: var(--ink); }
+  blockquote { background: var(--panel); border-left: 3px solid var(--purple-mid); border-radius: 0 10px 10px 0; padding: .8rem 1rem; margin-bottom: .7rem; }
+  blockquote p { color: var(--ink-soft); font-style: italic; margin-bottom: .35rem; }
+  blockquote p em { font-style: normal; font-weight: 600; }
+  blockquote cite { font-style: normal; font-size: .8rem; color: var(--ink-mute); }
+  ol.try { padding-left: 1.2rem; }
+  ol.try li { margin-bottom: .55rem; color: var(--ink); }
+  footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
+  footer a { color: var(--purple); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+      <h1>The same gender question reads differently at each rung</h1>
+      <p class="dek">A probe reads gender from the activation a, zeroing a along the probe's directions moves the model's predictions, and rerunning one bio with a changed computes that bio's counterfactual about a. Each tab shows the sentence its evidence supports and what it takes to move that sentence up one rung.</p>
+    </div>
+    <a class="back" href="./index.html">← All demos</a>
+  </header>
+
+  <div class="stage">
+    <p class="setup"><b>Setup.</b> 200 synthetic biographies, half about a woman (she) and half about a man (he). The model reads each bio and predicts the person's profession, nurse or surgeon. At one layer ℓ we record the activation a. Besides gender, each bio carries a <b>cue</b>, care words (“comfort”, “families”) versus hospital words (“theatre”, “schedule”), that travels with gender in these bios, and profession content that does not. All numbers are illustrative toy values.</p>
+
+    <div class="controls">
+      <div class="group">
+        <div class="kicker">Hidden world</div>
+        <div class="seg" role="group" aria-label="Hidden world">
+          <button id="wA" aria-pressed="true">World A</button>
+          <button id="wB" aria-pressed="false">World B</button>
+        </div>
+      </div>
+      <div class="group">
+        <div class="kicker" id="rho-lab">How closely the cue tracks gender, ρ</div>
+        <div class="slider">
+          <input type="range" id="rho" min="0.3" max="0.95" step="0.05" value="0.9" aria-labelledby="rho-lab">
+          <output id="rho-out">0.90</output>
+          <button class="chip" data-rho="0.5" aria-pressed="false">ρ = 0.5</button>
+          <button class="chip" data-rho="0.9" aria-pressed="true">ρ = 0.9</button>
+        </div>
+      </div>
+      <div class="group">
+        <button class="reveal" id="reveal" aria-pressed="false">Reveal the readout</button>
+      </div>
+    </div>
+    <p class="worldnote" id="worldnote"></p>
+
+    <div role="tablist" aria-label="Rung">
+      <button role="tab" id="tab1" aria-selected="true" aria-controls="p1" tabindex="0"><span class="rk">Rung 1</span>watch a</button>
+      <button role="tab" id="tab2" aria-selected="false" aria-controls="p2" tabindex="-1"><span class="rk">Rung 2</span>set a</button>
+      <button role="tab" id="tab3" aria-selected="false" aria-controls="p3" tabindex="-1"><span class="rk">Rung 3</span>had it been about a man</button>
+    </div>
+
+    <!-- Rung 1 -->
+    <div role="tabpanel" id="p1" aria-labelledby="tab1">
+      <p class="q">“Do these activations correlate with gender?”</p>
+      <p class="how">A <b>probe</b> is a linear classifier trained on a to predict the bio's gender label. We train it on half the bios and test it on the other half. Nothing inside the model is changed.</p>
+      <div class="cols">
+        <div class="box">
+          <svg id="sc1" viewBox="0 0 520 300" role="img" aria-label="Scatter plot of the 200 bios: probe score on the horizontal axis, the model's nurse logit on the vertical axis, she-bios and he-bios in two clusters."></svg>
+        </div>
+        <div>
+          <div class="metrics">
+            <div class="metric"><div class="v" id="m1acc">—</div><div class="k">probe accuracy on held-out bios</div></div>
+            <div class="metric"><div class="v">0</div><div class="k">interventions on the model</div></div>
+          </div>
+          <div class="claims">
+            <div class="claim ok"><span class="t">✓ Supported</span>Gender is decodable from this layer.</div>
+            <div class="claim bad"><span class="t">✗ Not supported</span>The model uses gender for the prediction.<span class="truth" id="c1truth"></span></div>
+          </div>
+          <p class="reading" id="r1"></p>
+        </div>
+      </div>
+      <p class="next"><b>To move this claim up a rung, you need:</b> to set a instead of watching it. The rung-2 tab does that.</p>
+    </div>
+
+    <!-- Rung 2 -->
+    <div role="tabpanel" id="p2" aria-labelledby="tab2" hidden>
+      <p class="q">“Does setting these activations change the profession the model predicts?”</p>
+      <p class="how"><b>INLP</b> (iterative nullspace projection): train a probe, delete its direction from a, train a fresh probe on what is left, and delete that direction too. This toy stops once a fresh probe scores below 75%. Then we rerun every bio with the edited a and compare the model's p(nurse) with the unedited run.</p>
+      <div class="cols">
+        <div class="box">
+          <svg id="st2" viewBox="0 0 520 230" role="img" aria-label="Strip plot of p(nurse) for every bio, she-bios and he-bios, before and after the INLP edit; a vertical tick marks each row's mean."></svg>
+          <table class="rows" aria-label="The six bios of the rung-3 tab before and after the edit">
+            <thead><tr><th>Bio</th><th>p(nurse), unedited</th><th>p(nurse), a edited</th><th>Prediction</th></tr></thead>
+            <tbody id="rows2"></tbody>
+          </table>
+        </div>
+        <div>
+          <div class="metrics">
+            <div class="metric"><div class="v" id="m2k">—</div><div class="k">directions INLP removed</div></div>
+            <div class="metric"><div class="v" id="m2flip">—</div><div class="k">predictions that flip</div></div>
+            <div class="metric"><div class="v" id="m2dp">—</div><div class="k">mean change in p(nurse)</div></div>
+          </div>
+          <p class="how" id="m2acc"></p>
+          <div class="claims">
+            <div class="claim" id="c2a"><span class="t" id="c2at"></span>Zeroing a along these directions changes the prediction on these bios.</div>
+            <div class="claim bad"><span class="t">✗ Not supported</span>The model relies on gender.<span class="truth" id="c2truth"></span></div>
+          </div>
+          <p class="reading" id="r2"></p>
+        </div>
+      </div>
+      <p class="next"><b>To move this claim up a rung, you need:</b> about a, nothing more, since one bio's rerun already is the counterfactual about a (rung-3 tab, ①); about gender, either a removed direction that is gender alone and whose zero is the he value, or a twin bio that changes gender and nothing else. The toy meets the zero condition only because it codes he as 0; projection in a real model sets the direction to zero, which for centred activations is the midpoint between she and he, a value no bio had.</p>
+    </div>
+
+    <!-- Rung 3 -->
+    <div role="tabpanel" id="p3" aria-labelledby="tab3" hidden>
+      <p class="q">“Had this bio been about a man, would the model have predicted surgeon?”</p>
+      <p class="how">One bio, three reruns. With the input given and greedy decoding, the forward pass fixes every activation, so a rerun with a changed is that bio's counterfactual about a, computed exactly.</p>
+      <div class="picker" role="group" aria-label="Pick a bio" id="picker"></div>
+      <div class="bio" id="biotext"></div>
+      <div class="slider" style="margin-bottom:.6rem">
+        <label for="delta" id="delta-lab"><b>How much else the she → he rewrite changes, δ</b></label>
+        <input type="range" id="delta" min="0" max="0.6" step="0.05" value="0.3" aria-labelledby="delta-lab">
+        <output id="delta-out">0.30</output>
+        <button class="chip" data-delta="0" aria-pressed="false">δ = 0</button>
+        <button class="chip" data-delta="0.3" aria-pressed="true">δ = 0.3</button>
+      </div>
+      <p class="cleanline" id="clean3"></p>
+      <div class="three">
+        <div class="num">
+          <h3>① Rerun this bio with a projected</h3>
+          <span class="what">The rung-2 edit, on this one bio.</span>
+          <div class="y" id="y31">—</div>
+          <span class="badge" id="b31"></span>
+          <span class="badge" id="v31" hidden></span>
+        </div>
+        <div class="num target locked" id="n32">
+          <h3>② The target: gender flipped, nothing else</h3>
+          <span class="what">This bio's a with only its gender coordinate set from she to he. A real model gives no access to it.</span>
+          <div class="y" id="y32">hidden until Reveal</div>
+          <span class="badge" id="b32"></span>
+        </div>
+        <div class="num">
+          <h3>③ Rerun the twin bio, she → he</h3>
+          <span class="what" id="w33"></span>
+          <div class="y" id="y33">—</div>
+          <span class="badge" id="b33"></span>
+          <span class="badge" id="v33" hidden></span>
+        </div>
+      </div>
+      <p class="reading" id="r3" aria-live="polite"></p>
+      <p class="next"><b>To move the gender claim onto this rung, you need:</b> a removed direction that is gender alone and whose zero is the he value (then ① equals ②; true here only because the toy codes he as 0), or a twin bio that changes gender and nothing else (then ③ equals ②). None of these conditions shows up in the rerun itself.</p>
+    </div>
+
+    <p class="provenance">Toy model, seeded and deterministic. Each bio has gender g (she = 1, he = 0), cue c (care words high, hospital words low; correlation ρ with g) and profession content p. The activation is a = R·(g, c, p) + small noise, with R a fixed rotation, so no neuron lines up with a concept. The readout is the nurse logit y = b<sub>g</sub>·a<sub>g</sub> + b<sub>c</sub>·a<sub>c</sub> + b<sub>p</sub>·a<sub>p</sub> − 1, where a<sub>g</sub>, a<sub>c</sub>, a<sub>p</sub> are a's coordinates along the three concepts. The probe is linear discriminant analysis. Built for this tutorial to illustrate the paper's “Decodability ≠ Model Use” gap on the tutorial's running example; it is not an experiment from the paper, and the bios are not Bias-in-Bios data.</p>
+  </div>
+
+  <section>
+    <h2>What this shows</h2>
+    <p>The three tabs ask about one population of bios and one activation. On the rung-1 tab the probe reads gender almost perfectly in both hidden worlds, at the same accuracy, and it must be the same: the two worlds share every activation and differ only in what the model's readout does with them, so no statistic of a can tell them apart. On the rung-2 tab INLP deletes the directions a probe uses and every bio is rerun. At high ρ the cue tracks gender so closely that a fresh probe still finds gender through it, so INLP deletes the cue direction too, and predictions move in both worlds. “Zeroing it changes the prediction on these bios” then holds in both; “relies on gender” holds only in the world whose readout uses gender.</p>
+    <p>The rung-3 tab takes one bio. Rerunning it with a projected gives the same number as its row on the rung-2 tab, and with the input given that number is the bio's counterfactual about a: moving the claim about a from rung 2 to rung 3 costs nothing. The question in the tab's title is about gender, and here rung 3 adds the concept. The rerun answers it only if the deleted directions are gender alone and setting them to zero puts a at the he value. This toy meets the first condition at ρ ≤ 0.5 and the second only because it codes he as 0; a real model tells you neither, and projection there sets the direction to zero, which for centred activations is a value no bio had. The twin bio is the other route: rewrite she as he and rerun, which answers the question only if the rewrite changes gender and nothing else (δ = 0).</p>
+  </section>
+
+  <section>
+    <h2>What the paper says</h2>
+    <blockquote>
+      <p>“Decodability ≠ encoding; the information may be present but unused by the model's own computation.”</p>
+      <cite>— arXiv:2602.16698, appendix “The Causal Ladder: A Unified Reference”, on what a linear probe supports</cite>
+    </blockquote>
+    <blockquote>
+      <p>“Many probes ∈ 𝒢 can achieve the same accuracy while picking out different directions and predictive success alone does not tell us which direction (if any) the model actually uses [citations omitted].” … “Pinning down <em>which</em> direction requires additional constraints such as sparsity, independence, etc.”</p>
+      <cite>— arXiv:2602.16698, appendix “Taxonomy for Characterising Intepretability Claims”, box “Decodability ≠ Model Use”</cite>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>On the rung-1 tab, switch between World A and World B before revealing anything. Which number changes? Write down the one sentence the probe's accuracy supports, then press “Reveal the readout” and check whether it survived in both worlds.</li>
+      <li>On the rung-2 tab at ρ = 0.9, note the share of flipped predictions in each world. Set ρ = 0.5 and look again. In which world did the number collapse, and what does the count of deleted directions tell you about why? Would a stricter stopping rule than 75% have changed the answer?</li>
+      <li>On the rung-3 tab, press Reveal, then try ρ = 0.5 with δ = 0. Which of ① and ③ now matches ②? On real Bias-in-Bios data, which of these conditions could you check, and with what experiment?</li>
+    </ol>
+  </section>
+
+  <footer>
+    Original interactive illustration for the EMNLP 2026 tutorial <i>Causal Foundations for Interpretability</i>, built on the position paper <a href="https://arxiv.org/abs/2602.16698">Causality is Key for Interpretability Claims to Generalise (arXiv:2602.16698)</a>. It follows the tutorial's running example, a gender probe on biographies, through the paper's three rungs; the bios, model and numbers are a deterministic toy, not an experiment from the paper. tutorial demo · CC-BY
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const $ = id => document.getElementById(id);
+
+  // ---------- seeded PRNG (mulberry32) ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function makeGauss(rng) {
+    let spare = null;
+    return function () {
+      if (spare !== null) { const v = spare; spare = null; return v; }
+      let u, v, s;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; s = u * u + v * v; } while (s >= 1 || s === 0);
+      const m = Math.sqrt(-2 * Math.log(s) / s);
+      spare = v * m; return u * m;
+    };
+  }
+
+  // ---------- linear algebra (3D) ----------
+  const dot = (x, y) => x[0] * y[0] + x[1] * y[1] + x[2] * y[2];
+  const mv = (M, x) => [dot(M[0], x), dot(M[1], x), dot(M[2], x)];
+  const mtv = (M, x) => [0, 1, 2].map(j => M[0][j] * x[0] + M[1][j] * x[1] + M[2][j] * x[2]);
+  const add = (x, y) => x.map((v, i) => v + y[i]);
+  function rot(ax, ay, az) {
+    const c = Math.cos, s = Math.sin;
+    const Rx = [[1, 0, 0], [0, c(ax), -s(ax)], [0, s(ax), c(ax)]];
+    const Ry = [[c(ay), 0, s(ay)], [0, 1, 0], [-s(ay), 0, c(ay)]];
+    const Rz = [[c(az), -s(az), 0], [s(az), c(az), 0], [0, 0, 1]];
+    const mm = (A, B) => A.map(r => [0, 1, 2].map(j => r[0] * B[0][j] + r[1] * B[1][j] + r[2] * B[2][j]));
+    return mm(Rz, mm(Ry, Rx));
+  }
+  function solve3(A, b) {
+    const M = A.map((r, i) => [...r, b[i]]);
+    for (let c = 0; c < 3; c++) {
+      let p = c;
+      for (let r = c + 1; r < 3; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+      [M[c], M[p]] = [M[p], M[c]];
+      for (let r = 0; r < 3; r++) if (r !== c) {
+        const f = M[r][c] / M[c][c];
+        for (let k = c; k < 4; k++) M[r][k] -= f * M[c][k];
+      }
+    }
+    return [M[0][3] / M[0][0], M[1][3] / M[1][1], M[2][3] / M[2][2]];
+  }
+
+  // ---------- the toy ----------
+  const N = 200, SIG = 0.03, PSD = 0.7, STOP = 0.75;
+  const WORLDS = {
+    A: { bg: 1.5, bc: 0.5, bp: 1, b0: 1 },
+    B: { bg: 0, bc: 2, bp: 1, b0: 1 }
+  };
+  const R = rot(0.6, -0.5, 0.9);          // concepts sit off the neuron axes
+  const EG = mv(R, [1, 0, 0]);            // the gender coordinate's direction in a
+  const gauss = makeGauss(mulberry32(19));
+  const BIOS = [];
+  for (let i = 0; i < N; i++) {
+    BIOS.push({ g: i % 2 === 0 ? 1 : 0, zc: gauss(), p: PSD * gauss(),
+      e: [SIG * gauss(), SIG * gauss(), SIG * gauss()], train: Math.floor(i / 2) % 2 === 0 });
+  }
+  const cueOf = (b, rho) => 0.5 + rho * (b.g - 0.5) + Math.sqrt(1 - rho * rho) * 0.5 * b.zc;
+  const actOf = (g, c, p, e) => add(mv(R, [g, c, p]), e);
+  const logit = (a, W) => { const u = mtv(R, a); return W.bg * u[0] + W.bc * u[1] + W.bp * u[2] - W.b0; };
+  const sig = x => 1 / (1 + Math.exp(-x));
+  const prof = y => (y > 0 ? 'nurse' : 'surgeon');
+
+  // probe: linear discriminant analysis, restricted to the subspace P keeps
+  function lda(X, P) {
+    const m = [[0, 0, 0], [0, 0, 0]], n = [0, 0];
+    BIOS.forEach((b, i) => { if (!b.train) return; n[b.g]++; for (let k = 0; k < 3; k++) m[b.g][k] += X[i][k]; });
+    m.forEach((v, j) => { for (let k = 0; k < 3; k++) v[k] /= n[j]; });
+    const S = [[1e-4, 0, 0], [0, 1e-4, 0], [0, 0, 1e-4]];
+    BIOS.forEach((b, i) => {
+      if (!b.train) return;
+      const d = [0, 1, 2].map(k => X[i][k] - m[b.g][k]);
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) S[r][c] += d[r] * d[c] / (n[0] + n[1] - 2);
+    });
+    let w = mv(P, solve3(S, [0, 1, 2].map(k => m[1][k] - m[0][k])));
+    const L = Math.hypot(w[0], w[1], w[2]); w = w.map(v => v / L);
+    const t = (dot(w, m[1]) + dot(w, m[0])) / 2;
+    let ok = 0, tot = 0;
+    BIOS.forEach((b, i) => { if (b.train) return; tot++; if ((dot(w, X[i]) > t ? 1 : 0) === b.g) ok++; });
+    return { w, t, acc: ok / tot };
+  }
+  function inlp(A) {
+    let P = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    const dirs = [], accs = [];
+    let first = null;
+    for (let k = 0; k < 3; k++) {
+      const pr = lda(A.map(a => mv(P, a)), P);
+      if (!first) first = pr;
+      accs.push(pr.acc);
+      if (pr.acc < STOP) break;
+      dirs.push(pr.w);
+      P = P.map((r, i) => r.map((v, j) => v - pr.w[i] * pr.w[j]));
+    }
+    return { P, dirs, accs, first };
+  }
+
+  // the six she-bios of the rung-3 tab and their twins' names
+  const NAMES = [['Anna', 'Adam'], ['Maria', 'Mark'], ['Julia', 'Julian'], ['Sofia', 'Simon'], ['Clara', 'Carl'], ['Elena', 'Eric']];
+  const PLACES = ['a city hospital', 'a regional clinic', 'a teaching hospital', 'a children’s hospital', 'a rehabilitation centre', 'a university hospital'];
+  const PICK = [];
+  BIOS.forEach((b, i) => { if (b.g === 1 && b.p > -0.3 && b.p < 0.45 && b.zc > -0.5 && b.zc < 1.5 && PICK.length < 6) PICK.push(i); });
+
+  // ---------- state ----------
+  const st = { world: 'A', rho: 0.9, delta: 0.3, revealed: false, bio: 0 };
+  let M = null;   // derived model state for the current rho
+  function derive() {
+    const C = BIOS.map(b => cueOf(b, st.rho));
+    const A = BIOS.map((b, i) => actOf(b.g, C[i], b.p, b.e));
+    const r = inlp(A);
+    M = { C, A, r, Aed: A.map(a => mv(r.P, a)) };
+  }
+
+  // ---------- svg helpers ----------
+  function el(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  const clear = s => { while (s.firstChild) s.removeChild(s.firstChild); };
+  const pct = v => Math.round(v * 100) + '%';
+  const sgn2 = v => (v < -0.005 ? '−' : '+') + Math.abs(v).toFixed(2);
+
+  // ---------- rung 1 ----------
+  function drawScatter(W) {
+    const s = $('sc1'); clear(s);
+    const L = 54, Rt = 506, T = 14, B = 258;
+    const pr = M.r.first;
+    const xs = M.A.map(a => dot(pr.w, a) - pr.t), ys = M.A.map(a => logit(a, W));
+    const xm = Math.max(...xs.map(Math.abs)) * 1.08, ym = Math.max(3.2, Math.max(...ys.map(Math.abs)) * 1.08);
+    const X = v => L + (v + xm) / (2 * xm) * (Rt - L), Y = v => T + (ym - v) / (2 * ym) * (B - T);
+    el('line', { class: 'ax', x1: L, y1: B, x2: Rt, y2: B }, s);
+    el('line', { class: 'ax', x1: L, y1: T, x2: L, y2: B }, s);
+    el('line', { class: 'zero', x1: X(0), y1: T, x2: X(0), y2: B }, s);
+    el('line', { class: 'zero', x1: L, y1: Y(0), x2: Rt, y2: Y(0) }, s);
+    [-2, 0, 2].forEach(v => el('text', { class: 'tick', x: L - 6, y: Y(v) + 3, 'text-anchor': 'end' }, s, v === 0 ? '0' : (v > 0 ? '+' : '−') + Math.abs(v)));
+    el('text', { class: 'axl', x: (L + Rt) / 2, y: B + 30, 'text-anchor': 'middle' }, s, 'probe score  (← he · she →)');
+    el('text', { class: 'axl', x: 12, y: (T + B) / 2, 'text-anchor': 'middle', transform: 'rotate(-90 12 ' + (T + B) / 2 + ')' }, s, 'nurse logit y');
+    el('text', { class: 'tick', x: X(0) + 6, y: Y(0) - 5, 'text-anchor': 'start' }, s, 'nurse ↑');
+    el('text', { class: 'tick', x: X(0) + 6, y: Y(0) + 13, 'text-anchor': 'start' }, s, 'surgeon ↓');
+    BIOS.forEach((b, i) => el('circle', { class: b.g ? 'she' : 'he', cx: X(xs[i]), cy: Y(ys[i]), r: 3.2, 'fill-opacity': .75 }, s));
+    // direct labels beside each cluster, on the side facing the empty middle
+    [1, 0].forEach(gv => {
+      let sy = 0, n = 0, lo = Infinity, hi = -Infinity;
+      BIOS.forEach((b, i) => { if (b.g === gv) { sy += ys[i]; n++; lo = Math.min(lo, X(xs[i])); hi = Math.max(hi, X(xs[i])); } });
+      el('text', { class: 'lab', x: gv ? lo - 10 : hi + 10, y: Y(sy / n) + 4, 'text-anchor': gv ? 'end' : 'start' }, s, gv ? 'she-bios' : 'he-bios');
+    });
+  }
+  function renderR1(W) {
+    drawScatter(W);
+    $('m1acc').textContent = pct(M.r.first.acc);
+    $('c1truth').textContent = st.revealed
+      ? (st.world === 'A' ? 'In World A this happens to be true; the accuracy did not show it.' : 'In World B it is false: the readout ignores gender, at the same accuracy.')
+      : '';
+    $('r1').textContent = 'Switch worlds: the accuracy stays at ' + pct(M.r.first.acc) + ', because both worlds share every activation. Only the readout differs, and watching a never involves the readout.';
+  }
+
+  // ---------- rung 2 ----------
+  function drawStrips(W) {
+    const s = $('st2'); clear(s);
+    const L = 100, Rt = 506, rows = [['she · unedited', 1, 0], ['she · a edited', 1, 1], ['he · unedited', 0, 0], ['he · a edited', 0, 1]];
+    const X = v => L + v * (Rt - L);
+    const rowY = k => 24 + k * 44;
+    el('line', { class: 'zero', x1: X(0.5), y1: 8, x2: X(0.5), y2: 192 }, s);
+    [0, 0.5, 1].forEach(v => el('text', { class: 'tick', x: X(v), y: 206, 'text-anchor': 'middle' }, s, v.toFixed(1)));
+    el('text', { class: 'axl', x: (L + Rt) / 2, y: 224, 'text-anchor': 'middle' }, s, 'p(nurse)   (← surgeon · nurse →)');
+    rows.forEach(([lab, gv, ed], k) => {
+      const y0 = rowY(k);
+      el('line', { class: 'ax', x1: L, y1: y0 + 14, x2: Rt, y2: y0 + 14 }, s);
+      el('text', { class: 'axl', x: L - 8, y: y0 + 4, 'text-anchor': 'end' }, s, lab);
+      let sum = 0, n = 0;
+      BIOS.forEach((b, i) => {
+        if (b.g !== gv) return;
+        const v = sig(logit(ed ? M.Aed[i] : M.A[i], W));
+        sum += v; n++;
+        const jit = ((i * 7919) % 17) / 17 * 18 - 9;
+        el('circle', { class: ed ? 'after' : 'hollow', cx: X(v), cy: y0 + jit * .7, r: 2.6, 'fill-opacity': ed ? .7 : 1 }, s);
+      });
+      const mx = X(sum / n);
+      el('line', { class: 'meanmk', x1: mx, y1: y0 - 12, x2: mx, y2: y0 + 12 }, s);
+    });
+  }
+  function renderR2(W) {
+    drawStrips(W);
+    let fl = 0, dp = 0;
+    BIOS.forEach((b, i) => {
+      const y = logit(M.A[i], W), y2 = logit(M.Aed[i], W);
+      if ((y > 0) !== (y2 > 0)) fl++;
+      dp += sig(y2) - sig(y);
+    });
+    const share = fl / N, k = M.r.dirs.length;
+    $('m2k').textContent = k;
+    $('m2flip').textContent = pct(share);
+    $('m2dp').textContent = sgn2(dp / N);
+    $('m2acc').textContent = 'Fresh-probe accuracy after each deletion: ' + M.r.accs.slice(1).map(pct).join(' → ') +
+      (k === 1 ? '. One direction, close to the gender coordinate, was enough.' : '. The first direction is close to gender; the second is close to the cue, which still predicted gender.');
+    const holds = share >= 0.05;
+    $('c2a').className = 'claim ' + (holds ? 'ok' : 'bad');
+    $('c2at').textContent = holds ? '✓ Supported (' + pct(share) + ' flip)' : '✗ Not supported here (' + pct(share) + ' flip)';
+    $('c2truth').textContent = st.revealed
+      ? (st.world === 'A' ? 'True in World A, but the flips alone did not show it.' : 'False in World B: the readout ignores gender' + (holds ? '; the flips come from the deleted cue direction.' : '.'))
+      : '';
+    $('r2').textContent = k === 2
+      ? 'At ρ = ' + st.rho.toFixed(2) + ' INLP deleted the cue direction along with gender, so predictions move whichever world you are in. The numbers cannot separate “uses gender” from “uses the cue”.'
+      : 'At ρ = ' + st.rho.toFixed(2) + ' INLP deleted one direction, close to gender alone. Now the worlds come apart: compare the flip share in World A and World B.';
+    const tb = $('rows2'); tb.innerHTML = '';
+    PICK.forEach((i, j) => {
+      const y = logit(M.A[i], W), y2 = logit(M.Aed[i], W);
+      const tr = document.createElement('tr');
+      if (j === st.bio) tr.className = 'cur';
+      [NAMES[j][0], sig(y).toFixed(2), sig(y2).toFixed(2), prof(y) + ' → ' + prof(y2)].forEach(t => {
+        const td = document.createElement('td'); td.textContent = t; tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- rung 3 ----------
+  function cueWords(c) { return c > 0.66 ? 'care words' : (c < 0.33 ? 'hospital words' : 'a mix of care and hospital words'); }
+  function renderR3(W) {
+    const j = st.bio, i = PICK[j], b = BIOS[i], c = M.C[i];
+    const [nm, tw] = NAMES[j];
+    const phrase = c > 0.66 ? 'is known for her care for patients and their families'
+      : (c < 0.33 ? 'runs the theatre schedule and the ward rota' : 'splits her time between the wards and the theatre schedule');
+    $('biotext').innerHTML = '';
+    const p1 = document.createElement('span');
+    p1.textContent = '“' + nm + ' has worked at ' + PLACES[j] + ' for ' + (6 + j * 3) + ' years and ' + phrase + '.”';
+    const p2 = document.createElement('span'); p2.className = 'meta';
+    p2.textContent = 'she · cue ' + c.toFixed(2) + ' (' + cueWords(c) + ') · profession content ' + sgn2(b.p);
+    $('biotext').append(p1, p2);
+    $('picker').querySelectorAll('button').forEach((bt, k) => bt.setAttribute('aria-pressed', k === j ? 'true' : 'false'));
+
+    const y0 = logit(M.A[i], W);
+    const y1 = logit(M.Aed[i], W);                                   // ① = this bio's rung-2 row
+    const y2 = logit(M.A[i].map((v, k) => v - EG[k]), W);            // ② gender coordinate 1 → 0
+    const y3 = logit(actOf(0, c - st.delta, b.p, b.e), W);           // ③ twin: gender 0, cue shifted by δ
+    $('clean3').innerHTML = '';
+    $('clean3').append('Unedited run of ' + nm + '’s bio: p(nurse) = ');
+    const bb = document.createElement('b'); bb.textContent = sig(y0).toFixed(2) + ' → ' + prof(y0); $('clean3').append(bb);
+    const show = (id, y) => { $(id).innerHTML = ''; $(id).append(sig(y).toFixed(2) + ' '); const sm = document.createElement('small'); sm.textContent = '→ ' + prof(y); $(id).append(sm); };
+    show('y31', y1);
+    show('y33', y3);
+    $('w33').textContent = 'Rewrite the bio with ' + tw + ' and he/his, then rerun. The new name also shifts the cue by δ = ' + st.delta.toFixed(2) + '.';
+
+    const gap = (u, v) => Math.abs(sig(u) - sig(v));
+    const n32 = $('n32');
+    if (st.revealed) {
+      n32.classList.remove('locked'); show('y32', y2);
+      $('b32').className = 'badge'; $('b32').textContent = 'The quantity “had this bio been about a man” names.';
+    } else {
+      n32.classList.add('locked'); $('y32').textContent = 'hidden until Reveal';
+      $('b32').className = 'badge'; $('b32').textContent = 'Press “Reveal the readout” to see it.';
+    }
+    const b31 = $('b31'), b33 = $('b33');
+    b31.textContent = 'Same number as ' + nm + '’s row on the rung-2 tab: with the input given, the rerun is the counterfactual about a.';
+    b31.className = 'badge';
+    b33.className = 'badge';
+    b33.textContent = 'An exact rerun of a different input.';
+    const v31 = $('v31'), v33 = $('v33');
+    v31.hidden = v33.hidden = !st.revealed;
+    let txt;
+    if (st.revealed) {
+      // verdicts rest on the structural condition, never on a tolerance alone
+      const g1 = gap(y1, y2), g3 = gap(y3, y2);
+      const ok1 = M.r.dirs.length === 1 && g1 < 0.05, ok3 = st.delta === 0;
+      const within = g => (g < 0.005 ? '✓ Matches ②.' : '✓ Matches ② to within ' + g.toFixed(2) + '.');
+      v31.className = 'badge ' + (ok1 ? 'ok' : 'bad');
+      v31.textContent = ok1 ? within(g1) : '✗ Misses ② by ' + g1.toFixed(2) + '.';
+      v33.className = 'badge ' + (ok3 ? 'ok' : 'bad');
+      v33.textContent = ok3 ? within(g3) : '✗ Misses ② by ' + g3.toFixed(2) + '.';
+      txt = (ok1 ? '① matches the target because INLP deleted one direction, close to gender alone, and zeroing it lands on the he value only because this toy codes he as 0. '
+                 : '① misses the target because INLP also deleted the cue direction' + (st.world === 'B' ? ', which is all this world’s readout uses. ' : '. '))
+          + (ok3 ? '③ matches because the rewrite changes gender and nothing else (δ = 0).'
+                 : (g3 < 0.05
+                    ? '③ lands within ' + g3.toFixed(2) + ' of ② only because this world’s readout weights the cue weakly; the rewrite still moved the cue by δ = ' + st.delta.toFixed(2) + ', and a real model does not tell you that weight.'
+                    : '③ misses because the rewrite also moved the cue by δ = ' + st.delta.toFixed(2) + '.'));
+    } else {
+      txt = '① and ③ differ by ' + Math.abs(sig(y1) - sig(y3)).toFixed(2) + ' in p(nurse). Both are exact reruns; neither says which, if either, answers the gender question. Reveal the target to check.';
+    }
+    $('r3').textContent = txt;
+  }
+
+  // ---------- render ----------
+  function render() {
+    const W = WORLDS[st.world];
+    $('rho-out').textContent = st.rho.toFixed(2);
+    $('delta-out').textContent = st.delta.toFixed(2);
+    document.querySelectorAll('[data-rho]').forEach(b => b.setAttribute('aria-pressed', Math.abs(+b.dataset.rho - st.rho) < 1e-9 ? 'true' : 'false'));
+    document.querySelectorAll('[data-delta]').forEach(b => b.setAttribute('aria-pressed', Math.abs(+b.dataset.delta - st.delta) < 1e-9 ? 'true' : 'false'));
+    $('wA').textContent = 'World A' + (st.revealed ? ' · uses gender' : '');
+    $('wB').textContent = 'World B' + (st.revealed ? ' · uses the cue only' : '');
+    $('worldnote').innerHTML = '';
+    if (st.revealed) {
+      $('worldnote').append('Readout in World ' + st.world + ': ');
+      const bb = document.createElement('b');
+      bb.innerHTML = 'y = ' + W.bg + '·a<sub>g</sub> + ' + W.bc + '·a<sub>c</sub> + 1·a<sub>p</sub> − 1';   // numbers from WORLDS only
+      $('worldnote').append(bb, st.world === 'A' ? '  (gender and, more weakly, the cue)' : '  (the cue; gender gets weight 0)');
+    } else {
+      $('worldnote').textContent = 'The two worlds share every bio and every activation; they differ only in the model’s readout, which stays hidden until you press Reveal.';
+    }
+    renderR1(W); renderR2(W); renderR3(W);
+  }
+
+  // ---------- wiring ----------
+  const setWorld = w => { st.world = w; $('wA').setAttribute('aria-pressed', w === 'A'); $('wB').setAttribute('aria-pressed', w === 'B'); render(); };
+  $('wA').addEventListener('click', () => setWorld('A'));
+  $('wB').addEventListener('click', () => setWorld('B'));
+  const setRho = v => { st.rho = Math.round(v * 100) / 100; $('rho').value = st.rho; derive(); render(); };
+  $('rho').addEventListener('input', e => setRho(+e.target.value));
+  document.querySelectorAll('[data-rho]').forEach(b => b.addEventListener('click', () => setRho(+b.dataset.rho)));
+  const setDelta = v => { st.delta = Math.round(v * 100) / 100; $('delta').value = st.delta; render(); };
+  $('delta').addEventListener('input', e => setDelta(+e.target.value));
+  document.querySelectorAll('[data-delta]').forEach(b => b.addEventListener('click', () => setDelta(+b.dataset.delta)));
+  $('reveal').addEventListener('click', () => {
+    st.revealed = !st.revealed;
+    $('reveal').setAttribute('aria-pressed', st.revealed);
+    $('reveal').textContent = st.revealed ? 'Hide the readout' : 'Reveal the readout';
+    render();
+  });
+  NAMES.forEach(([nm], k) => {
+    const bt = document.createElement('button');
+    bt.className = 'chip'; bt.textContent = nm; bt.id = 'bio' + k;
+    bt.addEventListener('click', () => { st.bio = k; render(); });
+    $('picker').appendChild(bt);
+  });
+  const tabs = [1, 2, 3].map(k => $('tab' + k));
+  function selectTab(k, focus) {
+    tabs.forEach((t, j) => {
+      const on = j + 1 === k;
+      t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
+      $('p' + (j + 1)).hidden = !on;
+    });
+    if (focus) tabs[k - 1].focus();
+  }
+  tabs.forEach((t, j) => {
+    t.addEventListener('click', () => selectTab(j + 1));
+    t.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(j === 2 ? 1 : j + 2, true); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); selectTab(j === 0 ? 3 : j, true); }
+      else if (e.key === 'Home') { e.preventDefault(); selectTab(1, true); }
+      else if (e.key === 'End') { e.preventDefault(); selectTab(3, true); }
+    });
+  });
+
+  derive();
+  render();
+})();
+</script>
+</body>
+</html>
