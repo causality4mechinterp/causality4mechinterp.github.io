@@ -184,7 +184,7 @@
     <a class="back" href="./index.html">&larr; All demos</a>
   </div>
   <h1>Sufficient &ne; necessary: a handle is not the mechanism</h1>
-  <p class="dek">A toy network carries the same IOI-style signal along two redundant pathways. Denoising path S restores the corrupted run &mdash; real evidence that S is a sufficient handle. Noising the very same path barely moves the clean run, because backup path T keeps the behaviour alive. The claim-o-meter tracks which narrations the evidence you have actually gathered will license, and a backup-strength slider lets you shrink the redundancy until the necessity verdict flips.</p>
+  <p class="dek">A toy network carries the same IOI-style signal along two redundant pathways. Denoising path S restores the corrupted run &mdash; real evidence that S is a sufficient handle. Noising the very same path barely moves the clean run, because backup path T keeps the behaviour alive. The claim-o-meter tracks which narrations the evidence you have actually gathered will support, and a backup-strength slider lets you shrink the redundancy until the necessity verdict flips.</p>
 </header>
 
 <div class="stage">
@@ -294,7 +294,7 @@
           <p class="cexp" id="exp-a"></p>
         </div>
         <div class="crow">
-          <div class="chead"><span class="clab">&ldquo;S is necessary for the behaviour&rdquo;</span><span class="cpill" id="pill-b">untested</span></div>
+          <div class="chead"><span class="clab">&ldquo;S is necessary for the output on this prompt&rdquo;</span><span class="cpill" id="pill-b">untested</span></div>
           <p class="cexp" id="exp-b"></p>
         </div>
         <div class="crow">
@@ -302,7 +302,7 @@
           <p class="cexp" id="exp-c"></p>
         </div>
         <p class="mnote" id="mnote-weights"></p>
-        <p class="mnote">L2 / L3 = the interventional and counterfactual rungs of Pearl&rsquo;s causal ladder: what happens if we <em>do</em> x, vs. what <em>would have</em> happened otherwise.</p>
+        <p class="mnote">L2 / L3 = the interventional and counterfactual rungs of Pearl&rsquo;s causal ladder: what happens if we <em>do</em> x, vs. what <em>would have</em> happened otherwise. With one prompt given and a deterministic forward pass, a patch on that prompt computes the counterfactual about activations, so for claims about S&rsquo;s activations the two rungs coincide here; a claim about the concept S implements does not.</p>
         <p class="mnote">Verdicts are thresholded on the live numbers: the behaviour &ldquo;persists&rdquo; above P = 0.75 and is destroyed below P = 0.55 (chance = 0.50).</p>
       </div>
     </div>
@@ -312,7 +312,8 @@
 <section class="prose">
   <h2>What this shows</h2>
   <p>The toy routes one signal &mdash; here, the IOI-style cue that the giver is John, so the next token should be &ldquo;Mary&rdquo; &mdash; through two redundant pathways, and its readout follows whichever pathway carries the stronger value. Denoising S &mdash; patching its clean activation into the corrupted run &mdash; fully restores the output, which is exactly the evidence activation patching yields, and it is real evidence: S is a working control handle for the behaviour. Noising S &mdash; patching the corrupted activation into the clean run &mdash; barely moves the output, because path T still carries the signal. The same component under two patching directions answers two different questions: denoising tests sufficiency, noising tests necessity, and in this network the answers diverge by construction. The backup-strength slider makes the reason tangible: drag w<sub>T</sub> toward zero and the necessity verdict flips, because redundancy is exactly what lets sufficiency and necessity come apart.</p>
-  <p>This is the paper&rsquo;s Case Study I in miniature. Patching evidence sits on the interventional rung (L2) of Pearl&rsquo;s causal ladder, the three-rung hierarchy of causal questions: L1 observes, L2 intervenes (what happens if we <em>do</em> x), L3 reasons counterfactually (what <em>would have</em> happened otherwise). &ldquo;S is <em>the</em> mechanism&rdquo;, by contrast, asserts necessity and uniqueness &mdash; counterfactual (L3) claims that the L2 result establishes for neither; the claim-o-meter marks that narration as rung-elevated until noising-style evidence arrives. One subtlety deserves a sentence: the noising experiment that refutes necessity is itself an L2 intervention, and it can settle the L3 claim here only because the toy is deterministic, so noising computes the counterfactual exactly. In real stochastic models noising is a practical proxy: L2 evidence can refute a necessity claim, but never establish it. The redundancy is not an artifact of the toy: Wang et al. (2023) find multiple redundant circuits for the same Indirect Object Identification task, and McGrath et al. (2023) document emergent self-repair in language model computations, where alternative pathways compensate for ablated ones. Running both patching directions, as Heimersheim and Nanda (2024) advocate, is the paper&rsquo;s recommended practical step &mdash; here it takes one extra button press to overturn the &ldquo;THE mechanism&rdquo; reading.</p>
+  <p>This is the paper&rsquo;s Case Study I in miniature. Pearl&rsquo;s causal ladder sorts causal questions into three rungs: L1 observes, L2 intervenes (what happens if we <em>do</em> x), L3 asks what <em>would have</em> happened otherwise. Both patching directions are interventions, and with the prompt given and a deterministic forward pass, as in this toy or in a language model under greedy decoding, each one also computes a counterfactual about activations. Noising S on the clean prompt gives exactly what this prompt would have produced had S carried the corrupted value, so one noising run settles whether S was necessary for this output on this prompt, relative to the value patched in. Necessity over a population of prompts is a different claim: it is about many inputs and needs the run repeated on each of them.</p>
+  <p>Rung three asks for more than a rerun gives in two cases only. The first is a claim about a concept: &ldquo;S is the mechanism for indirect-object identification&rdquo; presumes that S stands for that computation, an alignment the rerun cannot verify and that has to pass interchange tests over many prompts before the claim is supported. The second is sampling, where the same prompt can produce different tokens and the rerun no longer fixes the output. &ldquo;S is <em>the</em> mechanism&rdquo; asserts necessity and uniqueness, and denoising measured neither, so the claim-o-meter withholds that narration until Noise S and Denoise T have run. The redundancy is not an artifact of the toy: Wang et al. (2023) find multiple redundant circuits for the same Indirect Object Identification task, and McGrath et al. (2023) document emergent self-repair in language model computations, where alternative pathways compensate for ablated ones. Running both patching directions, as Heimersheim and Nanda (2024) advocate, is the paper&rsquo;s recommended practical step &mdash; here it takes one extra button press to overturn the &ldquo;THE mechanism&rdquo; reading.</p>
 </section>
 
 <section class="prose">
@@ -322,23 +323,23 @@
     <span class="src">&mdash; mismatch box &ldquo;Case Study I: Sufficient &ne; Necessary&rdquo;, arXiv:2602.16698</span>
   </blockquote>
   <blockquote>
-    <p>&ldquo;Patching identifies only a sufficient (but not necessary) control handle; necessity requires L3 evidence. [&hellip;] Testing for both denoising (sufficiency) and noising (necessity), as advocated by Heimersheim and Nanda (2024), is one practical step toward closing this gap&mdash;their recommendation has a direct theoretical grounding.&rdquo;</p>
-    <span class="src">&mdash; takeaway of the same mismatch box, arXiv:2602.16698</span>
+    <p>&ldquo;Showing &exist;S is an <em>existence</em> result, not an <em>identification</em> result that establishes uniqueness up to an equivalence class &sim;. Multiple subgraphs may produce the same effect through redundant pathways, distributed implementations, or equivalent reparameterisations.&rdquo;</p>
+    <span class="src">&mdash; mismatch box &ldquo;Existence &ne; Uniqueness&rdquo;, arXiv:2602.16698</span>
   </blockquote>
 </section>
 
 <section class="prose">
   <h2>Try this</h2>
   <ol class="try">
-    <li>Run <strong>Denoise S</strong> only and stop &mdash; the typical patching workflow. The sufficiency row turns green while the &ldquo;THE mechanism&rdquo; row reads <em>not licensed</em>. Which of the three narrations would the abstract of a paper reporting this experiment most likely have used?</li>
+    <li>Run <strong>Denoise S</strong> only and stop &mdash; the typical patching workflow. The sufficiency row turns green while the &ldquo;THE mechanism&rdquo; row reads <em>not supported</em>. Which of the three narrations would the abstract of a paper reporting this experiment most likely have used?</li>
     <li>Now run <strong>Noise S</strong>. The clean run&rsquo;s output barely moves. One extra experiment on the same component flips the necessity verdict &mdash; what does that imply for circuit papers that report only denoising results?</li>
-    <li>Run <strong>Denoise T</strong>. Both pathways are near-equally sufficient, so the equivalence class of sufficient circuits &mdash; the set of circuits this evidence cannot tell apart &mdash; has two members by construction. In a real model, where the amount of redundancy is unknown, what evidence would license calling any component set &ldquo;the&rdquo; mechanism?</li>
+    <li>Run <strong>Denoise T</strong>. Both pathways are near-equally sufficient, so the equivalence class of sufficient circuits &mdash; the set of circuits this evidence cannot tell apart &mdash; has two members by construction. In a real model, where the amount of redundancy is unknown, what evidence would support calling any component set &ldquo;the&rdquo; mechanism?</li>
     <li>With all badges in place, drag <strong>Backup strength w<sub>T</sub></strong> toward zero and watch the claim-o-meter: sufficient-but-not-necessary turns into sufficient-and-necessary as the redundancy vanishes. What does the flip tell you about <em>why</em> the two notions diverge in the first place?</li>
   </ol>
 </section>
 
 <footer>
-  <p>Original toy illustration built for this tutorial: the two-pathway network, its OR-style readout, and every number on this page are computed live from a fixed deterministic toy model &mdash; not an experiment from the paper. It mirrors the paper&rsquo;s appendix construction of a network with duplicated readout pathways and illustrates the mismatch box &ldquo;Case Study I: Sufficient &ne; Necessary&rdquo; of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>, <em>Causality is Key for Interpretability Claims to Generalise</em>. &nbsp;&middot;&nbsp; tutorial demo &nbsp;&middot;&nbsp; CC-BY</p>
+  <p>Original toy illustration built for this tutorial: the two-pathway network, its OR-style readout, and every number on this page are computed live from a fixed deterministic toy model &mdash; not an experiment from the paper. It mirrors the paper&rsquo;s appendix construction of a network with duplicated readout pathways and illustrates the mismatch boxes &ldquo;Case Study I: Sufficient &ne; Necessary&rdquo; and &ldquo;Existence &ne; Uniqueness&rdquo; of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>, <em>Causality is Key for Interpretability Claims to Generalise</em>. &nbsp;&middot;&nbsp; tutorial demo &nbsp;&middot;&nbsp; CC-BY</p>
 </footer>
 
 </div>
@@ -503,12 +504,12 @@ function updateClaims(){
       necSupported = true;
       setPill('b', 'ok', 'supported');
       el('exp-b').textContent = 'Supported: at wT = ' + w + ' the backup is gone — noising S sends the output to ' +
-        fmt(rNS.y) + ' (chance is 0.50). The L2 noising experiment settles this L3 claim only because the toy is deterministic.';
+        fmt(rNS.y) + ' (chance is 0.50). On this one prompt with a deterministic forward pass, this run is the counterfactual “had S carried the corrupted value”, so it settles necessity for this output. Necessity across prompts needs the run repeated on many prompts.';
     }
   } else {
     setPill('b', '', 'untested');
     el('exp-b').textContent = done.denoiseS
-      ? 'Untested — the denoising result does not speak to this. Necessity is a counterfactual (L3) claim; run Noise S.'
+      ? 'Untested — the denoising result does not speak to this. Necessity asks what the clean run would have output without S’s clean value; Noise S computes exactly that on this prompt.'
       : 'Untested — run Noise S.';
   }
 
@@ -526,13 +527,24 @@ function updateClaims(){
       '. “THE mechanism” asserts necessity and uniqueness; the evidence gathered contradicts it.';
   } else if (necSupported && done.denoiseT && restT < REST_LO){
     setPill('c', 'ok', 'holds here');
-    el('exp-c').textContent = 'Holds in this toy: with wT = ' + w + ' the backup is gone — Noise S shows necessity, and Denoise T shows no rival pathway restores the behaviour. Only the toy licenses this reading: every pathway here can be enumerated; a real model grants no such inventory.';
+    el('exp-c').textContent = 'Holds in this toy: with wT = ' + w + ' the backup is gone — Noise S shows necessity, and Denoise T shows no rival pathway restores the behaviour. Only the toy supports this reading: every pathway here can be enumerated, and a real model gives no such inventory. Saying S implements indirect-object identification would add a claim about a concept, the step that goes to rung three.';
   } else if (necSupported){
-    setPill('c', 'mid', 'not licensed');
-    el('exp-c').textContent = 'Not licensed yet: necessity holds at this backup strength, but “THE” also asserts uniqueness — run Denoise T to test for an equally sufficient rival pathway.';
-  } else if (done.denoiseS || done.noiseS || done.denoiseT || done.noiseT){
-    setPill('c', 'mid', 'not licensed');
-    el('exp-c').textContent = 'Not licensed: sufficiency-style evidence alone. Narrating S as THE mechanism reads necessity and uniqueness into an L2 result — rung-elevated language, wording borrowed from a higher rung of the ladder than the evidence occupies.';
+    setPill('c', 'mid', 'not supported');
+    el('exp-c').textContent = 'Not supported yet: necessity holds at this backup strength, but “THE” also asserts uniqueness — run Denoise T to test for an equally sufficient rival pathway.';
+  } else if (done.noiseS){
+    /* necessity borderline: Noise S ran, but the weakened backup only partly sustains the behaviour */
+    setPill('c', 'mid', 'not supported');
+    el('exp-c').textContent = 'Not supported: noising S only partly destroys the behaviour at this backup strength (output ' +
+      fmt(rNS.y) + '), so necessity is not established, and “THE” asserts it. ' +
+      (done.denoiseT
+        ? (restT >= REST_LO
+          ? 'Denoise T also partly restores the behaviour (' + fmt(rDT.before) + ' → ' + fmt(rDT.y) + '), so T is a partial rival pathway.'
+          : 'Denoise T shows no rival pathway restores the behaviour.')
+        : 'Run Denoise T to test for a rival pathway.');
+  } else if (done.denoiseS || done.denoiseT || done.noiseT){
+    setPill('c', 'mid', 'not supported');
+    el('exp-c').textContent = 'Not supported: no run so far tests whether S is necessary, and “THE” asserts necessity and uniqueness. ' +
+      (done.denoiseT ? 'Run Noise S for necessity.' : 'Run Noise S for necessity and Denoise T for a rival pathway.');
   } else {
     setPill('c', '', 'untested');
     el('exp-c').textContent = 'Asserts necessity and uniqueness — no evidence so far speaks to either.';

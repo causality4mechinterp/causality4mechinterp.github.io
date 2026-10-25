@@ -86,6 +86,7 @@
   .tag.paper  { color: var(--purple); border: 1px solid var(--purple); }
   .tag.anchor { color: var(--gap-green); border: 1px solid var(--gap-green); }
   .tag.synth  { color: var(--l2); border: 1px solid var(--l2); }
+  .tag.running { color: var(--purple-mid); border: 1px solid var(--purple-mid); }
   .dot { width: .62rem; height: .62rem; border-radius: 50%; border: 1.5px solid var(--ink-mute); flex: 0 0 auto; }
   .dot.done { background: var(--gap-green); border-color: var(--gap-green); }
   .cardclaim { font-size: .82rem; line-height: 1.35; color: var(--ink); }
@@ -181,7 +182,7 @@
 
   <div class="stage">
     <div class="topbar">
-      <div class="progress" id="progress" aria-live="polite">0 / 8 diagnosed</div>
+      <div class="progress" id="progress" aria-live="polite">0 / 9 diagnosed</div>
       <div class="timer" role="group" aria-label="Think-pair-share timer">
         <span class="tlab">Think-pair-share timer</span>
         <button type="button" id="tsolo" aria-pressed="false">Solo 2:00</button>
@@ -191,10 +192,10 @@
       </div>
     </div>
 
-    <div class="primer"><b>Pearl’s ladder of causation, one line:</b> <span class="pr1">Rung 1 = observe</span> (correlations in what the model shows) · <span class="pr2">Rung 2 = intervene</span> (change something, watch the effect) · <span class="pr3">Rung 3 = counterfactual</span> (what would this same input have done otherwise?). Every “rung” on this page refers to this ladder.</div>
+    <div class="primer"><b>Pearl’s ladder of causation, one line:</b> <span class="pr1">Rung 1 = observe</span> (correlations in what the model shows) · <span class="pr2">Rung 2 = intervene</span> (change something, watch the effect) · <span class="pr3">Rung 3 = counterfactual</span> (what would this same input have done otherwise? About activations under greedy decoding this is one rerun; rung 3 adds what the input does not fix: the concept an activation stands for, or sampling noise). Every “rung” on this page refers to this ladder.</div>
 
     <div class="banklab"><span class="stepnum">0 ·</span> Pick a claim card <span class="banksub">— the worksheet below follows your pick</span></div>
-    <div class="bank" id="bank" role="group" aria-label="Claim bank: eight claims to diagnose"></div>
+    <div class="bank" id="bank" role="group" aria-label="Claim bank: nine claims to diagnose"></div>
     <div class="vh" id="announce" role="status" aria-live="polite"></div>
 
     <div class="worksheet">
@@ -218,7 +219,7 @@
           <button type="button" data-rung="2" aria-pressed="false">Rung 2 · Interventional</button>
           <button type="button" data-rung="3" aria-pressed="false">Rung 3 · Counterfactual</button>
         </div>
-        <div class="hint">Checklist hint: probing → observational; activation patching → interventional; interchange interventions (swap activations between two runs and test whether the outputs swap too) → counterfactual.</div>
+        <div class="hint">Hint: probing → observational; activation patching → interventional. Interchange interventions (swap activations between two runs and test whether the outputs swap too) are interventions as well, so rung 2: run over many inputs, they test an <b>alignment</b>, the claim that an activation stands for a concept. A counterfactual about that concept is supported only once the alignment passes them, and a passed alignment is what lets the evidence count at rung 3 for that concept. (The paper’s checklist line pairs interchange interventions with the counterfactual rung; its appendix on DAS adds that the procedure “evaluates a distributional invariance across input pairs”.)</div>
         <div class="evbox">
           <label for="evslider">Evidence strength (what-if) — sweeps the headline number in this card’s evidence <span id="evval" aria-live="polite"></span></label>
           <input type="range" id="evslider" min="0" max="100" step="1" value="50">
@@ -233,7 +234,7 @@
           <button type="button" data-rung="2" aria-pressed="false">Rung 2 · Causal</button>
           <button type="button" data-rung="3" aria-pressed="false">Rung 3 · Mechanistic</button>
         </div>
-        <div class="hint">Two ladders, two namings: methods are named by what you <b>did</b> (observe / intervene / counterfactual); claims by what your <b>words assert</b> (association / causation / mechanism — the paper’s codebook names). A mechanistic claim needs counterfactual-grade evidence.</div>
+        <div class="hint">Two ladders, two namings: methods are named by what you <b>did</b> (observe / intervene / counterfactual); claims by what your <b>words assert</b> (association / causation / mechanism — the paper’s codebook names). A mechanistic claim about a concept (“encodes”, “represents”) needs rung-2 interventions plus an alignment that has passed interchange tests over many inputs.</div>
         <details class="markers">
           <summary>Show the codebook’s linguistic markers per rung</summary>
           <div class="mrow"><b>Rung 1:</b> “correlates with,” “is associated with,” “predicts,” “co-occurs with,” “information is present,” “is decodable from,” “can be extracted,” “activates on,” “fires when”</div>
@@ -256,8 +257,8 @@
 
   <section>
     <h2>What this shows</h2>
-    <p>This is the tutorial’s live exercise: the paper’s practitioners’ checklist applied to concrete claims. Every diagnosis reduces to the same three moves — name the estimand, place the method on the ladder, place the claim’s language on the ladder — and then a single comparison: if the claim’s rung exceeds the method’s, the wording admits a stronger causal reading than the evidence licenses, and the checklist offers two repairs: strengthen the method (add interventions) or weaken the claim. The evidence-strength slider makes the orthogonality explicit: sweep the headline number from weak to near-perfect and the method’s rung never moves — only a different experiment moves it.</p>
-    <p>The bank pairs calibrated cases with rung-elevated ones. The IOI card is the paper’s own worked example of what interventional evidence licenses; the SAE-evaluation card is a documented calibration anchor whose verbs describe what the method does rather than what the model does internally. The six synthetic cards each exhibit one of the six recurring rung-elevation patterns from the paper’s annotation codebook — probing → “encodes”, SAE → “represents”, attention → “performs”, patching → “THE circuit”, steering → “controls”, ablation → “necessary”.</p>
+    <p>This is the tutorial’s live exercise: the paper’s practitioners’ checklist applied to concrete claims. Every diagnosis reduces to the same three moves — name the estimand, place the method on the ladder, place the claim’s language on the ladder — and then a single comparison: if the claim’s rung exceeds the method’s, the wording admits a stronger causal reading than the evidence supports, and the checklist offers two repairs: strengthen the method (add interventions) or weaken the claim. The evidence-strength slider makes the orthogonality explicit: sweep the headline number from weak to near-perfect and the method’s rung never moves — only a different experiment moves it.</p>
+    <p>The bank pairs calibrated cases with rung-elevated ones. The running-example card carries the tutorial’s Bias-in-Bios claim, whose only evidence is a probe. The IOI card is the paper’s own worked example of what interventional evidence supports; the SAE-evaluation card is a documented calibration anchor whose verbs describe what the method does rather than what the model does internally. The six synthetic cards each exhibit one of the six recurring rung-elevation patterns from the paper’s annotation codebook — probing → “encodes”, SAE → “represents”, attention → “performs”, patching → “THE circuit”, steering → “controls”, ablation → “necessary”.</p>
   </section>
 
   <section>
@@ -295,6 +296,24 @@
 
   var CLAIMS = [
     {
+      id: 'gender', type: 'running', typeLabel: 'Tutorial running example',
+      claim: '“The model represents gender at this layer, and the prediction relies on it.”',
+      methodShort: 'linear probe, no intervention',
+      method: 'Bias-in-Bios biographies, nurse vs surgeon. A linear probe on the activation a at layer ℓ reads gender with 100% accuracy (a thought experiment, not a measured result). Nothing in the model’s forward pass is ever changed.',
+      source: 'The tutorial’s running example; the diagnosis below follows the worksheet slide in Part 4 of the deck. Not a claim from a published paper.',
+      docMLo: 1, docMHi: 1, docMLabel: 'Rung 1 · Observational (linear probe)',
+      docC: 2, docCLabel: 'Rung 2 · Causal — “relies on” is an interventional verb, and “represents” attaches a concept to it',
+      gap: 1,
+      estimand: 'the effect of gender in the layer-ℓ activation on the predicted profession',
+      notes: [
+        'Two gaps. Rung gap: the probe reaches rung 1, and “relies on” asks for rung 2. Identifiability gap: the probe’s direction is one of many that fit the gender labels, so “represents gender” may name a direction that also carries other cues, such as words like “hospital”.',
+        'From the paper (verbatim): “Many probes ∈ 𝒢 can achieve the same accuracy while picking out different directions and predictive success alone does not tell us which direction (if any) the model actually uses.”',
+        'If you picked rung 3 because “represents” is a rung-3 marker in the codebook: that word is what attaches the concept, and the concept is what the identifiability gap is about. A counterfactual about gender itself is supported only once the alignment of the direction with gender passes interchange tests over many bios.'
+      ],
+      fixW: '“Gender is linearly decodable from this layer.” (rung-1 marker: “is decodable from”)',
+      fixS: 'Rung gap: project the probe’s direction out of the activation, rerun the tested bios, and measure how the prediction changes (Part 2’s projection, rung 2). Identifiability gap: bios that change gender and nothing else narrow the direction down to gender (Part 3’s contrastive pairs), and interchange tests over many bios then check that alignment (Part 4).'
+    },
+    {
       id: 'ioi', type: 'paper', typeLabel: 'Paper worked example',
       claim: '“Intervening on head 9.6 changes IOI behavior under these tested conditions.”',
       methodShort: 'activation patching',
@@ -305,8 +324,8 @@
       gap: 0,
       estimand: 'output change from “John” toward “Mary” when patching head 9.6’s activation',
       notes: [
-        'What L2 licenses (verbatim): “Intervening on head 9.6 changes IOI behavior under these tested conditions.”',
-        'What L2 does not license (verbatim): “Head 9.6 is the IOI mechanism” (sufficiency ≠ necessity; other paths may exist) or “This finding will hold on all IOI-like prompts” (requires transportability testing).',
+        'What L2 supports (verbatim): “Intervening on head 9.6 changes IOI behavior under these tested conditions.”',
+        'What L2 does not support (verbatim): “Head 9.6 is the IOI mechanism” (sufficiency ≠ necessity; other paths may exist) or “This finding will hold on all IOI-like prompts” (requires transportability testing).',
         'Transportability (term gloss): whether the effect transfers to new prompts, tasks, or models.',
         'Alternatives: Wang et al. (2023) themselves find multiple redundant circuits for the IOI task — ablating the discovered circuit only partially degrades performance.'
       ],
@@ -342,7 +361,7 @@
         'Why decodability is not encoding (verbatim): “the information may be present but unused by the model’s own computation.”'
       ],
       fixW: '“Subject-verb agreement is linearly decodable from this subspace.” (rung-1 marker: “is decodable from”)',
-      fixS: 'Intervene on the subspace — patch or ablate it and measure the behavioural effect (rung 2); interchange interventions push toward rung 3.'
+      fixS: 'Intervene on the subspace — patch or ablate it and measure the behavioural effect (rung 2); interchange interventions over many inputs then test whether the subspace lines up with agreement, and “encodes” is supported only once that alignment passes them.'
     },
     {
       id: 'sae-represents', type: 'synth', typeLabel: 'Synthetic teaching example',
@@ -407,7 +426,7 @@
         '“Controls” implies exclusive, mechanism-level ownership of the concept; the intervention shows one direction that shifts the behaviour, not that it is the unique or necessary one.'
       ],
       fixW: '“Adding v shifts sentiment on the evaluated prompts.” (rung-2 marker: “intervening on X changes Y”)',
-      fixS: 'Test uniqueness and per-instance counterfactuals: do other directions produce the same shift, and does the effect hold instance-by-instance (rung 3)?'
+      fixS: 'Test uniqueness and rerun per prompt: do other directions produce the same shift, and does adding v shift sentiment on each prompt when you rerun it with and without v, not only on average?'
     },
     {
       id: 'abl-necessary', type: 'synth', typeLabel: 'Synthetic teaching example',
@@ -416,15 +435,16 @@
       method: 'Zero-ablation of the candidate heads on the evaluation set; task accuracy drops by 40%. No search over alternative pathways.',
       source: 'Synthetic card exhibiting the codebook pattern: Ablation → “necessary” (ablation R2 → claim R3, documented gap +1).',
       docMLo: 2, docMHi: 2, docMLabel: 'Rung 2 · Interventional (ablation: zero/mean out components)',
-      docC: 3, docCLabel: 'Rung 3 · Mechanistic — necessity is a counterfactual-level property',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — the codebook codes “necessary” at rung 3',
       gap: 1,
       estimand: 'accuracy drop when zero-ablating the candidate heads',
       notes: [
         'From the paper: sufficiency (intervention changes output) does not entail necessity — without these heads the output would have to be shown to differ, and alternative pathways may exist.',
-        'Cautionary precedent: in IOI, ablating the “discovered” circuit only partially degrades performance (Wang et al., 2023), indicating distributed computation.'
+        'Cautionary precedent: in IOI, ablating the “discovered” circuit only partially degrades performance (Wang et al., 2023), indicating distributed computation.',
+        'With each input given and greedy decoding, zero-ablating the heads on one input and rerunning computes whether they were necessary for that output on that input (Demo 11 runs this check as Noise S). An average accuracy drop over the evaluation set does not say on which inputs that held, and “necessary for the behaviour” is a claim about all of them.'
       ],
       fixW: '“Ablating these heads degrades performance.” (rung-2 marker: “ablating X degrades Y”)',
-      fixS: 'Necessity tests (rung 3): show that no alternative pathway achieves the same behaviour, e.g. via causal scrubbing (replace activations consistently with the hypothesised circuit and check behaviour is preserved).'
+      fixS: 'Report necessity per input: ablate and rerun each input, and say on which ones the output changes. For “the behaviour” as a whole, show that no alternative pathway achieves it, e.g. via causal scrubbing (replace activations consistently with the hypothesised circuit and check behaviour is preserved).'
     }
   ];
 
@@ -432,7 +452,8 @@
      in the card's evidence. Defaults match the card's stated value where one exists
      (ablation: 40%); otherwise a value consistent with the card's wording. */
   var EV = {
-    'ioi':            { min: 10, max: 95, step: 1, def: 85, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'patching head 9.6 restores ' + n + '% of the clean-run behaviour'; } },
+    'gender':         { min: 50, max: 100, step: 1, def: 100, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'the probe reads gender with ' + n + '% accuracy'; } },
+    'ioi':           { min: 10, max: 95, step: 1, def: 85, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'patching head 9.6 restores ' + n + '% of the clean-run behaviour'; } },
     'sae-eval':       { min: 10, max: 95, step: 1, def: 60, dec: 0, val: function (n) { return n + '%'; }, line: function (n) { return 'interchanging the SAE features shifts ' + n + '% of the factual predictions'; } },
     'probe-encodes':  { min: 55, max: 99.9, step: 0.1, def: 90, dec: 1, val: function (n) { return n + '%'; }, line: function (n) { return 'the probe reaches ' + n + '% held-out accuracy'; } },
     'sae-represents': { min: 55, max: 99.9, step: 0.1, def: 90, dec: 1, val: function (n) { return n + '%'; }, line: function (n) { return 'feature 4123 fires on ' + n + '% of deception-related texts'; } },
@@ -552,7 +573,7 @@
       verdictEl.innerHTML = '<b>Yes — aligned.</b> Method rung (' + a.m + ') ≥ claim rung (' + a.c + '): the language does not outrun the evidence. Reveal the debrief to compare with the documented annotation.';
     } else {
       verdictEl.classList.add('bad');
-      verdictEl.innerHTML = '<b>No → revise.</b> Claim rung (' + a.c + ') exceeds method rung (' + a.m + '): the wording admits a stronger causal reading than the method licenses. Checklist repair: “either strengthen method (add interventions) or weaken claim (‘correlates with’ instead of ‘implements’).”';
+      verdictEl.innerHTML = '<b>No → revise.</b> Claim rung (' + a.c + ') exceeds method rung (' + a.m + '): the wording admits a stronger causal reading than the method supports. Checklist repair: “either strengthen method (add interventions) or weaken claim (‘correlates with’ instead of ‘implements’).”';
     }
   }
 
@@ -655,7 +676,7 @@
   tstop.addEventListener('click', function () { stopTimer(true); });
 
   /* ---------- init ---------- */
-  selectClaim('ioi');
+  selectClaim('gender');
   updateProgress();
 })();
 </script>

@@ -92,7 +92,12 @@
   .sliderrow input[type="range"] { flex: 1 1 140px; max-width: 260px; accent-color: var(--purple); }
   .sliderrow input[type="range"]:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
   .sliderrow output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); min-width: 3.2em; }
-  .sliderrow .shint { flex-basis: 100%; font-size: .72rem; color: var(--ink-mute); }
+  .sliderrow .shint { flex-basis: 100%; font-size: .72rem; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+  .seg { display: flex; flex-direction: column; flex-basis: 100%; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+  .seg button { font: inherit; font-size: .8rem; padding: .32rem .7rem; border: none; cursor: pointer; background: transparent; color: var(--ink-soft); text-align: left; }
+  .seg button + button { border-top: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
+  .seg button:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
 
   .op { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .65rem .7rem .7rem; display: flex; flex-direction: column; min-width: 0; }
   .op h3 { font-size: .95rem; color: var(--purple); line-height: 1.25; margin-bottom: .3rem; }
@@ -136,11 +141,11 @@
 
   /* plane */
   .axis { stroke: var(--line); stroke-width: 1.2; }
-  .axlab { fill: var(--ink-mute); font-size: 8.5px; font-family: inherit; }
+  .axlab { fill: var(--ink-mute); font-size: 8.5px; font-family: inherit; paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
   .what { stroke: var(--purple); stroke-width: 2; }
-  .whatlab { fill: var(--purple); font-size: 9px; font-weight: 700; font-family: inherit; }
+  .whatlab { fill: var(--purple); font-size: 9px; font-weight: 700; font-family: inherit; paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
   .truth { stroke: var(--ok); stroke-width: 1.6; stroke-dasharray: 5 3; }
-  .truthlab { fill: var(--ok); font-size: 8.5px; font-weight: 700; font-family: inherit; }
+  .truthlab { fill: var(--ok); font-size: 8.5px; font-weight: 700; font-family: inherit; paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
   .proj { stroke: var(--ink-mute); stroke-width: 1.2; stroke-dasharray: 3 3; }
   .pt { fill: var(--ink); }
   .pt.after { fill: var(--purple); }
@@ -251,10 +256,18 @@
         <div class="kicker">Level 2 · a concept: where rung three differs</div>
         <p class="lvlsum">Now the variable is gender, read through a linear probe's direction ŵ in a. Removing ŵ and rerunning (as in iterative nullspace projection, INLP, or amnesic probing) is just as cheap and just as exact; what it is about depends on ŵ.</p>
         <div class="sliderrow">
+          <span id="readout-lab"><b>Readout</b></span>
+          <div class="seg" role="group" aria-labelledby="readout-lab" aria-describedby="readout-hint">
+            <button id="rdA" aria-pressed="true">Moves for the wrong reason</button>
+            <button id="rdB" aria-pressed="false">Stays put though gender mattered</button>
+          </div>
+          <span class="shint" id="readout-hint"></span>
+        </div>
+        <div class="sliderrow">
           <label for="theta">Alignment error θ</label>
-          <input type="range" id="theta" min="0" max="60" step="5" value="45" aria-describedby="theta-hint">
+          <input type="range" id="theta" min="0" max="90" step="5" value="45" aria-describedby="theta-hint">
           <output id="theta-out">45°</output>
-          <span class="shint" id="theta-hint">How far the probe's direction ŵ sits from the true gender direction, tilted toward the care and hospital words that travel with gender in these bios.</span>
+          <span class="shint" id="theta-hint">How far the probe's direction ŵ sits from the true gender direction, tilted toward the care and hospital words that travel with gender in these bios. Past 45° ŵ sits closer to the care cue than to gender: the probe then decodes gender mostly because the cue travels with gender.</span>
         </div>
         <div class="op" id="op3">
           <h3>③ Remove gender along ŵ</h3>
@@ -281,13 +294,13 @@
       <p id="banner2"></p>
     </div>
 
-    <p class="provenance">Toy model, fully deterministic: m = relu(1.2a + 0.1), g = β · relu(1 − a), y = 1.5a + 0.4m + 1.2g − 1.0, with a the output of the head that reads gender at layer ℓ. In ③ the downstream components are folded into a linear readout of a's two concept coordinates, y = 0.4r + 1.2s − 0.58, with gender r and the care cue s orthogonal in a and both equal to 1 on x₀. Built for this tutorial to illustrate the paper's L2/L3 distinction (“what is held fixed”) on the tutorial's Bias-in-Bios running example; it is neither an experiment from the paper nor a measured model.</p>
+    <p class="provenance">Toy model, fully deterministic: m = relu(1.2a + 0.1), g = β · relu(1 − a), y = 1.5a + 0.4m + 1.2g − 1.0, with a the output of the head that reads gender at layer ℓ. In ③ the downstream components are folded into a linear readout of a's two concept coordinates, gender r and the care cue s, orthogonal in a and both equal to 1 on x₀. The toggle picks one of two readouts, both giving the clean run's y = 1.02: “moves for the wrong reason”, y = 0.4r + 1.2s − 0.58, where removing ŵ flips the prediction from θ = 25° on although removing gender alone keeps nurse; and “stays put though gender mattered”, y = 1.2r + 0.4s − 0.58, where removing ŵ keeps nurse from θ = 70° on although removing gender alone flips it to surgeon. Built for this tutorial to illustrate the paper's L2/L3 distinction (“what is held fixed”) on the tutorial's Bias-in-Bios running example; it is neither an experiment from the paper nor a measured model.</p>
   </div>
 
   <section>
     <h2>What this shows</h2>
     <p>At the level of raw activations the objection is right. With the bio given and greedy decoding, the forward pass is a fully specified causal model whose only outside input is the bio, and we have it. A counterfactual about activations on this bio is therefore one more forward pass, and it gives the same number as the intervention on this bio. Panels ① and ② are both exact on x₀. They differ in what they hold fixed: ① lets M and G respond to the zeroed a and measures a's total effect; ② keeps them at their clean-run values and measures a's direct effect, which here costs two passes. With the backup head on, they disagree about whether a matters for this nurse prediction, and neither is wrong. A sentence about this bio has to say which nodes stayed fixed, and a sentence about bios in general needs reruns on many bios.</p>
-    <p>Panel ③ asks the same kind of question about gender rather than a component, and here rung three differs. The intervention is still a single forward pass and still reproducible; rerunning it gives the same number every time. What changes is the meaning of the number: projecting a off ŵ answers “what if the ŵ-component were absent”, and that is the gender counterfactual only if ŵ is the gender direction. With ŵ tilted toward the care cue, removing it also removes the words the prediction leans on, so the prediction flips to surgeon and the run reads as “the model relies on gender”, while removing gender alone would have left it at nurse. Nothing in the rerun tells you which case you are in. What moves the claim up is outside evidence about ŵ: bios that change gender and nothing else, which Part 3 uses to pin the direction down and Part 4 turns into a test of the alignment. Sampling is the other place rung three differs, since the noise that picked each token is not fixed by the bio; a recorded seed makes that counterfactual computable again.</p>
+    <p>Panel ③ asks the same kind of question about gender rather than a component, and here rung three differs. The intervention is still a single forward pass and still reproducible; rerunning it gives the same number every time. What changes is the meaning of the number: projecting a off ŵ answers “what if the ŵ-component were absent”, and that is the gender counterfactual only if ŵ is the gender direction. The two readouts show the two ways this goes wrong. With the first, the prediction leans on the care cue, so a ŵ tilted toward the cue removes the words the prediction leans on: the prediction flips to surgeon and the run reads as “the model relies on gender”, while removing gender alone would have left it at nurse. With the second, the prediction leans on gender, and a ŵ tilted far toward the cue (θ of 70° or more) removes mostly the cue: the prediction stays nurse and the run reads as “the model does not need gender”, while removing gender alone would have flipped it to surgeon. Nothing in the rerun tells you which case you are in. What moves the claim up is outside evidence about ŵ: bios that change gender and nothing else, which Part 3 uses to pin the direction down and Part 4 turns into a test of the alignment. Sampling is the other place rung three differs, since the noise that picked each token is not fixed by the bio; a recorded seed makes that counterfactual computable again.</p>
   </section>
 
   <section>
@@ -306,7 +319,7 @@
     <h2>Try this</h2>
     <ol class="try">
       <li>Drag β from 0 to 1.5. Find the value at which ① stops agreeing with ②. A paper reports “zeroing this head does not change the prediction, so the model does not need it”: which panel produced that sentence, and which question did it leave unanswered?</li>
-      <li>Set θ to 0°, then to 45°. In both cases the logit moves when you remove ŵ. Write down the claim you would publish from each run before pressing “Show the true encoding”. Which bios, outside this single run, would have told the two directions apart?</li>
+      <li>Set θ to 0°, then to 45°. In both cases the logit moves when you remove ŵ. Write down the claim you would publish from each run before pressing “Show the true encoding”. Which bios, outside this single run, would have told the two directions apart? Then switch the readout to “stays put though gender mattered” and set θ to 75°: what would you have concluded from a run in which the prediction did not change?</li>
       <li>Pick a claim from a probing, amnesic-probing or patching paper you know. Is its variable a component (a head, a neuron, an edge) or a concept read through a direction? If it is a component, say which of ① or ② it computed and which nodes stayed fixed. If it is a concept, name the alignment it rests on and the test that would strengthen it.</li>
     </ol>
   </section>
@@ -335,7 +348,12 @@
 
   // ---------- concept level ----------
   const PHI = 20 * Math.PI / 180;            // true gender axis, in unit coordinates
-  const readout = (r, s) => 0.4 * r + 1.2 * s - 0.58;  // r: gender, s: care cue
+  // r: gender, s: care cue; both readouts give y = 1.02 on the clean run (r = s = 1)
+  const READOUTS = {
+    A: { f: (r, s) => 0.4 * r + 1.2 * s - 0.58, txt: 'y = 0.4r + 1.2s − 0.58: the prediction leans on the care cue. Removing gender alone keeps nurse.' },
+    B: { f: (r, s) => 1.2 * r + 0.4 * s - 0.58, txt: 'y = 1.2r + 0.4s − 0.58: the prediction leans on gender. Removing gender alone flips it to surgeon. Removing ŵ goes wrong only once ŵ is tilted 70° or more; below that it flips the prediction too, and the claim comes out true.' }
+  };
+  let rdKey = 'A';
 
   function el0(tag, cls, parent, text) {
     const e = document.createElement(tag);
@@ -431,6 +449,10 @@
     const st = toXY(us[0], us[1]);
     el('circle', { class: 'pt star', cx: st[0], cy: st[1], r: 4 }, P.truthG);
     el('text', { class: 'ptlab star', x: st[0] - 7, y: st[1] - 6, 'text-anchor': 'end' }, P.truthG, 'a*');
+    // text on top of every line: axis labels last, truth labels in their own group so ŵ never crosses them
+    plane.querySelectorAll('.axlab').forEach(t => plane.appendChild(t));
+    P.truthLabG = el('g', { class: 'hidden' }, plane);
+    P.truthG.querySelectorAll('.truthlab').forEach(t => P.truthLabG.appendChild(t));
     P.h = h; P.ur = ur; P.us = us;
   })();
 
@@ -484,14 +506,22 @@
     const h = P.h, dot = h[0] * w[0] + h[1] * w[1];
     const hp = [h[0] - dot * w[0], h[1] - dot * w[1]];
     const r = hp[0] * P.ur[0] + hp[1] * P.ur[1], s = hp[0] * P.us[0] + hp[1] * P.us[1];
+    const readout = READOUTS[rdKey].f;
+    $('readout-hint').textContent = READOUTS[rdKey].txt;
     const y3 = readout(r, s), yTrue = readout(0, 1);
-    const a = toXY(-0.35 * w[0], -0.35 * w[1]), b = toXY(2.15 * w[0], 2.15 * w[1]);
+    // steep ŵ: stop the far end below the "unit 2 of a" and "true care cue" labels, whose letter gaps the halo cannot cover
+    const far = T >= 65 ? 1.7 : 2.15;
+    const a = toXY(-0.35 * w[0], -0.35 * w[1]), b = toXY(far * w[0], far * w[1]);
     P.what.setAttribute('x1', a[0]); P.what.setAttribute('y1', a[1]);
     P.what.setAttribute('x2', b[0]); P.what.setAttribute('y2', b[1]);
-    // label at the tip of ŵ: above-left for shallow directions, right of the tip for steep ones
+    // label at the tip of ŵ: above-left for shallow directions, right of the tip for steep ones;
+    // past θ = 65° the tip runs into the axis label, so label the tail below the origin instead
     if (20 + T < 50) {
       P.whatlab.setAttribute('text-anchor', 'end');
       P.whatlab.setAttribute('x', b[0] - 8); P.whatlab.setAttribute('y', b[1] - 4);
+    } else if (T >= 65) {
+      P.whatlab.setAttribute('text-anchor', 'start');
+      P.whatlab.setAttribute('x', a[0] + 6); P.whatlab.setAttribute('y', a[1] - 1);
     } else {
       P.whatlab.setAttribute('text-anchor', 'start');
       P.whatlab.setAttribute('x', b[0] + 6); P.whatlab.setAttribute('y', b[1] + 10);
@@ -528,6 +558,7 @@
     const correct = needed === truthNeeded;
     const shown = reveal.getAttribute('aria-pressed') === 'true';
     P.truthG.setAttribute('class', shown ? '' : 'hidden');
+    P.truthLabG.setAttribute('class', shown ? '' : 'hidden');
     const lic = $('lic3');
     lic.innerHTML = '';
     el0('span', 'lbl', lic, 'Supported by this run, about ŵ');
@@ -558,10 +589,15 @@
     if (T === 0) {
       b2 = 'At θ = 0° ŵ is the gender direction, so ③ computes the gender counterfactual itself.';
     } else if (correct) {
-      b2 = 'At θ = ' + T + '° the verdict still matches the truth, though ŵ also removes ' +
-        Math.round((1 - s) * 100) + '% of the care-cue coordinate. The run alone cannot tell you that.';
+      b2 = 'At θ = ' + T + '° the verdict still matches the truth, though removing ŵ also moves the care-cue coordinate from 1.00 to ' +
+        fmt(s) + '. The run alone cannot tell you that.';
     } else {
-      b2 = 'At θ = ' + T + '° the rerun still moves the logit, yet the counterfactual it answers is about ŵ, a mix of gender and the care cue. The claim is false, and nothing in the run shows it; bios that change gender and nothing else would.';
+      const how = needed
+        ? 'removing ŵ flips the prediction to surgeon, while removing gender alone would have kept nurse'
+        : 'removing ŵ leaves the prediction at nurse, while removing gender alone would have flipped it to surgeon';
+      b2 = 'At θ = ' + T + '° ' + how + ': the counterfactual the rerun answers is about ŵ, ' +
+        (T === 90 ? 'which here is the care cue alone.' : 'a mix of gender and the care cue.') +
+        ' The claim is false, and nothing in the run shows it; bios that change gender and nothing else would.';
     }
     $('banner1').textContent = b1;
     $('banner2').textContent = b2;
@@ -569,6 +605,12 @@
 
   beta.addEventListener('input', render);
   theta.addEventListener('input', render);
+  ['A', 'B'].forEach(k => $('rd' + k).addEventListener('click', () => {
+    rdKey = k;
+    $('rdA').setAttribute('aria-pressed', k === 'A' ? 'true' : 'false');
+    $('rdB').setAttribute('aria-pressed', k === 'B' ? 'true' : 'false');
+    render();
+  }));
   reveal.addEventListener('click', () => {
     const on = reveal.getAttribute('aria-pressed') !== 'true';
     reveal.setAttribute('aria-pressed', on ? 'true' : 'false');

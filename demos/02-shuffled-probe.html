@@ -229,7 +229,7 @@
           </div>
         </div>
         <div class="verdict" aria-live="polite">
-          <div class="lbl">What the accuracy licenses</div>
+          <div class="lbl">What the accuracy supports</div>
           <div id="verdict-text">…</div>
         </div>
       </div>
@@ -256,7 +256,7 @@
     <h2>Try this</h2>
     <ol class="try">
       <li>Stay on the linear probe and read only the purple number. Write the one-sentence claim you would put in an abstract. Now drag the slider to 48 hidden units: does your sentence survive, and which word in it had to change? Sweep back down and find the width where you would stop believing the claim.</li>
-      <li>The tutorial’s live case: a probe that “detects gender” in a model’s activations scores just as high when the labels are randomly shuffled. Which reported number would have caught this before publication: accuracy, or selectivity?</li>
+      <li>The tutorial’s gender probe is a thought experiment: suppose a linear probe reads gender from a model’s activations with 100% accuracy. Its control task gives each first name a random label and keeps it fixed across biographies. If that control also scored close to 100%, which reported number would have caught it before publication: accuracy, or selectivity? For scale, Hewitt and Liang’s linear probe on ELMo layer 1 scores 97.2% on part of speech and 71.2% on its control task, a selectivity of 26.0 points (their Table 1).</li>
       <li>Even the linear probe’s +32.5-point selectivity only supports a decodability claim. What experiment would you run to argue the model <em>uses</em> the concept? (Interventions come later in the tutorial.)</li>
     </ol>
   </section>
@@ -425,9 +425,9 @@ function noteFor(w) {
 }
 /* verdicts keyed to the selectivity color band (thresholds: ≥ +25 green, ≥ +8 amber, else red) */
 const VERDICTS = {
-  high: '<strong>Large selectivity (green band):</strong> the probe fits real labels far better than content-free ones, so the accuracy reflects structure in the representation rather than probe memorisation. Even so, it licenses a decodability claim only: whether the model uses that information is a separate, causal question.',
+  high: '<strong>Large selectivity (green band):</strong> the probe fits real labels far better than content-free ones, so the accuracy reflects structure in the representation rather than probe memorisation. Even so, it supports a decodability claim only: whether the model uses that information is a separate, causal question.',
   mid: '<strong>Selectivity is shrinking (amber band):</strong> same representation, higher real-label accuracy, yet the control probe now fits much of the shuffled data too. A growing share of the accuracy is explained by probe capacity rather than by the representation; the number that changed meaningfully is selectivity.',
-  low: '<strong>Raw accuracy now licenses almost nothing (red band):</strong> the probe fits shuffled labels about as well as real ones, and a probe that aces labels with no content cannot certify that the representation encodes the concept. Selectivity, not accuracy, is the informative quantity.',
+  low: '<strong>Raw accuracy now supports almost nothing (red band):</strong> the probe fits shuffled labels about as well as real ones, and a probe that aces labels with no content cannot certify that the representation encodes the concept. Selectivity, not accuracy, is the informative quantity.',
 };
 const BAND_SPAN = {
   high: '<span class="sel-high">green band</span>',
