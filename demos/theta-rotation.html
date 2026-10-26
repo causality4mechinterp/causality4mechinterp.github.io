@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Same Loss, Different Story — Causal Foundations for Interpretability</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+/* page tokens: the three curves (the dek names them grey, orange and purple) and the chart rules */
+:root{ --c-recon:#9AA3AE; --c-sparse:#C07A18; --c-paired:#5B4B9E; --chart-grid:var(--line); --chart-axis:var(--muted); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --c-sparse:#D9963A; --c-paired:#A99BDD; }
+}
+:root[data-theme="dark"]{ --c-sparse:#D9963A; --c-paired:#A99BDD; }
+:root[data-theme="light"]{ --c-sparse:#C07A18; --c-paired:#5B4B9E; }
+.panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);gap:.8rem;align-items:stretch}
+@media (max-width:640px){ .panels{grid-template-columns:1fr} .glyph svg{max-width:190px;margin:0 auto} }
+.card{background:var(--card);border:1px solid var(--line);padding:.7rem}
+.card svg{width:100%;height:auto;display:block}
+.glyph{display:flex;align-items:center}
+.status{list-style:none;margin:.8rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;font-size:.9rem}
+.status li{display:flex;align-items:baseline;gap:.4rem}
+.status i{display:inline-block;width:.8rem;height:.25rem;border-radius:2px;transform:translateY(-.2rem);flex:none}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin-top:.9rem}
+.sliderrow{display:flex;align-items:center;gap:.6rem;flex:1 1 260px;min-width:0}
+.sliderrow label{font-size:.95rem;font-weight:600;white-space:nowrap}
+.sliderrow input{flex:1;min-width:0}
+.sliderrow output{font-variant-numeric:tabular-nums;font-weight:600;min-width:2.6em;text-align:right}
+@media (max-width:560px){ #chart text{font-size:19px} .card{padding:.4rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="head">
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Same Loss, Different Story</h1>
+  <p class="dek">Schematic. Grey: reconstruction. Orange: sparsity, with co-occurring concepts. Purple: one more assumption.</p>
+</header>
+
+<div class="stage">
+  <div class="panels">
+    <div class="card glyph">
+      <svg id="axes" viewBox="0 0 220 236" role="img"
+        aria-label="The true concept axes, solid, and the learned axes, dashed, rotated by theta"></svg>
+    </div>
+    <div class="card">
+      <svg id="chart" viewBox="0 0 560 300" role="img"
+        aria-label="Schematic objective against theta"></svg>
+    </div>
+  </div>
+  <ul class="status" id="status" aria-live="polite"></ul>
+  <div class="controls">
+    <div class="sliderrow">
+      <label for="theta">Rotate the learned axes, &theta;</label>
+      <input type="range" id="theta" min="0" max="90" step="1" value="20"
+        aria-label="Rotation theta of the learned axes, in degrees">
+      <output id="theta-out" for="theta">20&deg;</output>
+    </div>
+    <button type="button" class="toggle" id="paired" aria-pressed="false">Add paired inputs</button>
+  </div>
+  <ul class="legend">
+    <li><b>&theta;</b>: angle between the learned axes (dashed) and the true concept axes (solid); at 0&deg; and 90&deg; they coincide, up to swapping names.</li>
+    <li><b>Reconstruction</b>: how well the learned features rebuild the activations. <b>Sparsity</b>: how few features each input uses. <b>Co-occurring concepts</b>: no input carries a single concept.</li>
+    <li><b>Paired inputs</b>: two inputs that differ in only a few concepts, the one more assumption behind the purple curve.</li>
+  </ul>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+  <p>Provenance: a schematic after the &ldquo;Same loss, different story&rdquo; plot on the poster of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>), as in the deck&rsquo;s drawing; the curves are illustrative, not measured &middot; tutorial demo &middot; CC-BY.</p>
+</div></footer>
+
+<script>
+(function(){
+  "use strict";
+  /* Points read off the poster's plot every 5 degrees, the same values as figures/same-loss.tex. */
+  var SPARSE = [[0,.938],[5,.906],[10,.877],[15,.849],[25,.807],[30,.792],[35,.784],[40,.779],
+    [45,.784],[50,.794],[55,.807],[60,.826],[65,.851],[70,.878],[75,.906],[80,.938],[85,.972],[90,1.003]];
+  var PAIRED = [[0,.5],[5,.526],[10,.601],[15,.708],[20,.836],[25,.966],[30,1.08],[35,1.169],[40,1.227],
+    [45,1.245],[50,1.227],[55,1.169],[60,1.08],[65,.963],[70,.834],[75,.708],[80,.601],[85,.526],[90,.5]];
+  /* monotone cubic (Fritsch-Carlson): smooth, and the minima stay at the read-off points */
+  function spline(p){
+    var n=p.length, d=[], m=[], i;
+    for(i=0;i<n-1;i++) d.push((p[i+1][1]-p[i][1])/(p[i+1][0]-p[i][0]));
+    m[0]=d[0]; m[n-1]=d[n-2];
+    for(i=1;i<n-1;i++) m[i] = d[i-1]*d[i]<=0 ? 0 : (d[i-1]+d[i])/2;
+    for(i=0;i<n-1;i++){
+      if(d[i]===0){ m[i]=m[i+1]=0; continue; }
+      var a=m[i]/d[i], b=m[i+1]/d[i], s=a*a+b*b;
+      if(s>9){ var t=3/Math.sqrt(s); m[i]=t*a*d[i]; m[i+1]=t*b*d[i]; }
+    }
+    return function(x){
+      var k=0; while(k<n-2 && x>p[k+1][0]) k++;
+      var h=p[k+1][0]-p[k][0], u=(x-p[k][0])/h, u2=u*u, u3=u2*u;
+      return (2*u3-3*u2+1)*p[k][1] + (u3-2*u2+u)*h*m[k] + (-2*u3+3*u2)*p[k+1][1] + (u3-u2)*h*m[k+1];
+    };
+  }
+  var fRecon=function(){ return 1; }, fSparse=spline(SPARSE), fPaired=spline(PAIRED);
+
+  var ns="http://www.w3.org/2000/svg";
+  function el(tag,attrs,parent,text){ var e=document.createElementNS(ns,tag);
+    for(var k in attrs) e.setAttribute(k,attrs[k]); if(text) e.textContent=text; parent.appendChild(e); return e; }
+  function txt(extra){ var o={"font-family":"inherit","font-size":"12",fill:"var(--ink-soft)",
+    stroke:"var(--card)","stroke-width":6,"paint-order":"stroke","stroke-linejoin":"round"};
+    for(var k in extra) o[k]=extra[k]; return o; }
+
+  /* ---- the axes: what theta rotates ---- */
+  var ax=document.getElementById("axes"), CX=110, CY=104, R=86, DEG=Math.PI/180;
+  el("line",{x1:CX-R,y1:CY,x2:CX+R,y2:CY,stroke:"var(--ink)","stroke-width":2.4},ax);
+  el("line",{x1:CX,y1:CY-R,x2:CX,y2:CY+R,stroke:"var(--ink)","stroke-width":2.4},ax);
+  var learned=el("g",{},ax);
+  el("line",{x1:CX-R,y1:CY,x2:CX+R,y2:CY,stroke:"var(--ink-soft)","stroke-width":2,"stroke-dasharray":"7 5"},learned);
+  el("line",{x1:CX,y1:CY-R,x2:CX,y2:CY+R,stroke:"var(--ink-soft)","stroke-width":2,"stroke-dasharray":"7 5"},learned);
+  var arc=el("path",{fill:"none",stroke:"var(--ink-soft)","stroke-width":1.4},ax);
+  var thLab=el("text",txt({"font-size":"13","font-style":"italic",fill:"var(--ink)"}),ax);
+  /* key under the axes */
+  el("line",{x1:14,y1:222,x2:38,y2:222,stroke:"var(--ink)","stroke-width":2.4},ax);
+  el("text",txt({x:43,y:226}),ax,"true");
+  el("line",{x1:98,y1:222,x2:122,y2:222,stroke:"var(--ink-soft)","stroke-width":2,"stroke-dasharray":"7 5"},ax);
+  el("text",txt({x:127,y:226}),ax,"learned");
+
+  /* ---- chart: the deck's figure ---- */
+  var chart=document.getElementById("chart");
+  var W=560,H=300,ML=66,MR=24,MT=14,MB=46,pw=W-ML-MR,ph=H-MT-MB;
+  function X(t){ return ML+t/90*pw; }
+  function Y(v){ return MT+(1.55-v)/(1.55-0.35)*ph; }
+  [0.5,1.0,1.5].forEach(function(v){
+    el("line",{x1:ML,y1:Y(v),x2:W-MR,y2:Y(v),stroke:"var(--chart-grid)","stroke-width":1},chart);
+    el("text",txt({x:ML-8,y:Y(v)+4,"text-anchor":"end",fill:"var(--chart-axis)"}),chart,v.toFixed(1));
+  });
+  [0,30,45,60,90].forEach(function(t){
+    el("text",txt({x:X(t),y:H-MB+18,"text-anchor":"middle",fill:"var(--chart-axis)"}),chart,t+"°");
+  });
+  el("text",txt({x:ML+pw/2,y:H-8,"text-anchor":"middle"}),chart,"θ, rotation of the learned axes");
+  el("text",txt({x:13,y:MT+ph/2,"text-anchor":"middle",transform:"rotate(-90 13 "+(MT+ph/2)+")"}),chart,"objective, lower is better");
+  [0,90].forEach(function(t){
+    el("line",{x1:X(t),y1:Y(1.55),x2:X(t),y2:Y(0.35),stroke:"var(--c-paired)","stroke-width":1.2,"stroke-dasharray":"1 3",opacity:.7},chart);
+  });
+  var cursor=el("line",{y1:Y(1.55),y2:Y(0.35),stroke:"var(--ink-soft)","stroke-width":1.4,"stroke-dasharray":"7 5"},chart);
+  function path(fn){ var d=""; for(var t=0;t<=90;t++) d+=(t?"L":"M")+X(t).toFixed(1)+" "+Y(fn(t)).toFixed(1); return d; }
+  function curve(fn,c,parent){ return el("path",{d:path(fn),fill:"none",stroke:c,"stroke-width":3,"stroke-linecap":"round","stroke-linejoin":"round"},parent); }
+  curve(fRecon,"var(--c-recon)",chart);
+  el("text",txt({x:X(78),y:Y(1)-9,"text-anchor":"middle"}),chart,"reconstruction");
+  curve(fSparse,"var(--c-sparse)",chart);
+  el("circle",{cx:X(40),cy:Y(.779),r:5.5,fill:"var(--c-sparse)"},chart);
+  el("text",txt({x:X(40),y:Y(.779)+24,"text-anchor":"middle"}),chart,"sparsity, lowest at 40°");
+  var pairedG=el("g",{},chart);
+  curve(fPaired,"var(--c-paired)",pairedG);
+  [0,90].forEach(function(t){ el("circle",{cx:X(t),cy:Y(.5),r:5.5,fill:"var(--c-paired)"},pairedG); });
+  el("text",txt({x:X(45),y:Y(1.245)-10,"text-anchor":"middle"}),pairedG,"with paired inputs, lowest at 0° and 90°");
+  var mR=el("circle",{r:5,fill:"var(--card)",stroke:"var(--c-recon)","stroke-width":2.4},chart);
+  var mS=el("circle",{r:5,fill:"var(--card)",stroke:"var(--c-sparse)","stroke-width":2.4},chart);
+  var mP=el("circle",{r:5,fill:"var(--card)",stroke:"var(--c-paired)","stroke-width":2.4},chart);
+
+  /* ---- interaction ---- */
+  var slider=document.getElementById("theta"), out=document.getElementById("theta-out");
+  var btn=document.getElementById("paired"), status=document.getElementById("status");
+  function item(c,s){ return '<li><i style="background:var('+c+')"></i><span>'+s+'</span></li>'; }
+  function update(){
+    var t=+slider.value, on=btn.getAttribute("aria-pressed")==="true";
+    out.textContent=t+"°";
+    /* the axes: rotate the dashed pair counter-clockwise by theta */
+    learned.setAttribute("transform","rotate("+(-t)+" "+CX+" "+CY+")");
+    var r=34, a=t*DEG;
+    arc.setAttribute("d", t<2 ? "" : "M "+(CX+r)+" "+CY+" A "+r+" "+r+" 0 0 0 "+(CX+r*Math.cos(a)).toFixed(1)+" "+(CY-r*Math.sin(a)).toFixed(1));
+    var m=(t/2)*DEG;
+    thLab.setAttribute("x",(CX+(r+14)*Math.cos(m)).toFixed(1));
+    thLab.setAttribute("y",(CY-(r+14)*Math.sin(m)+4).toFixed(1));
+    thLab.textContent = t<2 ? "" : "θ";
+    /* the chart */
+    cursor.setAttribute("x1",X(t)); cursor.setAttribute("x2",X(t));
+    [[mR,fRecon],[mS,fSparse],[mP,fPaired]].forEach(function(k){
+      k[0].setAttribute("cx",X(t)); k[0].setAttribute("cy",Y(k[1](t)));
+    });
+    pairedG.style.display=on?"":"none"; mP.style.display=on?"":"none";
+    /* what each curve says at this theta */
+    var onAxes = t<=1 || t>=89, at40 = Math.abs(t-40)<=1;
+    var h='<li><b>At θ = '+t+'°</b></li>';
+    h+=item("--c-recon","reconstruction: the same at every θ");
+    h+=item("--c-sparse", at40 ? "sparsity: at its lowest, on a wrong angle" : "sparsity: lower at 40°, a wrong angle");
+    if(on) h+=item("--c-paired", onAxes ? "with paired inputs: at its lowest, on the true axes" : "with paired inputs: lower at 0° and 90°, the true axes");
+    status.innerHTML=h;
+    document.getElementById("axes").setAttribute("aria-label","The true concept axes, solid, and the learned axes, dashed, rotated by "+t+" degrees");
+  }
+  slider.addEventListener("input",update);
+  btn.addEventListener("click",function(){
+    btn.setAttribute("aria-pressed", btn.getAttribute("aria-pressed")==="true" ? "false" : "true"); update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>

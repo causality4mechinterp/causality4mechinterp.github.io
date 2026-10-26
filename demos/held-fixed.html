@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is held fixed · EMNLP 2026 tutorial demo</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+/* page token: the fill of a node held fixed (the captions call it grey) */
+:root{ --frz:#D9D9D9; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --frz:#3a4150; }
+}
+:root[data-theme="dark"]{ --frz:#3a4150; }
+:root[data-theme="light"]{ --frz:#D9D9D9; }
+  * { margin: 0; }
+  .stage { display: grid; gap: 1rem; }
+  .split { display: grid; grid-template-columns: minmax(0, 400px) 1fr; gap: 1rem; align-items: start; }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+  .part { background: var(--paper-2); border: 1px solid var(--line); padding: .8rem; min-width: 0; }
+  .sub { font-size: .86rem; color: var(--ink-soft); margin: .2rem 0 .6rem; font-variant-numeric: tabular-nums; }
+  .ctl { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .7rem; font-size: .84rem; color: var(--ink-soft); margin-bottom: .6rem; }
+  .ctl label { font-weight: 600; }
+  .ctl input[type="range"] { flex: 1 1 140px; max-width: 260px; }
+  .ctl output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); min-width: 2.6em; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  @media (max-width: 560px) { .pair { grid-template-columns: 1fr; } }
+  .op { background: var(--card); border: 1px solid var(--line); padding: .5rem; min-width: 0; }
+  svg { width: 100%; max-width: 400px; height: auto; display: block; margin: 0 auto; }
+  .y { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .3rem; }
+  .capt { font-size: .76rem; color: var(--ink-soft); }
+  .eff { font-size: .86rem; font-variant-numeric: tabular-nums; margin-top: .35rem; }
+  .eff b { color: var(--ink); }
+  .key { font-size: .82rem; line-height: 1.5; color: var(--ink-soft); margin-top: .6rem; max-width: 110ch; }
+  .key + .key { margin-top: .2rem; }
+  .key b { color: var(--ink); }
+  .res { font-size: .9rem; font-variant-numeric: tabular-nums; }
+  .res p + p { margin-top: .45rem; }
+  .res b.i { color: var(--l2); } .res b.c { color: var(--l3); }
+  .res .def { color: var(--ink-soft); }
+  .verdict { font-weight: 600; border-left: 3px solid var(--muted); padding-left: .55rem; }
+  .verdict.bad { border-left-color: var(--l3); }
+
+  /* drawings: ink nodes, intervention colour (L2) for what the rerun sets, grey for nodes held fixed, L3 for the claim */
+  .edge { stroke: var(--ink-soft); stroke-width: 1.3; fill: none; }
+  .edge.thick { stroke-width: 3.2; }
+  .edge.set { stroke: var(--l2); stroke-width: 3.2; }
+  .edge.off { stroke-dasharray: 4 3; opacity: .5; }
+  .node rect { fill: var(--card); stroke: var(--ink); stroke-width: 1.2; }
+  .node.set rect { stroke: var(--l2); stroke-width: 3; }
+  .node.frz rect { fill: var(--frz); }
+  .node text { fill: var(--ink); font-family: inherit; text-anchor: middle; }
+  .node .v { fill: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .elab { fill: var(--l2); font-size: 9px; font-weight: 700; font-family: inherit; }
+  .axis { stroke: var(--ink); stroke-width: 1.2; }
+  .lab { fill: var(--ink); font-size: 10px; font-family: inherit; }
+  .lab.tick { fill: var(--ink-soft); font-size: 9px; }
+  .probe { stroke: var(--ink); stroke-width: 2.6; }
+  .pi { fill: var(--l2); } .pc { fill: var(--l3); }
+  .di { stroke: var(--l2); stroke-width: 1.3; stroke-dasharray: 4 3; } .dc { stroke: var(--l3); stroke-width: 1.3; stroke-dasharray: 4 3; }
+  .lab.i { fill: var(--l2); font-weight: 700; } .lab.c { fill: var(--l3); font-weight: 700; }
+  marker path { fill: var(--ink-soft); } #pm path { fill: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <a class="back" href="./index.html">← All demos</a>
+    <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+    <h1>Re-running a forward pass answers counterfactuals about heads but not about concepts</h1>
+    <p class="dek">Both reruns use one bio; each keeps different nodes fixed.</p>
+  </header>
+
+  <div class="stage">
+    <section class="part" aria-label="What a rerun holds fixed">
+      <div class="kicker">Level 1 · heads</div>
+      <p class="sub">Unedited run on x₀: a = 1.00, MLP = 1.30, backup = 0.00, y = 1.02 → nurse</p>
+      <div class="ctl">
+        <label for="beta">Backup head strength (toy)</label>
+        <input type="range" id="beta" min="0" max="15" step="1" value="10">
+        <output id="beta-out" for="beta">1.0</output>
+      </div>
+      <div class="pair">
+        <div class="op"><svg id="dag1" viewBox="0 0 290 172" role="img" aria-label="a zeroed and rerun: the MLP and the backup recompute from the zeroed a."></svg>
+          <div class="y" id="y1"></div><p class="capt" id="c1"></p>
+          <p class="eff" id="e1" aria-live="polite"></p></div>
+        <div class="op"><svg id="dag2" viewBox="0 0 290 172" role="img" aria-label="Path patching: only a's path to y carries zero; the MLP and the backup keep their unedited-run values."></svg>
+          <div class="y" id="y2"></div><p class="capt">path patching: only a's path to y zeroed, grey nodes held at their unedited-run values</p>
+          <p class="eff" id="e2"></p></div>
+      </div>
+      <p class="key"><b>x₀</b> one bio · <b>a</b> one head's output on it · <b>ã</b> a set to 0 · <b>backup</b> a head that stays idle while a is active and fills in when a drops · <b>y</b> score for nurse, above 0 reads nurse, otherwise surgeon · numbers in the boxes are each node's value in that run.</p>
+      <p class="key">Toy network: MLP = max(0, 1.2a + 0.1), backup = strength × max(0, 1 − a), y = 1.5a + 0.4 MLP + 1.2 backup − 1.</p>
+    </section>
+
+    <section class="part" aria-label="Removing the probe direction">
+      <div class="kicker">Level 2 · concepts</div>
+      <div class="split">
+      <div class="op"><svg id="plane" viewBox="0 0 260 200" role="img" aria-label="The bio's activation h in the plane of gender and another cue, the probe direction, h-prime after removing the probe direction, and h-star with gender alone removed."></svg></div>
+      <div>
+      <p class="sub">Unedited h: gender 1.00, cue 1.00, y = 1.02 → nurse</p>
+      <div class="ctl">
+        <label for="phi">Probe angle from gender</label>
+        <input type="range" id="phi" min="0" max="90" step="5" value="50">
+        <output id="phi-out" for="phi">50°</output>
+      </div>
+      <div class="res" aria-live="polite">
+        <p><b class="i">h′</b> <span class="def">h without the probe direction, what the rerun computes:</span> <span id="yp"></span></p>
+        <p><b class="c">h*</b> <span class="def">the same bio with gender alone removed, what the claim is about:</span> <span id="ys"></span></p>
+        <p class="verdict" id="vd"></p>
+      </div>
+      <p class="key"><b>h</b> the bio's activation vector at one layer · <b>gender</b>, <b>another cue</b> two directions in h that travel together in the bios; hidden: the analyst sees h and the probe, not these axes · <b>0°</b> the probe points exactly along gender.</p>
+      <p class="key">Toy readout: y = 0.4 × gender + 1.2 × cue − 0.58, above 0 reads nurse.</p>
+      </div>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+  <footer><div class="wrap"><p>
+    An original illustration of the position paper's “what is held fixed” (<a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>), not an experiment from the paper; the network, readout and all values are toy · tutorial demo · CC-BY
+  </p></div></footer>
+
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg', $ = id => document.getElementById(id);
+  const relu = v => Math.max(0, v);
+  const fmt = v => (v <= -0.005 ? '−' : '') + Math.abs(v).toFixed(2);
+  const sgn = v => (v <= -0.005 ? '−' : '+') + Math.abs(v).toFixed(2);
+  const pred = y => (y > 0 ? 'nurse' : 'surgeon');
+  function el(tag, attrs, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    parent.appendChild(e); return e;
+  }
+
+  // ---------- Level 1: the held-fixed network (figures/held-fixed.tex) ----------
+  const mOf = a => relu(1.2 * a + 0.1), gOf = (a, b) => b * relu(1 - a);
+  const yOf = (a, m, g) => 1.5 * a + 0.4 * m + 1.2 * g - 1.0;
+  const Y0 = yOf(1, mOf(1), 0);   // unedited run: a = 1, MLP = 1.30, backup idle, y = 1.02
+  const N = { x: [31, 86, 'x₀'], a: [100, 86, 'a'], m: [176, 32, 'MLP'], g: [176, 140, 'backup'], y: [256, 86, 'y'] };
+  const W = 58, H = 34;
+  function port(p, q) {
+    const dx = q[0] - p[0], dy = q[1] - p[1];
+    const s = Math.min((W / 2) / Math.abs(dx || 1e-9), (H / 2) / Math.abs(dy || 1e-9));
+    return [p[0] + dx * s, p[1] + dy * s];
+  }
+  function dag(svg) {
+    const mk = el('marker', { id: svg.id + 'm', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto' }, el('defs', {}, svg));
+    el('path', { d: 'M0,0 L10,5 L0,10 z' }, mk);
+    const E = {}, V = {}, G = {};
+    ['xa', 'am', 'ag', 'ay', 'my', 'gy'].forEach(k => {
+      const p = port(N[k[0]], N[k[1]]), q = port(N[k[1]], N[k[0]]);
+      E[k] = el('line', { class: 'edge', x1: p[0], y1: p[1], x2: q[0], y2: q[1], 'marker-end': 'url(#' + svg.id + 'm)' }, svg);
+    });
+    for (const k in N) {
+      const [cx, cy, name] = N[k];
+      G[k] = el('g', { class: 'node' }, svg);
+      el('rect', { x: cx - W / 2, y: cy - H / 2, width: W, height: H, rx: 5 }, G[k]);
+      G[k].name = el('text', { x: cx, y: cy - 3, 'font-size': 11, 'font-weight': 700 }, G[k], name);
+      V[k] = el('text', { class: 'v', x: cx, y: cy + 11, 'font-size': 9.5 }, G[k], '');
+    }
+    return { E, V, G, lab: el('text', { class: 'elab', x: 176, y: 80, 'text-anchor': 'middle' }, svg, '') };
+  }
+  const d1 = dag($('dag1')), d2 = dag($('dag2'));
+  d1.G.a.setAttribute('class', 'node set'); d1.G.a.name.textContent = 'ã';
+  d2.G.m.setAttribute('class', 'node frz'); d2.G.g.setAttribute('class', 'node frz');
+  d2.E.ay.setAttribute('class', 'edge set'); d2.lab.textContent = 'carries 0';
+  d1.V.x.textContent = d2.V.x.textContent = 'one bio';
+
+  // ---------- Level 2: the probe direction (figures/concept-counterfactual.tex) ----------
+  // One toy readout, chosen so the gender-only counterfactual keeps "nurse": y(h) = 0.4·gender + 1.2·cue − 0.58.
+  const f = (g, c) => 0.4 * g + 1.2 * c - 0.58;
+  const plane = $('plane'), O = [52, 166], S = 92, xy = (g, c) => [O[0] + S * g, O[1] - S * c];
+  const pm = el('marker', { id: 'pm', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, el('defs', {}, plane));
+  el('path', { d: 'M0,0 L10,5 L0,10 z' }, pm);
+  el('line', { class: 'axis', x1: 22, y1: O[1], x2: 248, y2: O[1] }, plane);
+  el('line', { class: 'axis', x1: O[0], y1: 196, x2: O[0], y2: 22 }, plane);
+  el('line', { class: 'axis', x1: O[0] + S, y1: O[1] - 3, x2: O[0] + S, y2: O[1] + 3 }, plane);
+  el('text', { class: 'lab tick', x: O[0] + S, y: O[1] + 13, 'text-anchor': 'middle' }, plane, '1');
+  el('line', { class: 'axis', x1: O[0] - 3, y1: O[1] - S, x2: O[0] + 3, y2: O[1] - S }, plane);
+  el('text', { class: 'lab tick', x: O[0] - 6, y: O[1] - S - 8, 'text-anchor': 'end' }, plane, '1');
+  el('text', { class: 'lab', x: 248, y: O[1] + 14, 'text-anchor': 'end' }, plane, 'gender (hidden)');
+  el('text', { class: 'lab', x: O[0] - 4, y: 14 }, plane, 'another cue (hidden)');
+  const hP = xy(1, 1), sP = xy(0, 1);
+  const P = {
+    probe: el('line', { class: 'probe', x1: O[0], y1: O[1], 'marker-end': 'url(#pm)' }, plane),
+    plab: el('text', { class: 'lab' }, plane, 'probe direction'),
+    dc: el('line', { class: 'dc', x1: hP[0], y1: hP[1], x2: sP[0], y2: sP[1] }, plane),
+    di: el('line', { class: 'di', x1: hP[0], y1: hP[1] }, plane)
+  };
+  el('circle', { cx: hP[0], cy: hP[1], r: 4.5, fill: 'var(--ink)' }, plane);
+  el('text', { class: 'lab', x: hP[0] + 8, y: hP[1] + 4 }, plane, 'h, one bio');
+  el('circle', { class: 'pc', cx: sP[0], cy: sP[1], r: 4.5 }, plane);
+  el('text', { class: 'lab c', x: sP[0] - 7, y: sP[1] + 4, 'text-anchor': 'end' }, plane, 'h*');
+  P.pt = el('circle', { class: 'pi', r: 4.5 }, plane);
+  P.ptlab = el('text', { class: 'lab i' }, plane, 'h′');
+
+  function render() {
+    const B = +$('beta').value / 10, T = +$('phi').value;
+    $('beta-out').textContent = B.toFixed(1); $('phi-out').textContent = T + '°';
+
+    // a zeroed, rerun: MLP and backup recompute from a = 0 (total effect)
+    const m1 = mOf(0), g1 = gOf(0, B), y1 = yOf(0, m1, g1);
+    d1.V.a.textContent = '= 0'; d1.V.m.textContent = fmt(m1); d1.V.g.textContent = fmt(g1); d1.V.y.textContent = fmt(y1);
+    d1.E.gy.setAttribute('class', 'edge' + (g1 > 0 ? ' thick' : ' off'));
+    $('y1').textContent = 'y = ' + fmt(y1) + ' → ' + pred(y1);
+    $('c1').textContent = 'a zeroed, rerun: ' + (y1 > 0 ? 'the backup restores the prediction' : 'the backup is too weak to restore the prediction');
+    $('e1').innerHTML = '<b>Total effect of a</b> (everything after a recomputes): y ' + fmt(Y0) + ' → ' + fmt(y1) + ', change ' + sgn(y1 - Y0);
+    // path patching: a → y carries 0, MLP and backup held at the unedited run (direct effect)
+    const m0 = mOf(1), g0 = gOf(1, B), y2 = yOf(0, m0, g0);
+    d2.V.a.textContent = '1.00'; d2.V.m.textContent = fmt(m0); d2.V.g.textContent = fmt(g0); d2.V.y.textContent = fmt(y2);
+    $('y2').textContent = 'y = ' + fmt(y2) + ' → ' + pred(y2);
+    $('e2').innerHTML = '<b>Direct effect of a</b> (only a\'s own path to y): y ' + fmt(Y0) + ' → ' + fmt(y2) + ', change ' + sgn(y2 - Y0);
+
+    // remove the probe direction w from h = (1, 1): h' = h − (h·w) w
+    const r = T * Math.PI / 180, w = [Math.cos(r), Math.sin(r)], dot = w[0] + w[1];
+    const hp = [1 - dot * w[0], 1 - dot * w[1]];
+    const tip = xy(1.55 * w[0], 1.55 * w[1]), q = xy(hp[0], hp[1]);
+    P.probe.setAttribute('x2', tip[0]); P.probe.setAttribute('y2', tip[1]);
+    P.plab.setAttribute('x', tip[0] + (T < 30 ? -40 : 6)); P.plab.setAttribute('y', tip[1] + (T < 30 ? -8 : T >= 75 ? 18 : 4));
+    P.di.setAttribute('x2', q[0]); P.di.setAttribute('y2', q[1]);
+    P.pt.setAttribute('cx', q[0]); P.pt.setAttribute('cy', q[1]);
+    P.ptlab.setAttribute('x', q[0] + 7); P.ptlab.setAttribute('y', q[1] + 14);
+    const yp = f(hp[0], hp[1]), ys = f(0, 1);
+    $('yp').textContent = 'gender ' + fmt(hp[0]) + ', cue ' + fmt(hp[1]) + ', y = ' + fmt(yp) + ' → ' + pred(yp);
+    $('ys').textContent = 'gender 0.00, cue 1.00, y = ' + fmt(ys) + ' → ' + pred(ys);
+    const same = Math.hypot(hp[0], hp[1] - 1) < 1e-6, vd = $('vd');
+    vd.className = 'verdict' + (pred(yp) !== pred(ys) ? ' bad' : '');
+    vd.textContent = same ? 'h′ = h*: the rerun answers the claim\'s question.'
+      : pred(yp) !== pred(ys) ? 'h′ ≠ h*: the rerun says ' + pred(yp) + ', the claim ' + pred(ys) + '; the prediction moves for the wrong reason.'
+      : 'h′ ≠ h*: same prediction here, but the rerun is about another direction.';
+  }
+  $('beta').addEventListener('input', render);
+  $('phi').addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

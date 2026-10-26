@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAEs trained on the same activations disagree</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+  :where(.stage) *{margin:0; padding:0;}
+  .ctl{display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin:.2rem 0 .5rem;}
+  .ctl label{font-weight:600; font-size:.95rem;}
+  .ctl input[type=range]{flex:1 1 220px; min-width:0; max-width:340px;}
+  .ctl output{font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); min-width:4.2em;}
+  .tag{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); border:1px solid var(--line); padding:.05rem .55rem; margin-left:auto;}
+
+  svg#plot{width:100%; max-width:680px; height:auto; display:block;}
+  svg text{font-family:inherit;}
+  .pt{fill:var(--muted);}
+  .arr{stroke:var(--ink); stroke-width:3; fill:none;}
+  .arr-head{fill:var(--ink);}
+  .ghost .arr{stroke:var(--muted); stroke-width:2; stroke-dasharray:6 4;}
+  .ghost .arr-head{fill:var(--muted);}
+  .lab{fill:var(--ink); font-size:15px; paint-order:stroke; stroke:var(--card); stroke-width:4px; stroke-linejoin:round;}
+  .ghost .lab{fill:var(--muted);}
+
+  table{margin:.6rem 0 .3rem; font-size:.9rem;}
+  th, td{padding:.25rem .8rem .25rem 0; text-align:left;}
+  td.num, th.num{text-align:right; padding-left:.8rem;}
+  td.num{white-space:nowrap;}
+  .cur{color:var(--ink); font-weight:700;}
+  .status{font-size:.92rem; font-weight:600; margin:.2rem 0 .15rem;}
+  .tally{font-size:.88rem; color:var(--ink-soft);}
+  @media (max-width: 560px){
+    .lab{font-size:22px;}
+    .tag{margin-left:0;}
+    th, td{padding-right:.4rem;}
+    td.num, th.num{padding-left:.4rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="head">
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <p class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</p>
+  <h1>SAEs trained on the same activations disagree</h1>
+  <p class="dek">Two seeds, two dictionaries: consistent with several sparse solutions.</p>
+</header>
+
+<section class="stage" aria-label="Interactive demo: one dictionary per training seed">
+  <div class="ctl">
+    <label for="seed">Training seed</label>
+    <input type="range" id="seed" min="1" max="12" step="1" value="2" aria-describedby="status">
+    <output id="seed-out" for="seed">seed 2</output>
+    <span class="tag">toy, computed live</span>
+  </div>
+  <svg id="plot" viewBox="50 20 550 280" role="img" aria-label="">
+    <g id="pts"></g>
+    <g id="ghost" class="ghost"></g>
+    <g id="cur"></g>
+  </svg>
+  <table aria-label="Objective terms for seed 1 and the chosen seed">
+    <thead><tr><th></th><th class="num">seed 1 (dashed)</th><th class="num cur" id="h-n">seed 2 (solid)</th></tr></thead>
+    <tbody>
+      <tr><th>Reconstruction error</th><td class="num" id="r-1"></td><td class="num cur" id="r-n"></td></tr>
+      <tr><th>Sparsity cost</th><td class="num" id="s-1"></td><td class="num cur" id="s-n"></td></tr>
+    </tbody>
+  </table>
+  <p class="status" id="status" aria-live="polite"></p>
+  <p class="tally" id="tally"></p>
+  <ul class="legend">
+    <li><b>SAE</b>: sparse autoencoder; it rebuilds each activation from a few features, and its <b>dictionary</b> is the set of feature directions (the arrows).</li>
+    <li><b>Dots</b>: 20 toy activations in 2-D. <b>Seed</b>: the random number that sets where training starts.</li>
+    <li><b>Reconstruction error</b>: mean squared distance from a dot to its rebuild, 0 here because any two arrows rebuild a 2-D dot. <b>Sparsity cost</b>: mean summed size of the two feature values per dot; lower is sparser.</li>
+  </ul>
+</section>
+</div>
+
+<footer><div class="wrap"><p>
+  Toy illustration: a two-feature sparse dictionary fit by gradient descent in your browser on the 20 dots of the slide&rsquo;s drawing. It illustrates Paulo and Belrose (2025, <a href="https://arxiv.org/abs/2501.16615">arXiv:2501.16615</a>), who train SAEs on the same activations with different seeds and get different features, a result consistent with sparsity leaving several solutions rather than a single one, though not proof of it · tutorial demo · CC-BY
+</p></div></footer>
+
+<script>
+'use strict';
+function mulberry32(a){
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+/* the 20 dots of figures/two-saes.tex, scaled by 1/10; the dictionary is centred on their mean */
+const RAW = [[4,6],[7,14],[9,3],[12,10],[14,18],[16,7],[18,14],[20,22],[21,4],[23,12],
+             [25,17],[26,8],[28,24],[29,13],[31,19],[32,5],[34,11],[35,21],[37,15],[39,9]];
+const P = RAW.map(p => [p[0] / 10, p[1] / 10]);
+const C = [P.reduce((s, p) => s + p[0], 0) / P.length, P.reduce((s, p) => s + p[1], 0) / P.length];
+const NAMES = [['seed 1,', 'feature 1'], ['seed 1,', 'feature 2']];
+const SHORT = ['feature 1', 'feature 2'];
+const SEEDS = 12, STEPS = 2000;
+const rad = d => d * Math.PI / 180;
+const $ = id => document.getElementById(id);
+
+/* codes z = D^{-1}(h - c): exact reconstruction for any two distinct unit directions */
+function cost(a, b){
+  const d1 = [Math.cos(rad(a)), Math.sin(rad(a))], d2 = [Math.cos(rad(b)), Math.sin(rad(b))];
+  const det = d1[0] * d2[1] - d2[0] * d1[1];
+  let s = 0, e = 0;
+  for (const p of P){
+    const h = [p[0] - C[0], p[1] - C[1]];
+    const z1 = (h[0] * d2[1] - d2[0] * h[1]) / det, z2 = (d1[0] * h[1] - h[0] * d1[1]) / det;
+    s += Math.abs(z1) + Math.abs(z2);
+    const rx = z1 * d1[0] + z2 * d2[0] - h[0], ry = z1 * d1[1] + z2 * d2[1] - h[1];
+    e += rx * rx + ry * ry;
+  }
+  return { sparsity: s / P.length, recon: e / P.length };
+}
+/* a direction and its negative are the same feature: show each in [-45, 135) degrees */
+const norm = x => ((x + 45) % 180 + 180) % 180 - 45;
+/* gradient descent on the sparsity cost over the two arrow angles, from a seeded random start */
+function train(seed){
+  const rng = mulberry32(seed);
+  let a = 180 * rng(), b = a + 30 + 120 * rng();
+  const raw = [[a, b]];
+  const sp = (x, y) => cost(x, y).sparsity, lr = 20, h = 1e-3;
+  for (let i = 0; i < STEPS; i++){
+    const ga = (sp(a + h, b) - sp(a - h, b)) / (2 * h), gb = (sp(a, b + h) - sp(a, b - h)) / (2 * h);
+    a -= lr * ga; b -= lr * gb;
+    raw.push([a, b]);
+  }
+  /* shift the whole path by the same multiple of 180 degrees so it ends in range without jumping */
+  const sa = norm(a) - a, sb = norm(b) - b;
+  const path = raw.map(([x, y]) => [x + sa, y + sb]);
+  return { path, end: path[STEPS], ...cost(a, b) };
+}
+const RUN = {};
+for (let s = 1; s <= SEEDS; s++) RUN[s] = train(s);
+
+/* seed 1's arrows get the names; the flatter arrow is feature 1 */
+const order1 = Math.abs(RUN[1].end[0]) < Math.abs(RUN[1].end[1]) ? [0, 1] : [1, 0];
+const REF = order1.map(i => RUN[1].end[i]);
+const gap = (x, y) => { const d = Math.abs(x - y) % 180; return Math.min(d, 180 - d); };
+/* one-to-one match of a dictionary B to dictionary A: [[index in B, index in A], ...] */
+function match(A, B){
+  const keep = gap(B[0], A[0]) + gap(B[1], A[1]) <= gap(B[0], A[1]) + gap(B[1], A[0]);
+  return keep ? [[0, 0], [1, 1]] : [[0, 1], [1, 0]];
+}
+/* angle between each of seed 1's named arrows (index k) and its matched arrow in seed s */
+const offs = s => { const o = [0, 0]; for (const [j, k] of match(REF, RUN[s].end)) o[k] = gap(RUN[s].end[j], REF[k]); return o; };
+const same = (A, B) => match(A, B).every(([j, k]) => gap(B[j], A[k]) < 2);
+
+/* how many different dictionaries the seeds reach */
+const distinct = [];
+for (let s = 1; s <= SEEDS; s++) if (!distinct.some(d => same(d, RUN[s].end))) distinct.push(RUN[s].end);
+const costs = Object.values(RUN).map(r => r.sparsity);
+const lo = Math.min(...costs), hi = Math.max(...costs);
+$('tally').textContent = 'Seeds 1–' + SEEDS + ' reach ' + distinct.length + ' different dictionaries, with sparsity costs from ' +
+  lo.toFixed(3) + ' to ' + hi.toFixed(3) + ' (within ' + Math.ceil(100 * (hi - lo) / lo) + '% of each other).';
+
+const S = 74, OX = 120, OY = 290, LEN = 1.6;
+const X = x => OX + x * S, Y = y => OY - y * S;
+$('pts').innerHTML = P.map(p => '<circle class="pt" cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="4"/>').join('');
+
+function arrow(deg, lines){
+  const ux = Math.cos(rad(deg)), uy = Math.sin(rad(deg));
+  const x0 = X(C[0]), y0 = Y(C[1]), x1 = X(C[0] + LEN * ux), y1 = Y(C[1] + LEN * uy);
+  const hx = -ux, hy = uy, px = -hy, py = hx;   /* back along the arrow, and its normal, in screen space */
+  const head = [x1, y1, x1 + 14 * hx + 6 * px, y1 + 14 * hy + 6 * py, x1 + 14 * hx - 6 * px, y1 + 14 * hy - 6 * py];
+  let svg = '<line class="arr" x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + (x1 + 10 * hx).toFixed(1) + '" y2="' + (y1 + 10 * hy).toFixed(1) + '"/>' +
+    '<polygon class="arr-head" points="' + head.map(v => v.toFixed(1)).join(',') + '"/>';
+  if (!lines) return svg;
+  const lx = X(C[0] + (LEN + 0.15) * ux), ly = Y(C[1] + (LEN + 0.15) * uy);
+  const anchor = ux > 0.35 ? 'start' : ux < -0.35 ? 'end' : 'middle';
+  /* above an upward tip; beside a sideways or downward-sideways tip; below only a straight-down tip */
+  const top = ly - (uy > 0.35 ? 30 : uy < -0.35 && anchor === 'middle' ? -18 : 6);
+  const text = lines.map((t, i) => '<tspan x="' + lx.toFixed(1) + '" ' + (i ? 'dy="1.15em"' : 'y="' + top.toFixed(1) + '"') + '>' + t + '</tspan>').join('');
+  return svg + '<text class="lab" text-anchor="' + anchor + '">' + text + '</text>';
+}
+function draw(seed, angles){
+  let lab;
+  if (seed === 1) lab = order1.map((i, k) => [angles[i], NAMES[k]]);
+  else {
+    const o = offs(seed);
+    lab = match(REF, RUN[seed].end).map(([j, k]) => [angles[j], ['seed ' + seed + ', ' + o[k].toFixed(0) + '° off', SHORT[k]]]);
+  }
+  $('cur').innerHTML = lab.map(([d, l]) => arrow(d, l)).join('');
+}
+
+$('r-1').textContent = RUN[1].recon.toFixed(3);
+$('s-1').textContent = RUN[1].sparsity.toFixed(3);
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let anim = 0;
+function setSeed(seed){
+  const r = RUN[seed];
+  $('seed-out').textContent = 'seed ' + seed;
+  $('h-n').textContent = 'seed ' + seed + ' (solid)';
+  $('r-n').textContent = r.recon.toFixed(3);
+  $('s-n').textContent = r.sparsity.toFixed(3);
+  /* seed 1's dictionary stays on screen, dashed; its names drop where the new arrows sit on top of it */
+  const o = seed === 1 ? [0, 0] : offs(seed);
+  $('ghost').innerHTML = seed === 1 ? '' : order1.map((i, k) => arrow(RUN[1].end[i], o[k] < 3 ? null : NAMES[k])).join('');
+  const pct = 100 * (r.sparsity - RUN[1].sparsity) / RUN[1].sparsity;
+  let msg;
+  if (seed === 1) msg = 'Seed 1: the reference dictionary. Move the slider to train from another seed.';
+  else if (same(REF, r.end)) msg = 'Seed ' + seed + ' lands on seed 1’s dictionary.';
+  else msg = 'Seed ' + seed + ' lands on a different dictionary, arrows ' + o[0].toFixed(0) + '° and ' + o[1].toFixed(0) +
+    '° off seed 1’s, with a sparsity cost ' + Math.abs(pct).toFixed(1) + '% ' + (pct < 0 ? 'lower' : 'higher') + '.';
+  $('status').textContent = msg;
+  $('plot').setAttribute('aria-label', 'Twenty toy activations with seed 1’s dictionary dashed and seed ' + seed + '’s dictionary solid. ' + msg);
+  cancelAnimationFrame(anim);
+  if (REDUCED){ draw(seed, r.path[STEPS]); return; }
+  const t0 = performance.now(), dur = 600;
+  (function frame(t){
+    const p = Math.min(1, Math.max(0, (t - t0) / dur));
+    draw(seed, r.path[Math.round(STEPS * (1 - Math.pow(1 - p, 3)))]);
+    if (p < 1) anim = requestAnimationFrame(frame);
+  })(t0);
+}
+$('seed').addEventListener('input', e => setSeed(+e.target.value));
+setSeed(+$('seed').value);
+</script>
+</body>
+</html>

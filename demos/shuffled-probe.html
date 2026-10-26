@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A control task shows what a probe can score by memorising · EMNLP 2026 tutorial demo</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+  * { margin: 0; }
+  .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .6rem 1rem; margin-bottom: .8rem; }
+  .guess { flex: 1 1 260px; max-width: 420px; }
+  .guess label { display: flex; justify-content: space-between; gap: .6rem; }
+  .guess output { font-size: .9rem; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  #guess { width: 100%; display: block; margin: .35rem 0 0; }
+  #guess:disabled { opacity: .45; }
+
+  svg#bars { width: 100%; max-width: 640px; height: auto; display: block; touch-action: none; }
+  svg text { font-family: inherit; fill: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+  svg .soft { fill: var(--ink-soft); paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+  svg .mute { fill: var(--muted); font-size: 12px; }
+  .grid { stroke: var(--line); stroke-width: 1; }
+  .base { stroke: var(--muted); stroke-width: 1.2; }
+  .bar-pos { fill: var(--ink); }
+  .bar-ctrl { fill: var(--muted); }
+  .guess-box { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .grip { fill: var(--ink); }
+  .hit { fill: transparent; cursor: ns-resize; }
+  .hit.off { cursor: default; }
+  .gap-line { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 3; }
+  .bracket { stroke: var(--ink); stroke-width: 1.6; fill: none; }
+  .bracket.real { stroke: var(--ink); }
+
+  .readout { font-size: .9rem; color: var(--ink); margin-top: .5rem; min-height: 1.5em; font-variant-numeric: tabular-nums; }
+  dl.legend dt { display: inline; }
+  dl.legend dd { display: inline; margin: 0; }
+
+  @media (max-width: 560px) {
+    .guess { max-width: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <a class="back" href="./index.html">← All demos</a>
+    <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+    <h1>A control task shows what a probe can score by memorising</h1>
+    <p class="dek">In Hewitt and Liang's control task, each word type is given a fixed random tag, so the only way to score well is to memorise; the same linear probe still reaches 71.2%, against 97.2% on part of speech.</p>
+  </header>
+
+  <div class="stage">
+    <div class="controls">
+      <div class="guess">
+        <label class="kicker" for="guess"><span>Your guess: control-task accuracy</span><output id="guess-out" for="guess">50%</output></label>
+        <input type="range" id="guess" min="0" max="100" step="1" value="50">
+      </div>
+      <button type="button" class="check" id="check">Check</button>
+    </div>
+
+    <svg id="bars" viewBox="0 0 560 320" role="img" aria-label=""></svg>
+
+    <p class="readout" id="readout" aria-live="polite"></p>
+
+    <dl class="legend">
+      <div><dt>Probe:</dt> <dd>a linear classifier trained on the frozen activations to predict each word's tag: its part of speech (noun, verb, …) or, in the control task, its random tag.</dd></div>
+      <div><dt>ELMo layer 1:</dt> <dd>the activations of the first layer of ELMo, a pretrained language model.</dd></div>
+      <div><dt>Control task:</dt> <dd>each word type (a distinct word, so every “the” alike) gets one fixed random tag, so the only way to score well is to memorise.</dd></div>
+      <div><dt>Selectivity:</dt> <dd>part-of-speech accuracy minus control-task accuracy, in percentage points; this gap, not the 97.2%, is what tells you about the representation.</dd></div>
+    </dl>
+  </div>
+
+</div>
+
+  <footer><div class="wrap"><p>
+    Numbers from Hewitt and Liang (2019), Table 1; guess-then-check exercise built for the tutorial &middot; tutorial demo &middot; CC-BY
+  </p></div></footer>
+
+<script>
+/* Deterministic: the only values are Hewitt and Liang's two numbers and the visitor's guess. */
+const ACC = { pos: 97.2, ctrl: 71.2 };       /* Hewitt and Liang 2019, Table 1: linear probe, ELMo layer 1 */
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NARROW = window.matchMedia('(max-width: 560px)');
+const NS = 'http://www.w3.org/2000/svg';
+const $ = id => document.getElementById(id);
+const svg = $('bars'), slider = $('guess');
+
+/* Two geometries, so that the text keeps its size at phone width. */
+const GEO = {
+  wide:   { W: 560, H: 320, top: 34, base: 262, ax: 46, posX: 92,  ctrlX: 300, bw: 80, brX: 398, two: false },
+  narrow: { W: 360, H: 330, top: 40, base: 262, ax: 30, posX: 48,  ctrlX: 190, bw: 60, brX: 264, two: true }
+};
+const state = { guess: 50, checked: false, shown: 0 };
+let g = GEO.wide, els = {};
+
+const fmt = v => (Math.round(v * 10) / 10).toFixed(Math.abs(v - Math.round(v)) < 1e-9 ? 0 : 1);
+const fmt1 = v => (Math.round(v * 10) / 10).toFixed(1).replace('-', '−');
+const y = v => g.base - (g.base - g.top) * v / 100;
+
+function el(name, attrs, parent, text) {
+  const e = document.createElementNS(NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || svg).appendChild(e);
+  return e;
+}
+
+function build() {
+  g = NARROW.matches ? GEO.narrow : GEO.wide;
+  svg.replaceChildren();
+  svg.setAttribute('viewBox', `0 0 ${g.W} ${g.H}`);
+  /* axis: title, gridlines, ticks */
+  el('text', { x: 0, y: 14, class: 'mute' }, svg, 'probe accuracy (%)');
+  el('text', { x: g.W - 4, y: g.two ? 30 : 14, class: 'mute', 'text-anchor': 'end' }, svg, 'ELMo layer 1, linear probe');
+  for (const t of [0, 25, 50, 75, 100]) {
+    el('line', { x1: g.ax, x2: g.brX, y1: y(t), y2: y(t), class: t ? 'grid' : 'base' });
+    el('text', { x: g.ax - 6, y: y(t) + 4, class: 'mute', 'text-anchor': 'end' }, svg, String(t));
+  }
+  /* part-of-speech bar */
+  el('rect', { x: g.posX, y: y(ACC.pos), width: g.bw, height: g.base - y(ACC.pos), class: 'bar-pos' });
+  const cx = g.posX + g.bw / 2, kx = g.ctrlX + g.bw / 2;
+  el('text', { x: cx, y: g.base + 20, 'text-anchor': 'middle' }, svg, 'Part of speech');
+  el('text', { x: cx, y: g.base + 37, 'text-anchor': 'middle', 'font-weight': 700 }, svg, '97.2%');
+  /* control-task column: real bar (after the check), the visitor's guess, the drag handle */
+  els.real = el('rect', { x: g.ctrlX, y: g.base, width: g.bw, height: 0, class: 'bar-ctrl' });
+  el('text', { x: kx, y: g.base + 20, 'text-anchor': 'middle' }, svg, 'Control task');
+  els.realT = el('text', { x: kx, y: g.base + 37, 'text-anchor': 'middle', 'font-weight': 700 }, svg, '?');
+  els.box = el('rect', { x: g.ctrlX, width: g.bw, class: 'guess-box' });
+  els.grip = el('rect', { x: g.ctrlX - 4, width: g.bw + 8, height: 6, rx: 3, class: 'grip' });
+  els.gl = el('text', { 'text-anchor': 'end', class: 'soft' });
+  /* selectivity: dashed line at the part-of-speech height, bracket down to the control height */
+  el('line', { x1: g.posX + g.bw, x2: g.brX, y1: y(ACC.pos), y2: y(ACC.pos), class: 'gap-line' });
+  els.br = el('polyline', { class: 'bracket' });
+  els.sl = el('text', { 'font-weight': 700 }, svg);
+  els.hit = el('rect', { x: g.ctrlX - 24, y: g.top - 10, width: g.bw + 40, height: g.base - g.top + 14, class: 'hit', 'aria-hidden': 'true' });
+  els.hit.addEventListener('pointerdown', down);
+  draw();
+}
+
+function draw() {
+  const real = state.checked, cv = real ? state.shown : state.guess;
+  const gy = y(state.guess), vy = y(cv), py = y(ACC.pos);
+  els.box.setAttribute('y', Math.min(gy, g.base));
+  els.box.setAttribute('height', Math.abs(g.base - gy));
+  els.grip.setAttribute('y', gy - 3);
+  els.grip.setAttribute('visibility', real ? 'hidden' : 'visible');
+  els.hit.classList.toggle('off', real);
+  /* guess label to the left of the control column */
+  const lx = g.ctrlX - 10;
+  els.gl.replaceChildren();
+  if (g.two) {
+    el('tspan', { x: lx, y: gy - 3 }, els.gl, 'your guess');
+    el('tspan', { x: lx, y: gy + 12 }, els.gl, fmt(state.guess) + '%');
+  } else {
+    el('tspan', { x: lx, y: gy + 4 }, els.gl, 'your guess, ' + fmt(state.guess) + '%');
+  }
+  /* real bar */
+  els.real.setAttribute('y', vy); els.real.setAttribute('height', real ? g.base - vy : 0);
+  els.realT.textContent = real ? fmt1(ACC.ctrl) + '%' : '?';
+  /* bracket and selectivity label */
+  const r = g.ctrlX + g.bw;
+  els.br.setAttribute('points', `${r},${vy} ${g.brX},${vy} ${g.brX},${py}`);
+  els.br.classList.toggle('real', real);
+  const sel = ACC.pos - cv, my = Math.max(g.top + 10, Math.min(g.base - 20, (vy + py) / 2));
+  els.sl.replaceChildren();
+  el('tspan', { x: g.brX + 8, y: my - 2 }, els.sl, 'selectivity');
+  el('tspan', { x: g.brX + 8, y: my + 15 }, els.sl, fmt1(sel) + ' points');
+  /* readout and accessible description */
+  $('guess-out').textContent = fmt(state.guess) + '%';
+  slider.setAttribute('aria-valuetext', fmt(state.guess) + '%, selectivity ' + fmt1(ACC.pos - state.guess) + ' points');
+  let msg, aria;
+  if (!real) {
+    msg = `If the control task scored ${fmt(state.guess)}%, selectivity would be 97.2 − ${fmt(state.guess)} = ${fmt1(ACC.pos - state.guess)} points.`;
+    aria = `Probe accuracy on ELMo layer 1: 97.2% on part of speech; your guess for the control task is ${fmt(state.guess)}%, which would give a selectivity of ${fmt1(ACC.pos - state.guess)} points.`;
+  } else {
+    const d = state.guess - ACC.ctrl;
+    const off = Math.abs(d) < 0.5 ? 'your guess was right.' : `your guess was ${fmt1(Math.abs(d))} points too ${d > 0 ? 'high' : 'low'}.`;
+    msg = `The control task scored 71.2%, so selectivity is 97.2 − 71.2 = 26.0 points; ${off}`;
+    aria = `Probe accuracy on ELMo layer 1: 97.2% on part of speech, 71.2% on the control task; the difference, 26.0 points, is the selectivity. Your guess was ${fmt(state.guess)}%.`;
+  }
+  if (!real || state.shown >= ACC.ctrl) $('readout').textContent = msg;
+  svg.setAttribute('aria-label', aria);
+}
+
+/* dragging the dashed bar sets the guess, like the slider */
+function fromPointer(e) {
+  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const v = Math.round(Math.max(0, Math.min(100, (g.base - p.y) / (g.base - g.top) * 100)));
+  setGuess(v);
+}
+function down(e) {
+  if (state.checked) return;
+  e.preventDefault();
+  els.hit.setPointerCapture(e.pointerId);
+  fromPointer(e);
+  const move = ev => fromPointer(ev);
+  const up = () => { els.hit.removeEventListener('pointermove', move); els.hit.removeEventListener('pointerup', up); els.hit.removeEventListener('pointercancel', up); };
+  els.hit.addEventListener('pointermove', move);
+  els.hit.addEventListener('pointerup', up);
+  els.hit.addEventListener('pointercancel', up);
+}
+function setGuess(v) { state.guess = v; slider.value = v; draw(); }
+
+function check() {
+  const btn = $('check');
+  if (state.checked) {                       /* guess again */
+    state.checked = false; state.shown = 0;
+    slider.disabled = false; btn.textContent = 'Check'; btn.classList.remove('again');
+    draw(); return;
+  }
+  state.checked = true; slider.disabled = true;
+  btn.textContent = 'Guess again'; btn.classList.add('again');
+  if (REDUCED) { state.shown = ACC.ctrl; draw(); return; }
+  const t0 = performance.now(), dur = 700;
+  (function frame(t) {
+    if (!state.checked) return;
+    const p = Math.max(0, Math.min(1, (t - t0) / dur));
+    state.shown = ACC.ctrl * (1 - Math.pow(1 - p, 3));
+    draw();
+    if (p < 1) requestAnimationFrame(frame);
+  })(t0);
+}
+
+slider.addEventListener('input', () => setGuess(Number(slider.value)));
+$('check').addEventListener('click', check);
+NARROW.addEventListener('change', build);
+build();
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subspace ≠ Coordinates — Causal Foundations for Interpretability</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+/* page tokens: the balls' colours, read by the page's script as hex */
+:root{ --ball-blue:#3F6DB3; --ball-grey:#9A95A8; --ball-pink:#D6609A; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --ball-blue:#6F9BE0; --ball-grey:#8C879A; --ball-pink:#E583B5; }
+}
+:root[data-theme="dark"]{ --ball-blue:#6F9BE0; --ball-grey:#8C879A; --ball-pink:#E583B5; }
+:root[data-theme="light"]{ --ball-blue:#3F6DB3; --ball-grey:#9A95A8; --ball-pink:#D6609A; }
+
+.grid{display:grid;grid-template-columns:1.15fr 1fr;gap:.9rem;align-items:start}
+@media (max-width:760px){ .grid{grid-template-columns:1fr} }
+.card{background:var(--card);border:1px solid var(--line);padding:.8rem}
+.card svg{width:100%;height:auto;display:block}
+svg text{font-family:inherit}
+@media (max-width:560px){ #plane text{font-size:15px} }
+
+/* control row, same on both ball pages */
+.sliderrow{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1.5rem}
+.sliderrow label{font-size:.9rem;font-weight:700;white-space:nowrap;line-height:1.6;min-width:7.6rem}
+.track{flex:1;min-width:0;position:relative}
+.track input[type=range]{width:100%;margin:.2rem 0 0}
+.tick{position:absolute;top:1.5rem;left:calc(8px + (100% - 16px) * 63 / 180);transform:translateX(-50%);
+  font-size:.72rem;color:var(--muted);white-space:nowrap;line-height:1.2;text-align:center}
+.tick::before{content:"";display:block;width:1px;height:.35rem;background:var(--muted);margin:0 auto .1rem}
+.sliderrow output{font-variant-numeric:tabular-nums;font-weight:700;min-width:3em;text-align:right;line-height:1.6}
+
+table{width:100%;font-size:.84rem}
+th,td{padding:.3rem .3rem;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;white-space:nowrap}
+thead tr.grp th{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:0;text-align:center}
+.sw{display:inline-block;width:.6rem;height:.6rem;border-radius:50%;margin-right:.35rem;border:1px solid var(--ink)}
+
+.losshead{margin:.9rem 0 .3rem;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.bar{display:grid;grid-template-columns:7.4rem 1fr 3.4rem;align-items:center;gap:.5rem;font-size:.86rem;margin:.25rem 0}
+.bar .bt{height:.7rem;background:var(--paper-2);overflow:hidden}
+.bar .bf{display:block;height:100%;background:var(--ink);width:0}
+.bar b{font-variant-numeric:tabular-nums;text-align:right}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="head">
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Subspace &ne; Coordinates</h1>
+  <p class="dek">A symmetry: a change that leaves the loss unchanged.</p>
+</header>
+
+<div class="stage">
+  <div class="grid">
+    <div class="card">
+      <svg id="plane" viewBox="0 0 400 300" role="img"
+        aria-label="The encoder's output as a plane. Three balls, blue and left, grey and centre, pink and right, never move. Faint true axes read position and colour; two learned axes turn with the slider."></svg>
+    </div>
+    <div class="card">
+      <div class="sliderrow">
+        <label for="theta">rotate the axes</label>
+        <div class="track">
+          <input type="range" id="theta" min="0" max="180" value="63" step="1"
+            aria-label="Rotation of the learned axes, in degrees; the slide uses 63">
+          <span class="tick" aria-hidden="true">63&deg; on the slide</span>
+        </div>
+        <output id="theta-out" for="theta">0&deg;</output>
+      </div>
+      <table>
+        <thead>
+          <tr class="grp"><th></th><th colspan="2">learned axes</th><th colspan="2">head output</th></tr>
+          <tr><th>ball</th><th>axis 1</th><th>axis 2</th><th>position</th><th>colour</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="losshead" id="losshead">loss</div>
+      <div aria-live="polite" aria-labelledby="losshead">
+        <div class="bar"><span>head turns back</span><span class="bt"><span class="bf" id="bf-back"></span></span><b id="v-back"></b></div>
+        <div class="bar"><span>head left as is</span><span class="bt"><span class="bf" id="bf-fix"></span></span><b id="v-fix"></b></div>
+      </div>
+    </div>
+  </div>
+  <ul class="legend">
+    <li><b>Balls:</b> three pictures of a ball, each placed where the encoder puts it.</li>
+    <li><b>Grey lines:</b> the true axes, position (across) and colour (up).</li>
+    <li><b>Learned axes:</b> the two directions a method reads the encoding along; the slider turns them.</li>
+    <li><b>Head:</b> a linear map from the two readings to position and colour; it turns back by the same angle, or is left as is.</li>
+    <li><b>Loss:</b> the mean squared gap between the head&rsquo;s output and each ball&rsquo;s true position and colour.</li>
+    <li><b>Numbers</b> are in the toy&rsquo;s units: the blue ball sits at (&minus;13, &minus;7), the pink at (13, 7).</li>
+  </ul>
+</div>
+
+</div>
+
+<footer><div class="wrap"><p>
+  Toy values read off the deck&rsquo;s rotation drawing (drawing after a 2025 talk by Sridhar); original illustration for the tutorial, not an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> &middot; tutorial demo &middot; CC-BY
+</p></div></footer>
+
+<script>
+(function(){
+  "use strict";
+  /* No randomness: the three balls are the deck figure's points (figures/rotation.tex), in its units, as in steering-encoding.html. */
+  var BALLS = [
+    {name:"blue, left",   z:[-13,-7], fill:"var(--ball-blue)", anchor:"end",   dx:-11, dy:4},
+    {name:"grey, centre", z:[0,0],    fill:"var(--ball-grey)", anchor:"start", dx:9,  dy:17},
+    {name:"pink, right",  z:[13,7],   fill:"var(--ball-pink)", anchor:"start", dx:11, dy:4}
+  ];
+  var DEG = Math.PI/180, C = [200,150], S = 8, AX = 95;
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("plane");
+  function el(tag, attrs, txt){ var e=document.createElementNS(ns,tag); for(var k in attrs) e.setAttribute(k,attrs[k]); if(txt) e.textContent=txt; svg.appendChild(e); return e; }
+  function px(v){ return [C[0]+S*v[0], C[1]-S*v[1]]; }
+
+  /* arrowhead marker */
+  var defs = document.createElementNS(ns,"defs");
+  defs.innerHTML = '<marker id="hd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"/></marker>';
+  svg.appendChild(defs);
+
+  /* true axes: fixed, faint */
+  el("line",{x1:30,y1:C[1],x2:370,y2:C[1],stroke:"var(--muted)","stroke-width":1.2,opacity:.55});
+  el("line",{x1:C[0],y1:12,x2:C[0],y2:288,stroke:"var(--muted)","stroke-width":1.2,opacity:.55});
+  var fixed = [];   /* marks the learned-axis labels keep clear of */
+  fixed.push(el("text",{x:370,y:C[1]+16,"text-anchor":"end","font-size":11,fill:"var(--ink-soft)"},"position"));
+  fixed.push(el("text",{x:C[0]+6,y:22,"text-anchor":"start","font-size":11,fill:"var(--ink-soft)"},"colour"));
+
+  /* learned axes: turn with the slider */
+  var ax1 = el("line",{x1:C[0],y1:C[1],stroke:"var(--ink)","stroke-width":1.8,"marker-end":"url(#hd)"});
+  var ax2 = el("line",{x1:C[0],y1:C[1],stroke:"var(--ink)","stroke-width":1.8,"marker-end":"url(#hd)"});
+  function lab(){ return el("text",{"font-size":11.5,"font-weight":600,fill:"var(--ink)","paint-order":"stroke",stroke:"var(--card)","stroke-width":3}); }
+  var lab1 = lab(), lab2 = lab();
+  lab1.textContent = "learned axis 1"; lab2.textContent = "learned axis 2";
+
+  /* the balls: never move */
+  BALLS.forEach(function(b){
+    var p = px(b.z);
+    fixed.push(el("circle",{cx:p[0],cy:p[1],r:7,fill:b.fill,stroke:"var(--ink)","stroke-width":1}));
+    fixed.push(el("text",{x:p[0]+b.dx,y:p[1]+b.dy,"text-anchor":b.anchor,"font-size":11.5,fill:"var(--ink-soft)","paint-order":"stroke",stroke:"var(--card)","stroke-width":3},b.name));
+  });
+
+  /* Label placement: try candidate spots in order and keep the first whose box touches no other
+     mark (or, failing that, the one that overlaps least); same rule as on steering-encoding.html. */
+  function box(e){ var b = e.getBBox(); return {x:b.x-2, y:b.y-2, w:b.width+4, h:b.height+4}; }
+  function placeText(t, cands, rects, segs){
+    var best = cands[0], bestS = Infinity;
+    for (var i=0; i<cands.length; i++){
+      var c = cands[i];
+      t.setAttribute("x",c[0]); t.setAttribute("y",c[1]); t.setAttribute("text-anchor",c[2]);
+      var r = box(t), s = 0;
+      rects.forEach(function(o){
+        var ox = Math.max(0, Math.min(r.x+r.w, o.x+o.w) - Math.max(r.x, o.x));
+        var oy = Math.max(0, Math.min(r.y+r.h, o.y+o.h) - Math.max(r.y, o.y));
+        s += ox*oy;
+      });
+      segs.forEach(function(g){
+        for (var k=0; k<=40; k++){
+          var qx = g[0]+(g[2]-g[0])*k/40, qy = g[1]+(g[3]-g[1])*k/40;
+          if (qx>r.x && qx<r.x+r.w && qy>r.y && qy<r.y+r.h){ s += 200; break; }
+        }
+      });
+      if (r.x<2 || r.y<2 || r.x+r.w>398 || r.y+r.h>298) s += 1e4;
+      if (s<bestS){ bestS = s; best = c; }
+      if (s===0) break;
+    }
+    t.setAttribute("x",best[0]); t.setAttribute("y",best[1]); t.setAttribute("text-anchor",best[2]);
+  }
+  function tipOf(ang){ var u=[Math.cos(ang*DEG), Math.sin(ang*DEG)]; return {u:u, x:C[0]+AX*u[0], y:C[1]-AX*u[1]}; }
+  function axisCands(tp){
+    var ux = tp.u[0], uy = tp.u[1], tx = tp.x, ty = tp.y;
+    var a = ux>0.35 ? "start" : (ux<-0.35 ? "end" : "middle");
+    function side(nx){ return nx>0.3 ? "start" : (nx<-0.3 ? "end" : "middle"); }
+    var c = [[tx+10*ux, ty-10*uy+4+(a==="middle" ? (uy>0 ? -5 : 10) : 0), a]];
+    [10, 22, 34].forEach(function(d){ c.push([tx+6, ty-d, "start"], [tx-6, ty-d, "end"], [tx+6, ty+d+6, "start"], [tx-6, ty+d+6, "end"]); });
+    [0.6, 0.35].forEach(function(f){ [13, 26].forEach(function(d){
+      var mx = C[0]+f*(tx-C[0]), my = C[1]+f*(ty-C[1]);
+      c.push([mx+d*uy, my+d*ux+4, side(uy)], [mx-d*uy, my-d*ux+4, side(-uy)]);
+    }); });
+    return c;
+  }
+
+  function fmt(v, d){ var f = Math.pow(10,d), r = Math.round(v*f)/f; if (Math.abs(r) < 0.5/f) r = 0; return (r<0?"−":"")+Math.abs(r).toFixed(d); }
+
+  var slider = document.getElementById("theta"), out = document.getElementById("theta-out");
+  var rows = document.getElementById("rows");
+  var cells = BALLS.map(function(b){
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td><span class=sw style='background:"+b.fill+"'></span>"+b.name+"</td><td></td><td></td><td></td><td></td>";
+    rows.appendChild(tr);
+    return tr.querySelectorAll("td");
+  });
+  /* the largest loss the slider can reach (head left as is, axes turned 180 degrees) sets the bar scale */
+  var MEAN_SQ = BALLS.reduce(function(a,b){ return a + b.z[0]*b.z[0] + b.z[1]*b.z[1]; }, 0)/BALLS.length;
+  var LMAX = 4*MEAN_SQ;
+
+  function update(){
+    var t = +slider.value, c = Math.cos(t*DEG), s = Math.sin(t*DEG);
+    out.textContent = t + "°";
+    var t1 = tipOf(t), t2 = tipOf(t+90);
+    ax1.setAttribute("x2",t1.x); ax1.setAttribute("y2",t1.y);
+    ax2.setAttribute("x2",t2.x); ax2.setAttribute("y2",t2.y);
+    var rects = fixed.map(box);
+    var segs = [[30,C[1],370,C[1]], [C[0],12,C[0],288], [C[0],C[1],t1.x,t1.y], [C[0],C[1],t2.x,t2.y]];
+    placeText(lab1, axisCands(t1), rects, segs);
+    placeText(lab2, axisCands(t2), rects.concat([box(lab1)]), segs);
+    var back = 0, fix = 0;
+    BALLS.forEach(function(b, i){
+      var h = b.z;                                   /* where the encoder puts this picture */
+      var e1 = c*h[0]+s*h[1], e2 = -s*h[0]+c*h[1];   /* readings along the learned axes */
+      var p = c*e1-s*e2, q = s*e1+c*e2;              /* head that turns back by the same angle */
+      back += (p-b.z[0])*(p-b.z[0]) + (q-b.z[1])*(q-b.z[1]);
+      fix  += (e1-b.z[0])*(e1-b.z[0]) + (e2-b.z[1])*(e2-b.z[1]);   /* head left as is: reads e1, e2 as position, colour */
+      cells[i][1].textContent = fmt(e1,1); cells[i][2].textContent = fmt(e2,1);
+      cells[i][3].textContent = fmt(p,1);  cells[i][4].textContent = fmt(q,1);
+    });
+    back /= BALLS.length; fix /= BALLS.length;
+    document.getElementById("v-back").textContent = fmt(back,1);
+    document.getElementById("v-fix").textContent = fmt(fix,1);
+    document.getElementById("bf-back").style.width = (100*back/LMAX)+"%";
+    document.getElementById("bf-fix").style.width = (100*fix/LMAX)+"%";
+  }
+  slider.addEventListener("input", update);
+  matchMedia("(max-width:560px)").addEventListener("change", update);   /* label sizes change there */
+  update();
+})();
+</script>
+</body>
+</html>
