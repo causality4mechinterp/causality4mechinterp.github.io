@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Three Rungs, Three Worked Examples — Causal Foundations for Interpretability</title>
+<title>Pearl's ladder sorts questions into rungs — Causal Foundations for Interpretability</title>
 <style>
 :root{
   --paper:#FBFAFD; --panel:#F5F4F9; --hero:#EDE8F7; --card:#FFFFFF;
@@ -51,141 +51,57 @@ header h1{color:var(--purple);font-size:1.7rem;margin:.35rem 0 .3rem}
 a{color:var(--purple)}
 sup{font-size:.68em}
 
-/* ---- stage ---- */
-.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
-.rungs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;align-items:end;margin-bottom:1rem}
-.rung-btn{display:flex;flex-direction:column;gap:.15rem;text-align:left;cursor:pointer;
-  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem;
-  color:var(--ink);font:inherit}
-.rung-btn:nth-child(1){margin-top:2.2rem}
-.rung-btn:nth-child(2){margin-top:1.1rem}
-.rung-btn[aria-pressed="true"]{border-color:var(--purple-mid);background:var(--hero);
-  box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.rung-btn:focus-visible,.btn:focus-visible,.switch input:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
-.rung-tag{font-weight:700;font-size:.8rem;letter-spacing:.06em}
-.rung-tag.t1{color:var(--l1)}.rung-tag.t2{color:var(--l2)}.rung-tag.t3{color:var(--l3)}
-.rung-name{font-weight:600;font-size:.95rem}
-.rung-q{font-size:.78rem;color:var(--ink-mute)}
 [hidden]{display:none!important}
-
-.diagq{background:var(--hero);border-left:4px solid var(--purple-mid);border-radius:8px;
-  padding:.55rem .8rem;margin-bottom:.9rem}
-.diagq .kicker{display:block;margin-bottom:.1rem}
-.diagq strong{font-size:1rem}
-
-.scene{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.9rem;margin-bottom:.9rem}
-.scene h3{margin:0 0 .55rem;font-size:.98rem;color:var(--ink)}
-.scenenote{font-size:.75rem;color:var(--ink-mute);margin:.55rem 0 0}
-.flow{display:flex;flex-wrap:wrap;gap:.45rem;align-items:flex-start;margin:.4rem 0}
-.arr{color:var(--ink-mute);line-height:2rem}
-.chip{display:inline-block;border:1px solid var(--line);
-  background:var(--paper);border-radius:8px;padding:.3rem .55rem;font-size:.84rem;color:var(--ink)}
-.chip.prompt{font-style:italic;max-width:22ch}
-.chip.dim{color:var(--ink-mute);border-style:dashed}
-.chip.hl1{border-color:var(--l1);box-shadow:inset 0 -3px 0 var(--l1)}
-.chip.hl2{border-color:var(--l2);box-shadow:inset 0 -3px 0 var(--l2)}
-.chip.hl3{border-color:var(--l3);box-shadow:inset 0 -3px 0 var(--l3)}
-.chip.swapped{background:color-mix(in srgb,var(--l2) 16%,transparent);border-color:var(--l2)}
-.chip.cf{background:color-mix(in srgb,var(--l3) 14%,transparent);border-color:var(--l3)}
-.chip.out{font-weight:600}
-.rowlabel{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);
-  min-width:4.2rem;line-height:2rem}
-.probe-anchor{display:flex;flex-direction:column;align-items:center}
-.probe-wire{width:0;height:.9rem;border-left:2px dashed var(--purple-mid)}
-.probe{border:1.5px dashed var(--purple-mid);border-radius:8px;padding:.3rem .55rem;
-  font-size:.8rem;color:var(--ink-soft);background:var(--panel);text-align:center}
-.readout{display:inline-block;margin-top:.5rem;font-size:.9rem;color:var(--ink-soft)}
-.readout b{color:var(--ink);font-variant-numeric:tabular-nums}
-.btn{cursor:pointer;font:inherit;font-size:.88rem;border-radius:8px;padding:.42rem .85rem;
-  border:1px solid var(--line);background:var(--card);color:var(--ink)}
-.btn.primary{background:var(--purple);border-color:var(--purple);color:var(--paper);font-weight:600}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:1.4rem 0}
+.rungs{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:.9rem}
+.rung-btn{display:flex;flex-direction:column;gap:.15rem;text-align:left;cursor:pointer;font:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem;color:var(--ink)}
+.rung-btn[aria-pressed="true"]{border-color:var(--purple-mid);background:var(--hero)}
+.rung-btn:focus-visible,.btn:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.rung-tag{font-weight:700;font-size:.8rem;letter-spacing:.06em}
+.t1{color:var(--l1)}.t2{color:var(--l2)}.t3{color:var(--l3)}
+.rung-q{font-size:.82rem;color:var(--ink-soft)}
+.scene{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.9rem}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);font-weight:600;text-align:left;padding:.2rem .5rem}
+td{padding:.28rem .5rem;border-top:1px solid var(--line)}
+tr.focus td{background:var(--hero);font-weight:600}
+.abar{display:inline-block;vertical-align:middle;width:min(120px,20vw);height:9px;border-radius:999px;background:var(--purple-faint);margin-right:.45rem}
+.afill{display:block;height:100%;border-radius:999px;background:var(--purple-mid);transition:width .3s}
+.setv{border:1.5px solid var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink);border-radius:7px;padding:0 .3rem}
+.tens{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.old{color:var(--ink-mute);text-decoration:line-through;margin-right:.35rem;font-weight:400}
+.src{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;text-align:center}
+.col{display:flex;flex-direction:column-reverse;align-items:center;gap:.35rem;transition:opacity .3s}
+.col.dim{opacity:.35}
+.cell{min-width:6.5rem;border:1.5px solid var(--ink-soft);border-radius:7px;padding:.25rem .5rem;font-variant-numeric:tabular-nums}
+.cell.setv{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.arrow{color:var(--ink-mute);line-height:1}
+.colhead{font-weight:600}
+.capt{font-size:.82rem;color:var(--ink-soft)}
+.btn{cursor:pointer;font:inherit;font-size:.9rem;border-radius:8px;padding:.45rem .9rem;margin-top:.8rem;
+  background:var(--purple);border:1px solid var(--purple);color:var(--paper);font-weight:600}
 .btn:disabled{opacity:.45;cursor:default}
-.controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.7rem}
-.hint{font-size:.83rem;color:var(--ink-soft);margin:.55rem 0 0}
-.hint.on{color:var(--ink)}
-.starter{margin:0 0 .9rem;font-size:.88rem;color:var(--ink-soft);max-width:78ch}
-.starter b{color:var(--purple)}
-.scenenote.top{margin:0 0 .55rem}
-.sliderrow{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-top:.75rem}
-.sliderrow label{font-size:.84rem;color:var(--ink-soft)}
-.sliderrow input[type=range]{accent-color:var(--l2);width:min(230px,56vw)}
-.sliderrow input[type=range]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
-.alpha-read{font-size:.86rem;color:var(--ink);font-variant-numeric:tabular-nums}
-.lbar-row{display:flex;align-items:center;gap:.55rem;margin-top:.65rem;max-width:460px}
-.lbar-name{font-size:.82rem;color:var(--ink-soft);font-weight:600;white-space:nowrap}
-.lbar{position:relative;flex:1;height:10px;border-radius:999px;background:var(--purple-faint);border:1px solid var(--line)}
-.lbar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--l2);border-radius:999px;width:0%;transition:width .15s}
-.lbar-mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--ink-mute);opacity:.6}
-.lbar-cap{display:block;font-size:.72rem;color:var(--ink-mute);margin-top:.3rem}
-
-/* verdicts */
-.verdicts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;transition:opacity .35s}
-.verdicts.waiting{opacity:.45}
-.vcard{border-radius:10px;padding:.7rem .8rem;background:var(--card);border:1px solid var(--line);font-size:.87rem}
-.vcard.lic{border-left:4px solid var(--gap-green)}
-.vcard.nolic{border-left:4px solid var(--magenta)}
-.vhead{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:.25rem}
-.vcard.lic .vhead{color:var(--gap-green)}
-.vcard.nolic .vhead{color:var(--magenta)}
-.vcard p{margin:.25rem 0}
-.vcard .why{color:var(--ink-soft);font-size:.8rem}
-
-/* L3 stepper */
-.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin:.6rem 0 .8rem}
-.step{border:1px solid var(--line);border-radius:10px;padding:.55rem .65rem;background:var(--paper);font-size:.82rem}
-.step .snum{display:inline-block;font-weight:700;font-size:.75rem;color:var(--ink-mute);margin-right:.3rem}
-.step .sname{font-weight:600;font-size:.9rem}
-.step .sdesc{color:var(--ink-soft);margin:.2rem 0 0}
-.step.current{border-color:var(--l3);box-shadow:inset 0 3px 0 var(--l3)}
-.step.done{border-color:var(--gap-green)}
-.step.done .snum::after{content:" ✓";color:var(--gap-green)}
-.ubadge{display:inline-flex;align-items:center;gap:.35rem;border:1.5px dashed var(--purple-mid);
-  border-radius:999px;padding:.22rem .7rem;font-size:.8rem;color:var(--ink-soft);margin:.2rem 0 .5rem}
-.ubadge b{color:var(--purple)}
-.segrow{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:.7rem 0 .45rem}
-.seglabel{font-size:.84rem;color:var(--ink-soft);margin-right:.15rem}
-.seg{cursor:pointer;font:inherit;font-size:.84rem;border-radius:999px;padding:.3rem .8rem;
-  border:1px solid var(--line);background:var(--paper);color:var(--ink-soft)}
-.seg[aria-pressed="true"]{border-color:var(--l3);background:color-mix(in srgb,var(--l3) 12%,transparent);color:var(--ink);font-weight:600}
-.seg:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
-.dists{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.7rem}
-.dist{border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem;background:var(--paper)}
-.dhead{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
-.dhead.t3{color:var(--l3)}.dhead.t2{color:var(--l2)}
-.dsub{display:block;font-size:.76rem;color:var(--ink-mute);margin:.1rem 0 .4rem}
-.brow{display:grid;grid-template-columns:4.2rem 1fr 2.8rem;align-items:center;gap:.45rem;font-size:.82rem;margin:.18rem 0}
-.brow .tok{color:var(--ink)}
-.brow .pct{color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
-.btrack{height:9px;border-radius:999px;background:var(--purple-faint)}
-.bfill{height:100%;border-radius:999px}
-.dist:first-child .bfill{background:var(--l3)}
-.dist:last-child .bfill{background:var(--l2)}
-.next{margin-top:.9rem;background:var(--hero);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:.55rem .8rem;font-size:.88rem}
-.next b{color:var(--purple)}
-.patch-callout{border:1px solid var(--l3);border-radius:10px;background:color-mix(in srgb,var(--l3) 8%,transparent);
-  padding:.6rem .8rem;font-size:.85rem;margin-top:.7rem}
-.patch-callout b{color:var(--l3)}
-.status{font-size:.85rem;color:var(--ink-soft);min-height:1.3em;margin-top:.55rem}
-
-/* prose sections */
-section.prose{margin:1.6rem 0;max-width:70ch}
-section.prose h2{font-size:1.15rem;color:var(--purple);margin-bottom:.4rem}
-.paperbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin:1.6rem 0}
-.paperbox h2{font-size:1.15rem;color:var(--purple);margin:.1rem 0 .4rem}
-.paperbox blockquote{margin:.6rem 0;padding-left:.9rem;border-left:3px solid var(--purple-soft);
-  color:var(--ink-soft);font-style:italic;max-width:70ch}
-.paperbox cite{display:block;font-style:normal;font-size:.78rem;color:var(--ink-mute);margin-top:.2rem}
-.try ol{padding-left:1.2rem;max-width:70ch}
-.try li{margin-bottom:.5rem}
-footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
+.verdicts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.9rem;transition:opacity .3s}
+.verdicts.waiting{opacity:.35}
+.verdicts.waiting .vcard span:not(.vhead){visibility:hidden}
+.vcard{border-radius:10px;padding:.6rem .8rem;background:var(--card);border:1px solid var(--line);font-size:.88rem}
+.vcard.sup{border-left:4px solid var(--gap-green)}
+.vcard.nosup{border-left:4px solid var(--ink-mute)}
+.vhead{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink-mute)}
+.vcard.sup .vhead{color:var(--gap-green)}
+section.prose{margin:1.4rem 0;max-width:70ch}
+footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
 @media (max-width:720px){
-  .rungs{grid-template-columns:1fr;align-items:stretch}
-  .rung-btn:nth-child(1),.rung-btn:nth-child(2){margin-top:0}
-  .verdicts,.steps,.dists{grid-template-columns:1fr}
+  .wrap{padding-left:1rem;padding-right:1rem}
+  .rungs,.verdicts,.cols{grid-template-columns:1fr}
+  th,td{padding:.25rem .25rem;font-size:.84rem}
+  td{white-space:nowrap}
+  .abar{width:10vw;margin-right:.3rem}
 }
-@media (prefers-reduced-motion: reduce){
-  *{transition:none!important;animation:none!important}
-}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -193,231 +109,76 @@ footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font
 <header>
   <a class="back" href="./index.html">&larr; All demos</a>
   <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
-  <h1>Three Rungs, Three Worked Examples</h1>
-  <p class="dek">A sentiment probe, an activation patch, and a counterfactual about one forward pass: three diagnostic questions locate each piece of evidence on Pearl&rsquo;s causal ladder, show what it supports, and name what it would take to climb a rung.</p>
+  <h1>Pearl's ladder sorts questions into rungs</h1>
+  <p class="dek">Counterfactual: what this one input would have produced had <i>a</i> been different.</p>
 </header>
 
 <div class="stage">
-  <p class="starter"><b>Do this first:</b> pick a rung below&mdash;the three cards are clickable tabs&mdash;then run its experiment: the dimmed verdict cards unlock when you do. Each rung is one level of causal evidence: rung 1 observes correlations, rung 2 intervenes (Pearl&rsquo;s do-operator: externally set a variable), rung 3 asks what <em>would have</em> happened in one observed case. The paper writes the rungs as L1, L2 and L3.</p>
-  <nav class="rungs" aria-label="Choose a rung of the causal ladder">
+  <div class="rungs" role="group" aria-label="Choose a rung of the causal ladder">
     <button class="rung-btn" data-rung="1" aria-pressed="true">
       <span class="rung-tag t1">RUNG 1 &middot; ASSOCIATION</span>
-      <span class="rung-name">Sentiment probe</span>
-      <span class="rung-q">Does A correlate with B?</span>
+      <span class="rung-q">watching: does <i>y</i> go with <i>a</i> across inputs?</span>
     </button>
     <button class="rung-btn" data-rung="2" aria-pressed="false">
       <span class="rung-tag t2">RUNG 2 &middot; INTERVENTION</span>
-      <span class="rung-name">IOI activation patching</span>
-      <span class="rung-q">Does changing A change B?</span>
+      <span class="rung-q">setting: does <i>y</i> change when we set <i>a</i>, over many inputs?</span>
     </button>
     <button class="rung-btn" data-rung="3" aria-pressed="false">
       <span class="rung-tag t3">RUNG 3 &middot; COUNTERFACTUAL</span>
-      <span class="rung-name">Eiffel Tower &rarr; Colosseum</span>
-      <span class="rung-q">For this input, would changing A have changed B?</span>
+      <span class="rung-q">what this one input would have produced had <i>a</i> been different</span>
     </button>
-  </nav>
+  </div>
+  <p class="sr-only" id="status" role="status" aria-live="polite"></p>
 
-  <!-- ================= L1 ================= -->
-  <div class="rpanel" id="panel-1" role="region" aria-label="Rung 1, association: linear probing for sentiment">
-    <div class="diagq">
-      <span class="kicker">Diagnostic question &middot; Rung 1</span>
-      <strong>Is the system manipulated, or only observed?</strong>
-    </div>
-    <div class="scene">
-      <h3>Linear probing for sentiment</h3>
-      <div class="flow" aria-hidden="true">
-        <span class="rowlabel">Forward pass</span>
-        <span class="chip prompt">sentiment-labeled text</span><span class="arr">&rarr;</span>
-        <span class="chip">a<sup>(1)</sup></span><span class="arr">&rarr;</span>
-        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
-        <div class="probe-anchor">
-          <span class="chip hl1">a<sup>(12)</sup></span>
-          <div class="probe-wire"></div>
-          <div class="probe">external probe<br>&#375; = &sigma;(w<sup>&#8868;</sup>a<sup>(12)</sup> + b)</div>
-        </div>
-        <span class="arr">&rarr;</span>
-        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
-        <span class="chip out">y</span>
-      </div>
-      <div class="controls">
-        <button class="btn primary" id="fit-probe" title="Train the external classifier on recorded layer-12 activations; the model itself is never modified">Fit the probe on layer-12 activations</button>
-        <button class="btn" id="reset-probe" disabled>Reset</button>
-        <span class="readout" id="probe-readout">held-out accuracy: <b>&mdash;</b></span>
-        <span class="readout" title="The probe only reads recorded activations; nothing in the model is ever set or changed">interventions on the model: <b>0</b></span>
-      </div>
-      <p class="hint" id="l1-hint" aria-live="polite">The probe reads activations from outside; the model&rsquo;s own computation is untouched.</p>
-      <p class="scenenote">Tutorial illustration of the paper&rsquo;s worked example (the 92% figure is the paper&rsquo;s); not a paper experiment.</p>
-    </div>
-    <div class="verdicts waiting" id="verdicts-1">
-      <div class="vcard lic">
-        <span class="vhead">&#10003; What rung 1 supports</span>
-        <p>&ldquo;Sentiment is linearly decodable from layer 12.&rdquo;</p>
-      </div>
-      <div class="vcard nolic">
-        <span class="vhead">&#10007; What rung 1 does not support</span>
-        <p>&ldquo;The model represents sentiment at layer 12&rdquo; or &ldquo;Layer 12 computes sentiment.&rdquo;</p>
-        <p class="why">Decodability &ne; encoding; the information may be present but unused by the model&rsquo;s own computation.</p>
-      </div>
-    </div>
-    <p class="next"><b>To move this claim up a rung, you need:</b> to set the variable instead of watching it. Write a value into layer 12 and see whether the model&rsquo;s output changes.</p>
+  <div class="scene" id="sceneTable">
+    <table>
+      <thead><tr><th>sum</th><th>carries?</th><th><i>a</i> at layer &#8467;</th><th>answer <i>y</i></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="src" id="srcLine" hidden><i>&atilde;</i> is the value of <i>a</i> on 30 + 47, a sum that does not carry: <b id="srcVal"></b></p>
   </div>
 
-  <!-- ================= L2 ================= -->
-  <div class="rpanel" id="panel-2" role="region" aria-label="Rung 2, intervention: activation patching for indirect object identification" hidden>
-    <div class="diagq">
-      <span class="kicker">Diagnostic question &middot; Rung 2</span>
-      <strong>Is the manipulation externally controlled?</strong>
-    </div>
-    <div class="scene">
-      <h3>Activation patching for indirect object identification (IOI)</h3>
-      <p class="scenenote top">Notation: head 9.6 = layer 9, attention head 6; a<sup>(9.6)</sup><sub>A</sub> is its activation on run A. Run B is the same prompt with the names swapped (the &ldquo;corrupted&rdquo; prompt).</p>
-      <div class="flow">
-        <span class="rowlabel">Run A</span>
-        <span class="chip prompt">&ldquo;Mary gave a book to John. Mary gave a pencil to&hellip;&rdquo;</span><span class="arr">&rarr;</span>
-        <span class="chip hl2" id="headA" title="layer 9, attention head 6">head 9.6: a<sup>(9.6)</sup><sub>A</sub></span><span class="arr">&rarr;</span>
-        <span class="chip dim" title="untested">other heads (untested)</span><span class="arr">&rarr;</span>
-        <span class="chip out" id="outA">&ldquo;John&rdquo;</span>
+  <div class="scene" id="sceneCf" hidden>
+    <div class="cols">
+      <div class="col" id="c1">
+        <span class="capt">nothing to infer</span>
+        <span class="cell">17 + 25</span><span class="arrow" aria-hidden="true">&uarr;</span>
+        <span class="cell"><i>a</i> = <span id="aObs"></span></span><span class="arrow" aria-hidden="true">&uarr;</span>
+        <span class="cell">42</span>
+        <span class="colhead">abduction</span>
       </div>
-      <div class="flow">
-        <span class="rowlabel">Run B</span>
-        <span class="chip prompt">&ldquo;John gave a book to Mary. John gave a pencil to&hellip;&rdquo;</span><span class="arr">&rarr;</span>
-        <span class="chip swapped">head 9.6: a<sup>(9.6)</sup><sub>B</sub> recorded</span>
+      <div class="col dim" id="c2">
+        <span class="capt">set <i>a</i> := <i>&atilde;</i></span>
+        <span class="cell">17 + 25</span><span class="arrow" aria-hidden="true">&uarr;</span>
+        <span class="cell setv"><i>&atilde;</i> = <span class="tval"></span></span><span class="arrow" aria-hidden="true">&uarr;</span>
+        <span class="cell">?</span>
+        <span class="colhead">action</span>
       </div>
-      <div class="controls">
-        <button class="btn primary" id="do-patch" title="Write run B&rsquo;s activation into run A at this head (sets the patch fraction to 1)">Patch: a<sup>(9.6)</sup><sub>A</sub> &larr; a<sup>(9.6)</sup><sub>B</sub></button>
-        <button class="btn" id="reset-patch" disabled>Reset</button>
-      </div>
-      <div class="sliderrow">
-        <label for="alpha">Patch fraction &alpha;: a<sup>(9.6)</sup> &larr; (1&minus;&alpha;)&middot;a<sub>A</sub> + &alpha;&middot;a<sub>B</sub></label>
-        <input type="range" id="alpha" min="0" max="1" step="0.05" value="0" aria-describedby="alpha-copy">
-        <span class="alpha-read" id="alpha-read">&alpha; = 0.00</span>
-      </div>
-      <p class="scenenote" id="alpha-copy" style="margin-top:.25rem">Drag to set how much of run B&rsquo;s activation is patched into head 9.6: the effect on the output is graded, not all-or-nothing.</p>
-      <div class="lbar-row" aria-hidden="true">
-        <span class="lbar-name">&ldquo;John&rdquo;</span>
-        <div class="lbar"><div class="lbar-fill" id="lbar-fill"></div><div class="lbar-mid"></div></div>
-        <span class="lbar-name">&ldquo;Mary&rdquo;</span>
-      </div>
-      <span class="lbar-cap" aria-hidden="true">schematic logit difference (unnumbered); the midline flip point is illustrative</span>
-      <p class="hint" id="l2-hint" aria-live="polite">The experimenter sets the value at head 9.6; the rest of the computation runs unchanged.</p>
-      <p class="scenenote">Tutorial illustration of the paper&rsquo;s worked example; only head 9.6 is tested&mdash;other paths remain unexplored in this experiment. The graded bar and its &alpha; = 0.5 flip point are schematic, not measured.</p>
-    </div>
-    <div class="verdicts waiting" id="verdicts-2">
-      <div class="vcard lic">
-        <span class="vhead">&#10003; What rung 2 supports</span>
-        <p>&ldquo;Intervening on head 9.6 changes IOI behavior under these tested conditions.&rdquo;</p>
-      </div>
-      <div class="vcard nolic">
-        <span class="vhead">&#10007; What rung 2 does not support</span>
-        <p>&ldquo;Head 9.6 is the IOI mechanism&rdquo; (sufficiency &ne; necessity; other paths may exist) or &ldquo;This finding will hold on all IOI-like prompts&rdquo; (requires transportability testing).</p>
-        <p class="why">Transportability: whether a causal finding established on one prompt distribution carries over to another.</p>
+      <div class="col dim" id="c3">
+        <span class="capt">rerun</span>
+        <span class="cell">17 + 25</span><span class="arrow" aria-hidden="true">&uarr;</span>
+        <span class="cell setv"><i>&atilde;</i> = <span class="tval"></span></span><span class="arrow" aria-hidden="true">&uarr;</span>
+        <span class="cell setv" id="cfOut">?</span>
+        <span class="colhead">prediction</span>
       </div>
     </div>
-    <p class="next"><b>To move this claim up a rung, you need:</b> for a claim about activations on one prompt, nothing more. With the input given and greedy decoding, the patched rerun of prompt A <em>is</em> the counterfactual for prompt A (under sampling, keep the recorded seed). For a claim about a concept, such as &ldquo;head 9.6 moves the name,&rdquo; you need evidence that the head&rsquo;s activation is that concept: an aligned, identified variable.</p>
   </div>
 
-  <!-- ================= L3 ================= -->
-  <div class="rpanel" id="panel-3" role="region" aria-label="Rung 3, counterfactual: the Eiffel Tower example with the abduction, action, prediction recipe" hidden>
-    <div class="diagq">
-      <span class="kicker">Diagnostic question &middot; Rung 3</span>
-      <strong>Is the query anchored to a specific observation?</strong>
-    </div>
-    <div class="scene">
-      <h3>The Eiffel Tower counterfactual: abduction &rarr; action &rarr; prediction</h3>
-      <p class="hint">Observed run: &ldquo;The Eiffel Tower is in&rdquo; &rarr; &ldquo;Paris.&rdquo; The question is about <em>this</em> run: what would the model have output had a<sup>(5)</sup> taken the value it takes on &ldquo;The Colosseum is in&rdquo;? Pearl&rsquo;s (2009) recipe answers it in three steps: abduction (infer whatever the observation leaves unknown), action (set a<sup>(5)</sup>), prediction (rerun with what step (i) found held fixed).</p>
-      <div class="segrow" role="group" aria-label="Decoding mode">
-        <span class="seglabel">Decoding:</span>
-        <button class="seg" data-mode="greedy" aria-pressed="true">greedy</button>
-        <button class="seg" data-mode="rec" aria-pressed="false">sampling &middot; seed recorded</button>
-        <button class="seg" data-mode="lost" aria-pressed="false">sampling &middot; seed lost</button>
-      </div>
-      <p class="scenenote top" id="mode-note">Greedy decoding takes the top token. Sampling adds random noise to the logits and then takes the top token (the Gumbel-max trick, which draws from the softmax); the seed fixes the noise.</p>
-      <div class="steps" id="l3-steps">
-        <div class="step" id="step-abd">
-          <span class="snum">(i)</span><span class="sname">Abduction</span>
-          <p class="sdesc" id="desc-abd"></p>
-        </div>
-        <div class="step" id="step-act">
-          <span class="snum">(ii)</span><span class="sname">Action</span>
-          <p class="sdesc">Set a<sup>(5)</sup> &larr; a&prime;<sup>(5)</sup>, the activation recorded on the Colosseum prompt.</p>
-        </div>
-        <div class="step" id="step-pred">
-          <span class="snum">(iii)</span><span class="sname">Prediction</span>
-          <p class="sdesc" id="desc-pred"></p>
-        </div>
-      </div>
-      <div class="ubadge" id="ubadge" title="U = whatever the observed run leaves unknown: here, at most the sampling noise"><b>U</b> unknown given the input: <span id="ustate"></span></div>
-      <div class="flow">
-        <span class="rowlabel">This run</span>
-        <span class="chip prompt">&ldquo;The Eiffel Tower is in&rdquo;</span><span class="arr">&rarr;</span>
-        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
-        <span class="chip" id="layer5">a<sup>(5)</sup></span><span class="arr">&rarr;</span>
-        <span class="chip dim">&hellip;</span><span class="arr">&rarr;</span>
-        <span class="chip out" id="l3-out">&ldquo;Paris&rdquo;</span>
-      </div>
-      <div class="controls">
-        <button class="btn primary" id="l3-next">Perform step (i): abduction</button>
-        <button class="btn" id="l3-back" disabled>Back</button>
-        <button class="btn" id="l3-reset">Reset</button>
-      </div>
-      <p class="status" id="l3-status" aria-live="polite"></p>
-      <div class="patch-callout" id="patch-callout" hidden></div>
-      <div class="dists" id="dists" hidden>
-        <div class="dist">
-          <span class="dhead t3">Rung 3 &middot; counterfactual for this run</span>
-          <span class="dsub" id="dsub-cf"></span>
-          <div id="bars-cf"></div>
-        </div>
-        <div class="dist">
-          <span class="dhead t2">Rung 2 &middot; patched rerun, fresh seed</span>
-          <span class="dsub" id="dsub-iv"></span>
-          <div id="bars-iv"></div>
-        </div>
-      </div>
-      <p class="scenenote">Tutorial illustration of the paper&rsquo;s worked example; the sampling toy uses five made-up logits per run and 2,000 seeded noise draws, computed on load. Not a paper experiment and not a real model.</p>
-    </div>
-    <div class="verdicts waiting" id="verdicts-3">
-      <div class="vcard lic" id="l3-lic">
-        <span class="vhead">&#10003; What rung 3 supports</span>
-        <p class="claim" id="l3-claim">&ldquo;For this specific forward pass, had a<sup>(5)</sup> taken the Colosseum value, the model would have output &lsquo;Rome.&rsquo;&rdquo;</p>
-      </div>
-      <div class="vcard nolic">
-        <span class="vhead">&#10007; What rung 3 does not support</span>
-        <p>Generalisations to other inputs (requires separate analysis or transportability assumptions) or mechanism-level claims like &ldquo;layer 5 encodes location.&rdquo;</p>
-        <p class="why">A claim about a concept, such as &ldquo;the model stores the location fact here,&rdquo; needs a<sup>(5)</sup> to <em>be</em> that concept, and the rerun cannot verify that: it tells you what this run would have output, not what a<sup>(5)</sup> stands for.</p>
-      </div>
-    </div>
-    <p class="next"><b>To move the location claim onto this rung, you need:</b> about a<sup>(5)</sup>, nothing more under greedy decoding, and the recorded seed under sampling for a one-token answer; about the location fact, evidence that a<sup>(5)</sup> is that concept (an aligned, identified variable), which no rerun on this prompt supplies.</p>
+  <button class="btn" id="act" hidden></button>
+
+  <div class="verdicts" id="verdicts">
+    <div class="vcard sup"><span class="vhead">Supports</span><span id="vSup"></span></div>
+    <div class="vcard nosup"><span class="vhead">Does not support</span><span id="vNo"></span></div>
   </div>
 </div>
 
 <section class="prose">
-  <h2>What this shows</h2>
-  <p>Each rung of Pearl&rsquo;s causal ladder answers a different question, and the hierarchy is cumulative upward: associational evidence does not support interventional claims (Pearl, 2009; Bareinboim et al., 2022). The three scenes re-create the paper&rsquo;s worked examples. The probe establishes that sentiment is decodable by an external classifier&mdash;the model is only observed, so the evidence stays on rung 1 no matter how causal the surrounding language sounds. The patch establishes that head 9.6 causally contributes under the tested conditions&mdash;an externally controlled manipulation, hence rung 2, but sufficiency under one intervention is not the mechanism.</p>
-  <p>The rung-3 stepper shows where the third rung adds something and where it does not. A counterfactual is anchored to one observed forward pass, and Pearl&rsquo;s abduction&ndash;action&ndash;prediction recipe answers it. With the input given and greedy decoding, the forward pass leaves nothing unknown, so abduction is empty and the patched rerun is the counterfactual about a<sup>(5)</sup>: for that input, the rung-2 rerun and the rung-3 answer are one computation. Rung 3 differs in two places. Under sampling with the seed lost, the noise must be inferred from the token the run produced, and the answer becomes a distribution that differs from a fresh-seed rerun; a recorded seed makes it one token again. And a claim about a concept, such as &ldquo;layer 5 encodes location,&rdquo; needs a<sup>(5)</sup> to be that concept, which no rerun can verify.</p>
-</section>
-
-<div class="paperbox">
-  <h2>What the paper says</h2>
-  <blockquote>&ldquo;Decodability &ne; encoding; the information may be present but unused by the model&rsquo;s own computation.&rdquo;
-    <cite>&mdash; Appendix, &ldquo;Locating an Interpretability Method on the Causal Ladder&rdquo; (rung 1 example)</cite>
-  </blockquote>
-  <blockquote>&ldquo;The method establishes that intervening on specific components changes the model&rsquo;s output (mediation), but storage language implies an internal representation that <em>is</em> the fact&mdash;a counterfactual claim about necessity and specificity.&rdquo;
-    <cite>&mdash; Appendix, &ldquo;Calibration Rationales,&rdquo; Pattern 2: knowledge localisation &rarr; storage language</cite>
-  </blockquote>
-</div>
-
-<section class="prose try">
-  <h2>Try this</h2>
-  <ol>
-    <li>Take an interpretability claim you know well&mdash;&ldquo;feature X mediates behaviour Y&rdquo;&mdash;and ask the three diagnostic questions in order. Which rung does the evidence occupy, and which rung does the language assert?</li>
-    <li>In the rung-3 scene, switch decoding to &ldquo;sampling &middot; seed lost&rdquo; and run the three steps. Why does keeping only the seeds that produced &ldquo;Paris&rdquo; give &ldquo;Paris&rdquo; a larger share than the fresh-seed rerun does? What would you have logged to get back to one counterfactual token?</li>
-    <li>With a partner: one of you defends &ldquo;head 9.6 is the IOI mechanism,&rdquo; the other may answer only with the rung-2 verdict cards. Then agree on the experiment that would strengthen the claim (necessity tests, transportability tests, or both).</li>
-  </ol>
+  <p>The network is a toy: <i>a</i> is one number at layer &#8467;, the network adds 1 to the tens digit of its answer when <i>a</i> is above 0.5, and every value of <i>a</i> is a toy value. With greedy decoding (the model always outputs its most likely token) the input and the weights fix every activation, so the rung-3 rerun has nothing left to infer and computes the counterfactual about <i>a</i>; it is also the rung-2 intervention on this one input, so it gives the same 32 as the first row of rung 2&rsquo;s table. A sampled token would also need the random draw that picked it, and &ldquo;had the carry been 0&rdquo; needs an alignment between <i>a</i> and the carry, which Part 4 tests.</p>
+  <p><b>Try this:</b> before you rerun at rung 3, say what 17&nbsp;+&nbsp;25 will give.</p>
 </section>
 
 <footer>
-  <p>Provenance: interactive re-rendering of the three worked examples in the appendix &ldquo;The Causal Ladder: A Unified Reference&rdquo; of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>). The examples (92% probe accuracy, layer 12, head 9.6, layer 5) and the quoted supports / does-not-support statements come from the paper, except the storage-language and &ldquo;moves the name&rdquo; examples, which are the tutorial&rsquo;s; the mini-scenes themselves are tutorial illustrations, not paper experiments. The rung-3 scene reads the Eiffel Tower example under the tutorial&rsquo;s convention (with the input given and greedy decoding, the patched rerun is the counterfactual about activations), and its sampling toggle is a seeded toy: Gumbel-max sampling over five made-up logits, 2,000 noise draws, every percentage computed on load.</p>
+  <p>Provenance: tutorial illustration of Part 2&rsquo;s ladder frame and its carry example (17 + 25 = 42, patch source 30 + 47, the abduction, action, prediction figure); the network and the values of <i>a</i> are toy values, not an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>.</p>
   <p>tutorial demo &middot; CC-BY</p>
 </footer>
 </div>
@@ -425,250 +186,74 @@ footer{border-top:1px solid var(--line);margin-top:2.2rem;padding-top:.9rem;font
 <script>
 (function(){
   "use strict";
-  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---- rung navigation ---- */
-  var rungBtns = Array.prototype.slice.call(document.querySelectorAll(".rung-btn"));
-  rungBtns.forEach(function(btn){
-    btn.addEventListener("click", function(){
-      rungBtns.forEach(function(b){
-        var on = b === btn;
-        b.setAttribute("aria-pressed", on ? "true" : "false");
-        document.getElementById("panel-" + b.dataset.rung).hidden = !on;
-      });
-    });
-  });
-
-  function reveal(id){ document.getElementById(id).classList.remove("waiting"); }
-
-  /* ---- L1: fit probe ---- */
-  var fitBtn = document.getElementById("fit-probe");
-  var resetProbe = document.getElementById("reset-probe");
-  var readout = document.getElementById("probe-readout").querySelector("b");
-  var l1Hint = document.getElementById("l1-hint");
-  var l1HintHome = l1Hint.textContent;
-  var l1Timer = null;
-  fitBtn.addEventListener("click", function(){
-    fitBtn.disabled = true;
-    resetProbe.disabled = false;
-    reveal("verdicts-1");
-    l1Hint.classList.add("on");
-    l1Hint.textContent = "You never touched the model — the accuracy climbed while the intervention counter stayed at zero. Every number came from unmodified forward passes: the evidence is associational (rung 1).";
-    if (reduced){ readout.textContent = "92%"; return; }
-    var v = 50;
-    l1Timer = setInterval(function(){
-      v += 3;
-      if (v >= 92){ v = 92; clearInterval(l1Timer); l1Timer = null; }
-      readout.textContent = v + "%";
-    }, 40);
-  });
-  resetProbe.addEventListener("click", function(){
-    if (l1Timer){ clearInterval(l1Timer); l1Timer = null; }
-    readout.textContent = "—";
-    l1Hint.classList.remove("on");
-    l1Hint.textContent = l1HintHome;
-    fitBtn.disabled = false;
-    resetProbe.disabled = true;
-  });
-
-  /* ---- L2: patch head 9.6, graded by patch fraction alpha ---- */
-  var patchBtn = document.getElementById("do-patch");
-  var resetPatch = document.getElementById("reset-patch");
-  var alphaIn = document.getElementById("alpha");
-  var alphaRead = document.getElementById("alpha-read");
-  var lbarFill = document.getElementById("lbar-fill");
-  var headA = document.getElementById("headA");
-  var outA = document.getElementById("outA");
-  var l2Hint = document.getElementById("l2-hint");
-  var headAHome = headA.innerHTML, l2HintHome = l2Hint.textContent;
-
-  function applyAlpha(a){
-    alphaRead.textContent = "α = " + a.toFixed(2);
-    lbarFill.style.width = (a * 100) + "%";
-    if (a === 0){
-      headA.classList.remove("swapped");
-      headA.innerHTML = headAHome;
-    } else if (a === 1){
-      headA.classList.add("swapped");
-      headA.innerHTML = "head 9.6: a<sup>(9.6)</sup><sub>B</sub> patched in";
-    } else {
-      headA.classList.add("swapped");
-      headA.innerHTML = "head 9.6: (1&minus;&alpha;)&middot;a<sub>A</sub> + &alpha;&middot;a<sub>B</sub>";
-    }
-    if (a > 0.5){
-      outA.textContent = "“Mary”";
-      outA.classList.add("cf");
-    } else {
-      outA.textContent = "“John”";
-      outA.classList.remove("cf");
-    }
-    if (a === 0){
-      l2Hint.classList.remove("on");
-      l2Hint.textContent = l2HintHome;
-    } else {
-      l2Hint.classList.add("on");
-      if (a === 1){
-        l2Hint.textContent = "The output shifts from “John” toward “Mary”: head 9.6 causally contributes to IOI behavior under this intervention.";
-      } else if (a > 0.5){
-        l2Hint.textContent = "Past the schematic flip point: with α = " + a.toFixed(2) + " of run B’s activation written in, “Mary” now wins. Partial intervention, graded effect.";
-      } else {
-        l2Hint.textContent = "Partial intervention, partial effect: α = " + a.toFixed(2) + " narrows the John–Mary logit gap, but “John” still wins.";
-      }
-      reveal("verdicts-2");
-    }
-    patchBtn.disabled = (a === 1);
-    resetPatch.disabled = (a === 0);
-  }
-  patchBtn.addEventListener("click", function(){ alphaIn.value = "1"; applyAlpha(1); });
-  resetPatch.addEventListener("click", function(){ alphaIn.value = "0"; applyAlpha(0); });
-  alphaIn.addEventListener("input", function(){ applyAlpha(parseFloat(alphaIn.value)); });
-
-  /* ---- L3: stepper with a decoding toggle ---- */
-  // Seeded toy: Gumbel-max sampling over five made-up logits (no real model).
-  function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0;
-    var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  // Toy network, not a real model: the tens digit gets +1 when a > 0.5. Values of a are seeded toy values.
+  function mulberry32(s){ return function(){ s |= 0; s = s + 0x6D2B79F5 | 0;
+    var t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
     return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  var TOK = ["Paris", "France", "Rome", "Italy", "the"];
-  var CLEAN = [1.5, 0.9, -0.6, -1.0, 0.9];   // logits on the Eiffel Tower run
-  var PATCH = [0.5, -0.3, 1.6, 1.1, 0.9];    // logits with a(5) <- a'(5) (Colosseum)
-  var NSEED = 2000;
-  function argmaxPlus(l, g){ var b = 0; for (var i = 1; i < l.length; i++){ if (l[i] + g[i] > l[b] + g[b]) b = i; } return b; }
-  var cfCount = [0,0,0,0,0], ivCount = [0,0,0,0,0], kept = 0, recSeed = -1, recTok = -1;
-  for (var s = 1; s <= NSEED; s++){
-    var r = mulberry32(Math.imul(s, 2654435761) >>> 0);
-    var g = TOK.map(function(){ var u = r() * (1 - 2e-9) + 1e-9; return -Math.log(-Math.log(u)); });
-    var c = argmaxPlus(CLEAN, g), p = argmaxPlus(PATCH, g);
-    ivCount[p]++;
-    if (c === 0){ kept++; cfCount[p]++; if (recSeed < 0){ recSeed = s; recTok = p; } }
-  }
-  var greedyCF = TOK[argmaxPlus(PATCH, [0,0,0,0,0])];  // greedy: no noise
-  function pct(n, d){ return Math.round(100 * n / d); }
-  var cfRome = pct(cfCount[2], kept), cfParis = pct(cfCount[0], kept), ivParis = pct(ivCount[0], NSEED);
-  function fmtN(n){ return n.toLocaleString("en-US"); }
-
-  function bars(el, counts, total){
-    el.innerHTML = TOK.map(function(t, i){
-      return '<div class="brow"><span class="tok">“' + t + '”</span><div class="btrack"><div class="bfill" style="width:' +
-        (100 * counts[i] / total).toFixed(1) + '%"></div></div><span class="pct">' + pct(counts[i], total) + '%</span></div>';
+  var rnd = mulberry32(42);
+  function carries(x){ return (x[0] % 10) + (x[1] % 10) >= 10; }
+  function actOf(x){ return carries(x) ? 0.82 + 0.14 * rnd() : 0.06 + 0.14 * rnd(); }
+  function answer(x, a){ return (Math.floor(x[0] / 10) + Math.floor(x[1] / 10) + (a > 0.5 ? 1 : 0)) * 10 + (x[0] + x[1]) % 10; }
+  var sums = [[17,25],[11,23],[28,14],[52,31],[36,19],[20,64],[45,38],[43,26]];
+  var acts = sums.map(actOf);
+  var aTilde = actOf([30,47]);
+  var rung = 1, done = false;
+  function $(id){ return document.getElementById(id); }
+  function fmt(v){ return v.toFixed(2); }
+  var TEXT = {
+    1: {sup: "on these sums, <i>y</i> goes with <i>a</i>: where <i>a</i> is high, the sum carries and the tens digit of <i>y</i> (underlined) includes the carried 1.",
+        no: "setting <i>a</i> changes <i>y</i>."},
+    2: {btn: "Set a := ã on every sum and rerun",
+        sup: "copying <i>a</i> in changes the answer on the tested sums that carry.",
+        no: "<i>a</i> is the carry; sums unlike the tested ones."},
+    3: {btn: "Rerun 17 + 25 with a := ã",
+        sup: "on 17 + 25, had <i>a</i> been its 30 + 47 value, the answer would have been 32.",
+        no: "had the carry been 0; that needs the alignment."}
+  };
+  function renderTable(){
+    var set = rung === 2 && done;
+    $("rows").innerHTML = sums.map(function(x, i){
+      var a = set ? aTilde : acts[i], y0 = answer(x, acts[i]), y = answer(x, a), ys = String(y);
+      if (rung === 1 && carries(x)) ys = '<span class="tens">' + ys.slice(0, -1) + '</span>' + ys.slice(-1);
+      return '<tr' + (i === 0 ? ' class="focus"' : '') + '><td>' + x[0] + ' + ' + x[1] + '</td><td>' +
+        (carries(x) ? 'yes' : 'no') + '</td><td><span class="abar"><span class="afill" style="width:' +
+        Math.round(a * 100) + '%"></span></span>' + (set ? '<span class="setv">' + fmt(a) + '</span>' : fmt(a)) + '</td><td>' +
+        (y !== y0 ? '<span class="old">' + y0 + '</span>' : '') + ys + '</td></tr>';
     }).join("");
   }
-  bars(document.getElementById("bars-cf"), cfCount, kept);
-  bars(document.getElementById("bars-iv"), ivCount, NSEED);
-  document.getElementById("dsub-cf").textContent = "patched rerun on the " + fmtN(kept) + " seeds that reproduce “Paris”";
-  document.getElementById("dsub-iv").textContent = "patched rerun on all " + fmtN(NSEED) + " seeds";
-
-  var stAbd = document.getElementById("step-abd");
-  var stAct = document.getElementById("step-act");
-  var stPred = document.getElementById("step-pred");
-  var descAbd = document.getElementById("desc-abd");
-  var descPred = document.getElementById("desc-pred");
-  var uState = document.getElementById("ustate");
-  var layer5 = document.getElementById("layer5");
-  var l3Out = document.getElementById("l3-out");
-  var nextBtn = document.getElementById("l3-next");
-  var backBtn = document.getElementById("l3-back");
-  var resetBtn = document.getElementById("l3-reset");
-  var statusEl = document.getElementById("l3-status");
-  var callout = document.getElementById("patch-callout");
-  var dists = document.getElementById("dists");
-  var verd3 = document.getElementById("verdicts-3");
-  var claim3 = document.getElementById("l3-claim");
-  var claimHome = claim3.innerHTML;
-  var segs = Array.prototype.slice.call(document.querySelectorAll(".seg"));
-  var mode = "greedy";
-  var idx = 0; // number of recipe steps performed
-
-  var TEXT = {
-    greedy: {
-      abd: "The input is given, the weights are fixed and greedy decoding draws no noise, so this forward pass leaves nothing unknown: abduction has nothing to infer.",
-      pred: "Rerun the forward pass from layer 5 on, with the same input. The plain rerun lets every later layer respond to the new a(5), so its output is the counterfactual (the total effect).",
-      u0: "nothing (input given, greedy decoding)",
-      u1: "nothing (input given, greedy decoding)",
-      done: "Abduction found nothing to infer. Step (ii) is next: write in the Colosseum activation."
-    },
-    rec: {
-      abd: "The only thing the input leaves unknown is the sampling noise, and the recorded seed fixes it: abduction reads the noise off the log.",
-      pred: "Rerun with the patch and the recorded seed: one counterfactual token.",
-      u0: "the sampling noise (seed in the log)",
-      u1: "the sampling noise, fixed by recorded seed " + recSeed,
-      done: "Seed " + recSeed + " read off the log; it reproduces “Paris.” Step (ii) is next: write in the Colosseum activation."
-    },
-    lost: {
-      abd: "The sampling noise is unknown. Abduction keeps only the noise draws that reproduce “Paris”: " + fmtN(kept) + " of " + fmtN(NSEED) + " seeds.",
-      pred: "Rerun the patch once per kept seed: the counterfactual is a distribution over tokens.",
-      u0: "the sampling noise (seed not recorded)",
-      u1: "the sampling noise, inferred: " + fmtN(kept) + " seeds consistent with “Paris”",
-      done: fmtN(kept) + " of " + fmtN(NSEED) + " noise draws reproduce “Paris”; abduction keeps those. Step (ii) is next: write in the Colosseum activation."
-    }
-  };
-
-  function render(){
-    var T = TEXT[mode];
-    descAbd.textContent = T.abd;
-    descPred.textContent = T.pred;
-    stAbd.className = "step" + (idx >= 1 ? " done" : " current");
-    stAct.className = "step" + (idx >= 2 ? " done" : (idx === 1 ? " current" : ""));
-    stPred.className = "step" + (idx >= 3 ? " done" : (idx === 2 ? " current" : ""));
-    uState.textContent = idx >= 1 ? T.u1 : T.u0;
-
-    if (idx >= 2){
-      layer5.className = "chip cf";
-      layer5.innerHTML = "a&prime;<sup>(5)</sup> (Colosseum)";
-    } else {
-      layer5.className = "chip";
-      layer5.innerHTML = "a<sup>(5)</sup>";
-    }
-    if (idx >= 3){
-      l3Out.className = "chip out cf";
-      l3Out.textContent = mode === "greedy" ? "“" + greedyCF + "”"
-        : mode === "rec" ? "“" + TOK[recTok] + "”" : "a distribution (below)";
-    } else {
-      l3Out.className = "chip out";
-      l3Out.textContent = "“Paris”";
-    }
-
-    var labels = ["Perform step (i): abduction", "Perform step (ii): action", "Perform step (iii): prediction", "Recipe finished"];
-    nextBtn.textContent = labels[Math.min(idx, 3)];
-    nextBtn.disabled = idx >= 3;
-    backBtn.disabled = idx <= 0;
-
-    var msgs = ["Step (i) of the recipe is up next.", T.done,
-      "a′(5) is set. Step (iii): rerun the forward pass from layer 5.", ""];
-    if (mode === "greedy") msgs[3] = "For this forward pass, the counterfactual output is “" + greedyCF + ".” The patched rerun computed it.";
-    else if (mode === "rec") msgs[3] = "With seed " + recSeed + ", the counterfactual output for this run is “" + TOK[recTok] + ".”";
-    else msgs[3] = "No single token: the counterfactual for this run is a distribution, with “Rome” at " + cfRome + "%.";
-    statusEl.textContent = msgs[Math.min(idx, 3)];
-
-    callout.hidden = idx < 3;
-    dists.hidden = !(idx >= 3 && mode === "lost");
-    if (mode === "greedy"){
-      callout.innerHTML = "<b>The patched rerun is the counterfactual.</b> With the input given and greedy decoding, activation patching on this prompt runs all three steps: abduction is empty, the patch is the action, the rerun is the prediction. The rung-2 rerun of this input and the rung-3 answer about a<sup>(5)</sup> are one computation, and both read “" + greedyCF + ".”";
-    } else if (mode === "rec"){
-      callout.innerHTML = "<b>Still one computation.</b> The recorded seed fixes the only thing the input does not. Rerunning the patch with seed " + recSeed + " gives this run’s counterfactual token, “" + TOK[recTok] + ".” A rerun with a fresh seed would answer a rung-2 question instead: what the patched model outputs on this prompt across noise draws.";
-    } else {
-      callout.innerHTML = "<b>Here rung 3 differs from rung 2.</b> A patched rerun with a fresh seed samples from the interventional distribution (right). The counterfactual is about the run that said “Paris,” so it keeps only the noise that produced “Paris” (left): “Paris” survives the patch " + cfParis + "% of the time instead of " + ivParis + "%. The noise had to be inferred, and the answer is a distribution. Inferring the noise also needs how the sampler turns noise into a token (here Gumbel-max): a sampler with the same probabilities but a different noise mapping gives a different left panel.";
-    }
-
-    verd3.classList.toggle("waiting", idx < 3);
-    if (mode === "lost"){
-      claim3.innerHTML = "“For this forward pass, had a<sup>(5)</sup> taken the Colosseum value, the model would have output ‘Rome’ with probability " + cfRome + "%, over the noise consistent with ‘Paris.’”";
-    } else if (mode === "rec" && recTok !== 2){
-      claim3.innerHTML = "“For this specific forward pass, had a<sup>(5)</sup> taken the Colosseum value, the model would have output ‘" + TOK[recTok] + ".’”";
-    } else {
-      claim3.innerHTML = claimHome;
-    }
+  function changed(){ return sums.filter(function(x, i){ return answer(x, aTilde) !== answer(x, acts[i]); }).length; }
+  function status(){
+    var y0 = answer(sums[0], acts[0]), y1 = answer(sums[0], aTilde);
+    if (rung === 1) return "Rung 1: a and y observed on " + sums.length + " sums.";
+    if (rung === 2) return done ? "17 + 25: " + y0 + " → " + y1 + "; " + changed() + " of " + sums.length + " sums changed."
+                                : "Rung 2: nothing set yet.";
+    return done ? "17 + 25 with a := ã: " + y0 + " → " + y1 + "." : "Rung 3: 17 + 25, a not set yet.";
   }
-
-  segs.forEach(function(b){
-    b.addEventListener("click", function(){
-      mode = b.dataset.mode;
-      segs.forEach(function(o){ o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
-      render();
-    });
+  function render(){
+    var t = TEXT[rung];
+    document.querySelectorAll(".rung-btn").forEach(function(b){
+      b.setAttribute("aria-pressed", String(+b.dataset.rung === rung)); });
+    $("sceneTable").hidden = rung === 3;
+    $("sceneCf").hidden = rung !== 3;
+    $("srcLine").hidden = rung !== 2;
+    $("c2").classList.toggle("dim", !(rung === 3 && done));
+    $("c3").classList.toggle("dim", !(rung === 3 && done));
+    $("cfOut").innerHTML = rung === 3 && done ? "<b>" + answer(sums[0], aTilde) + "</b>" : "?";
+    $("act").hidden = rung === 1;
+    if (t.btn){ $("act").textContent = t.btn; $("act").disabled = done; }
+    $("vSup").innerHTML = t.sup;
+    $("vNo").innerHTML = t.no;
+    $("verdicts").classList.toggle("waiting", rung !== 1 && !done);
+    renderTable();
+    $("status").textContent = status();
+  }
+  document.querySelectorAll(".rung-btn").forEach(function(b){
+    b.addEventListener("click", function(){ rung = +b.dataset.rung; done = false; render(); });
   });
-  nextBtn.addEventListener("click", function(){ if (idx < 3){ idx += 1; render(); } });
-  backBtn.addEventListener("click", function(){ if (idx > 0){ idx -= 1; render(); } });
-  resetBtn.addEventListener("click", function(){ idx = 0; render(); });
+  $("act").addEventListener("click", function(){ done = true; render(); });
+  $("srcVal").textContent = fmt(aTilde);
+  $("aObs").textContent = fmt(acts[0]);
+  document.querySelectorAll(".tval").forEach(function(s){ s.textContent = fmt(aTilde); });
   render();
 })();
 </script>

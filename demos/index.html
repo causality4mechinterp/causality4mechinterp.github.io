@@ -102,52 +102,57 @@ footer{border-top:1px solid var(--line); margin-top:3rem; padding:1.4rem 0 2.4re
     <a class="btn" href="poster.html">Interactive poster</a>
     <a class="btn" href="https://github.com/rpatrik96/mech-interp-claim-calibration">Claim-audit data</a>
   </div>
-  <p class="blocknote">Ordered by tutorial block: <b>I</b> why claims fail → <b>II</b> the causal ladder →
-  <b>III</b> identifiability → <b>IV</b> the mismatch taxonomy and claim diagnosis.</p>
+  <p class="blocknote">Grouped by the part of the tutorial that opens them; the last group holds the demos the slides do not open.</p>
 </header>
 
 <main class="wrap">
 
 <section>
-  <div class="blockhead"><span class="tag">Block I</span><h2>Why interpretability claims fail to generalise</h2><span class="sub">live failure cases</span></div>
+  <div class="blockhead"><span class="tag">Part 1</span><h2>Asking a causal question</h2><span class="sub">Aaron Mueller</span></div>
+  <div class="grid">
+    <a class="demo" href="02-shuffled-probe.html"><span class="num">02</span><span class="t">A control task shows what a probe can score by memorising</span><span class="d">In Hewitt and Liang's control task, each word type is given a fixed random tag, so the only way to score well is to memorise; the same linear probe still reaches 71.2%, against 97.2% on part of speech.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">Part 2</span><h2>Levels of causal questions</h2><span class="sub">Patrik Reizinger</span></div>
+  <div class="grid">
+    <a class="demo" href="04-causal-ladder.html"><span class="num">04</span><span class="t">Pearl's ladder sorts questions into rungs</span><span class="d">Counterfactual: what this one input would have produced had <i>a</i> been different.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="19-gender-ladder.html"><span class="num">19</span><span class="t">The same gender question reads differently at each rung</span><span class="d">A probe reads gender from the activation a, zeroing a along the probe's directions moves the model's predictions, and rerunning one bio with a changed computes that bio's counterfactual about a.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="18-held-fixed.html"><span class="num">18</span><span class="t">Re-running a forward pass answers counterfactuals about heads but not about concepts</span><span class="d">Ablate-and-rerun and path patching are both exact on one forward pass and freeze different components; removing a probe's direction answers a counterfactual about that direction, which is about gender only if the direction is gender's.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">Part 3</span><h2>Identifying the answers</h2><span class="sub">Shruti Joshi</span></div>
+  <div class="grid">
+    <a class="demo" href="15-subspace-rotation.html"><span class="num">15</span><span class="t">Subspace ≠ Coordinates</span><span class="d">A symmetry: a change that leaves the loss unchanged.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="16-steering-encoding.html"><span class="num">16</span><span class="t">Steering ≠ encoding</span><span class="d">A mixed axis: steering along it moves both concepts.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="03-two-saes.html"><span class="num">03</span><span class="t">Two SAEs, same activations, different features</span><span class="d">Two seeds, two dictionaries: consistent with several sparse solutions.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="07-theta-rotation.html"><span class="num">07</span><span class="t">Same Loss, Different Story</span><span class="d">Reconstruction cannot see the rotation, and sparsity can pick the wrong one.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="06-affordance-classes.html"><span class="num">06</span><span class="t">Affordances Shrink the Equivalence Class</span><span class="d">CRL, causal representation learning, pins <i>z</i> down with contrastive pairs, interventions on concepts and natural experiments.</span><span class="go">Open demo →</span></a>
+    <a class="demo" href="09-transport-compose.html"><span class="num">09</span><span class="t">Will the Edit Survive Deployment?</span><span class="d">Transport: a finding still holds on new inputs. Our answer to &ldquo;when will it generalise?&rdquo;</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">Part 4</span><h2>From answers to mechanisms</h2><span class="sub">Aaron Mueller and Shruti Joshi</span></div>
+  <div class="grid">
+    <a class="demo" href="17-claim-diagnosis.html"><span class="num">17</span><span class="t">Diagnose the claim</span><span class="d">A tool for writing: put any claim through it before it goes in a paper.</span><span class="go">Open demo →</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="blockhead"><span class="tag">More</span><h2>More demos</h2><span class="sub">not opened from the slides</span></div>
   <div class="grid">
     <a class="demo" href="01-ablation-circuit.html"><span class="num">01</span><span class="t">The circuit depends on the ablation strategy</span><span class="d">Zero-, mean-, and resample-ablation each "discover" a different circuit — at the same faithfulness.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="02-shuffled-probe.html"><span class="num">02</span><span class="t">The probe that aces shuffled labels</span><span class="d">Sweep probe capacity from linear to a 673-parameter MLP and watch it ace shuffled labels — selectivity, not accuracy, carries the information.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="03-two-saes.html"><span class="num">03</span><span class="t">Two SAEs, same activations, different features</span><span class="d">Near-identical loss, disagreeing dictionaries — sweep concept correlation to watch identification track the data, not the loss.</span><span class="go">Open demo →</span></a>
-  </div>
-</section>
-
-<section>
-  <div class="blockhead"><span class="tag">Block II</span><h2>Interpretability questions are causal questions</h2><span class="sub">the causal ladder</span></div>
-  <div class="grid">
-    <a class="demo" href="04-causal-ladder.html"><span class="num">04</span><span class="t">Three rungs, three worked examples</span><span class="d">Sentiment probe (L1), graded IOI patching with a patch-fraction slider (L2), and the Eiffel→Colosseum counterfactual with the abduction–action–prediction stepper (L3).</span><span class="go">Open demo →</span></a>
     <a class="demo" href="05-rung-sandbox.html"><span class="num">05</span><span class="t">Observe or intervene? A confounder sandbox</span><span class="d">Two hidden worlds, one correlation — only do() tells them apart.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="18-held-fixed.html"><span class="num">18</span><span class="t">Re-running a forward pass answers counterfactuals about heads but not about concepts</span><span class="d">Ablate-and-rerun and path patching are both exact on one forward pass and freeze different components; removing a probe's direction answers a counterfactual about that direction, which is about gender only if the direction is gender's.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="19-gender-ladder.html"><span class="num">19</span><span class="t">The same gender question reads differently at each rung</span><span class="d">One population of bios, one tab per rung: the probe decodes gender, INLP moves predictions in both hidden worlds, and one bio's rerun matches the gender counterfactual only when the deleted direction is gender alone.</span><span class="go">Open demo →</span></a>
-  </div>
-</section>
-
-<section>
-  <div class="blockhead"><span class="tag">Block III</span><h2>What can we recover at all?</h2><span class="sub">identifiability, affordances, transport</span></div>
-  <div class="grid">
-    <a class="demo" href="06-affordance-classes.html"><span class="num">06</span><span class="t">Affordances shrink the equivalence class</span><span class="d">Toggle the interactions you can afford — and slide how many environments you observe — to watch which distinctions become identifiable.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="07-theta-rotation.html"><span class="num">07</span><span class="t">Same loss, different story (θ playground)</span><span class="d">Rotate the learned basis: reconstruction is blind, the sparsity penalty near-ties two bases, and only an identifiable objective finds the axes.</span><span class="go">Open demo →</span></a>
     <a class="demo" href="08-task-classes.html"><span class="num">08</span><span class="t">How much identifiability does your task need?</span><span class="d">Classification needs affine, steering blockwise, editing elementwise — using less visibly fails, and a mixing slider shows when it merely got lucky.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="09-transport-compose.html"><span class="num">09</span><span class="t">Will the edit survive deployment?</span><span class="d">Edits that pass in-distribution revert under paraphrase; edits interfere where task vectors compose.</span><span class="go">Open demo →</span></a>
-  </div>
-</section>
-
-<section>
-  <div class="blockhead"><span class="tag">Block IV</span><h2>Matching claims to evidence</h2><span class="sub">the mismatch taxonomy + diagnosis</span></div>
-  <div class="grid">
     <a class="demo" href="10-decodability-use.html"><span class="num">10</span><span class="t">Decodability ≠ model use</span><span class="d">Both worlds decode at 97% — only ablation reveals which one the model actually uses.</span><span class="go">Open demo →</span></a>
     <a class="demo" href="11-sufficiency-necessity.html"><span class="num">11</span><span class="t">Sufficient ≠ necessary</span><span class="d">Denoise and the behaviour returns; noise and it persists — until you drag the backup pathway to zero and necessity flips.</span><span class="go">Open demo →</span></a>
     <a class="demo" href="12-existence-uniqueness.html"><span class="num">12</span><span class="t">Existence ≠ uniqueness</span><span class="d">Re-run circuit discovery and get a different, equally faithful circuit every time; sweeping the threshold τ never shrinks the set to one.</span><span class="go">Open demo →</span></a>
     <a class="demo" href="13-saliency-baselines.html"><span class="num">13</span><span class="t">Local sensitivity ≠ global importance</span><span class="d">Change the baseline and the "responsible" tokens reshuffle; aggregate over interventions and they stabilise.</span><span class="go">Open demo →</span></a>
     <a class="demo" href="14-alignment-contrast.html"><span class="num">14</span><span class="t">Alignment ≠ ontological identity</span><span class="d">The same feature reads "honesty" or "formality" depending on the contrast set you test it with.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="15-subspace-rotation.html"><span class="num">15</span><span class="t">Subspace ≠ coordinates</span><span class="d">Rotate the basis inside the concept subspace: behaviour never changes, the axis labels do.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="16-steering-encoding.html"><span class="num">16</span><span class="t">Steering ≠ encoding</span><span class="d">The steering vector works — and is non-unique, entangled, and miscalibrated off-distribution.</span><span class="go">Open demo →</span></a>
-    <a class="demo" href="17-claim-diagnosis.html"><span class="num">17</span><span class="t">Diagnose the claim (think-pair-share)</span><span class="d">The live exercise: run the paper's checklist on real and pattern-typed claims — and sweep evidence strength to see no number moves a method up a rung.</span><span class="go">Open demo →</span></a>
   </div>
 </section>
 
