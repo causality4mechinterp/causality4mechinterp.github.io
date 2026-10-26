@@ -300,15 +300,15 @@
       claim: '“The model represents gender at this layer, and the prediction relies on it.”',
       methodShort: 'linear probe, no intervention',
       method: 'Bias-in-Bios biographies, nurse vs surgeon. A linear probe on the activation a at layer ℓ reads gender with 100% accuracy (a thought experiment, not a measured result). Nothing in the model’s forward pass is ever changed.',
-      source: 'The tutorial’s running example; the diagnosis below follows the worksheet slide in Part 4 of the deck. Not a claim from a published paper.',
+      source: 'The tutorial’s running example; the claim’s rung follows the verb ladder in Part 4 of the deck. Not a claim from a published paper.',
       docMLo: 1, docMHi: 1, docMLabel: 'Rung 1 · Observational (linear probe)',
-      docC: 2, docCLabel: 'Rung 2 · Causal — “relies on” is an interventional verb, and “represents” attaches a concept to it',
-      gap: 1,
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — “represents” is a rung-3 marker: it attaches the concept, gender, that “relies on” is about',
+      gap: 2,
       estimand: 'the effect of gender in the layer-ℓ activation on the predicted profession',
       notes: [
-        'Two gaps. Rung gap: the probe reaches rung 1, and “relies on” asks for rung 2. Identifiability gap: the probe’s direction is one of many that fit the gender labels, so “represents gender” may name a direction that also carries other cues, such as words like “hospital”.',
+        'Two gaps. Rung gap: the probe reaches rung 1; “relies on” asks for an intervention (rung 2), and “represents gender” asks for that intervention to be on gender itself (rung 3). Identifiability gap: the probe’s direction is one of many that fit the gender labels, so “represents gender” may name a direction that also carries other cues, such as words like “hospital”.',
         'From the paper (verbatim): “Many probes ∈ 𝒢 can achieve the same accuracy while picking out different directions and predictive success alone does not tell us which direction (if any) the model actually uses.”',
-        'If you picked rung 3 because “represents” is a rung-3 marker in the codebook: that word is what attaches the concept, and the concept is what the identifiability gap is about. A counterfactual about gender itself is supported only once the alignment of the direction with gender passes interchange tests over many bios.'
+        'If you picked rung 2 because “relies on” is an interventional verb: the deck’s worksheet reads the claim the same way, as rung 2 plus a concept. “Represents” is the word that attaches the concept, which puts the claim at rung 3, and the concept is what the identifiability gap is about. A counterfactual about gender itself is supported only once the alignment of the direction with gender passes interchange tests over many bios.'
       ],
       fixW: '“Gender is linearly decodable from this layer.” (rung-1 marker: “is decodable from”)',
       fixS: 'Rung gap: project the probe’s direction out of the activation, rerun the tested bios, and measure how the prediction changes (Part 2’s projection, rung 2). Identifiability gap: bios that change gender and nothing else narrow the direction down to gender (Part 3’s contrastive pairs), and interchange tests over many bios then check that alignment (Part 4).'
@@ -433,9 +433,9 @@
       claim: '“These heads are necessary for the behaviour — ablating them reduces accuracy by 40%.”',
       methodShort: 'ablation',
       method: 'Zero-ablation of the candidate heads on the evaluation set; task accuracy drops by 40%. No search over alternative pathways.',
-      source: 'Synthetic card exhibiting the codebook pattern: Ablation → “necessary” (ablation R2 → claim R3, documented gap +1).',
+      source: 'Synthetic card: ablation (rung 2) → “necessary for the behaviour” (rung 3), gap +1. “Necessary for this output on these inputs” would be rung 2, which one ablation per input computes.',
       docMLo: 2, docMHi: 2, docMLabel: 'Rung 2 · Interventional (ablation: zero/mean out components)',
-      docC: 3, docCLabel: 'Rung 3 · Mechanistic — the codebook codes “necessary” at rung 3',
+      docC: 3, docCLabel: 'Rung 3 · Mechanistic — “the behaviour” makes “necessary” a claim about the mechanism on every input; necessary for this output on these inputs is rung 2',
       gap: 1,
       estimand: 'accuracy drop when zero-ablating the candidate heads',
       notes: [
