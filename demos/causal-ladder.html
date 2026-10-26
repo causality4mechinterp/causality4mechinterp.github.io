@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pearl's ladder sorts questions into rungs — Causal Foundations for Interpretability</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+
+/* the slider */
+.ctrl{background:var(--card);border:1px solid var(--line);padding:.7rem .9rem .5rem;margin-bottom:.9rem}
+.ctrl-row{display:flex;align-items:center;gap:.4rem .9rem;flex-wrap:wrap}
+.ctrl label{font-weight:600;font-size:.92rem}
+.ctrl output{font-variant-numeric:tabular-nums;font-weight:700;min-width:4.6rem}
+.track{position:relative;flex:1 1 220px;min-width:0;padding:.9rem 0 1.25rem}
+.track input{width:100%;margin:0}
+.tick{position:absolute;transform:translateX(-50%);font-size:.74rem;color:var(--ink-soft);white-space:nowrap;line-height:1}
+.tick.lo{top:2.15rem}
+.tick.lo::before{content:"";display:block;width:1px;height:.35rem;background:var(--ink-soft);margin:0 auto .15rem}
+.tick.hi{top:0}
+.tick.hi::after{content:"";display:block;width:1px;height:.35rem;background:var(--ink-soft);margin:.15rem auto 0}
+
+/* the ladder, rung three on top as on the slide */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:.9rem;align-items:start}
+.ladder{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+.rung{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--rc);padding:.55rem .8rem}
+.rung.r1{--rc:var(--l1)}.rung.r2{--rc:var(--l2)}.rung.r3{--rc:var(--l3)}
+.rtag{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rc)}
+.rq{display:block;font-size:.84rem;color:var(--ink-soft)}
+.ra{display:block;font-size:.95rem;margin-top:.25rem;font-variant-numeric:tabular-nums}
+.ra b{font-weight:700}
+.rnote{display:block;font-size:.8rem;color:var(--muted);margin-top:.15rem}
+
+/* the inputs */
+.scene{background:var(--card);border:1px solid var(--line);padding:.5rem .6rem}
+table{width:100%;font-size:.9rem}
+th{text-align:left;padding:.2rem .4rem;line-height:1.25}
+td{padding:.25rem .4rem;border-top:1px solid var(--line);white-space:nowrap}
+tr.focus td{background:var(--hero)}
+td.pick{width:1.6rem;padding-right:0}
+td.pick input{margin:0;accent-color:var(--l3)}
+td label{cursor:pointer}
+.abar{display:inline-block;vertical-align:middle;width:56px;height:8px;background:var(--paper-2);margin-right:.4rem;position:relative}
+.afill{position:absolute;left:0;top:0;bottom:0;background:var(--muted)}
+.old{color:var(--muted);text-decoration:line-through;margin-right:.3rem}
+.chg{font-weight:700}
+@media (max-width:760px){
+  .cols{grid-template-columns:1fr}
+  .abar{display:none}
+  th,td{padding:.22rem .25rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="head">
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Pearl's ladder sorts questions into rungs</h1>
+  <p class="dek">Counterfactual: what this one input would have produced had <i>a</i> been different.</p>
+</header>
+
+<div class="stage">
+  <div class="ctrl">
+    <div class="ctrl-row">
+      <label for="at">Set <i>a</i> to <i>&atilde;</i></label>
+      <div class="track">
+        <span class="tick hi" id="tickHi" aria-hidden="true">0.5</span>
+        <input type="range" id="at" min="0" max="1" step="0.01" value="0.18" aria-describedby="atv">
+        <span class="tick lo" id="tickLo" aria-hidden="true"><i>a</i> on 30 + 47</span>
+      </div>
+      <output id="atv" for="at"></output>
+    </div>
+  </div>
+
+  <div class="cols">
+    <ol class="ladder" aria-label="The three rungs, top to bottom">
+      <li class="rung r3">
+        <span class="rtag">Rung 3 &middot; Counterfactual</span>
+        <span class="rq">what this one input would have produced had <i>a</i> been different</span>
+        <span class="ra" id="a3"></span>
+        <span class="rnote">Rung three adds the concept <i>a</i> stands for.</span>
+      </li>
+      <li class="rung r2">
+        <span class="rtag">Rung 2 &middot; Intervention</span>
+        <span class="rq">setting: does <i>y</i> change when we set <i>a</i>, over many inputs?</span>
+        <span class="ra" id="a2"></span>
+      </li>
+      <li class="rung r1">
+        <span class="rtag">Rung 1 &middot; Association</span>
+        <span class="rq">watching: does <i>y</i> go with <i>a</i> across inputs?</span>
+        <span class="ra" id="a1"></span>
+      </li>
+    </ol>
+
+    <div class="scene">
+      <table>
+        <caption class="sr-only">Eight sums, the observed activation a, the answer y, and the answer with a set to ã</caption>
+        <thead><tr><th><span class="sr-only">rung-3 input</span></th><th>sum</th><th>carries?</th><th><i>a</i> observed</th><th>answer <i>y</i></th><th><i>y</i> with <i>a</i> := <i>&atilde;</i></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <ul class="legend">
+    <li><i>a</i>: the activation at one layer and one position of a toy network that adds two numbers; <i>&atilde;</i>: the value the slider sets it to.</li>
+    <li>The toy network adds a carry of 1 to the tens digit when <i>a</i> is above 0.5; the values of <i>a</i> are toy values.</li>
+    <li>The button on a row makes that sum the one input of rung 3.</li>
+  </ul>
+  <p class="sr-only" id="status" role="status" aria-live="polite"></p>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+  <p>Provenance: tutorial illustration of Part 2&rsquo;s ladder frame on its carry example (17 + 25 = 42, <i>a</i> copied from 30 + 47); the network and the values of <i>a</i> are toy values &middot; tutorial demo &middot; CC-BY.</p>
+</div></footer>
+
+<script>
+(function(){
+  "use strict";
+  // Toy network, not a real model: the tens digit gets +1 when a > 0.5. Values of a are seeded toy values.
+  function mulberry32(s){ return function(){ s |= 0; s = s + 0x6D2B79F5 | 0;
+    var t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var rnd = mulberry32(42);
+  function carries(x){ return (x[0] % 10) + (x[1] % 10) >= 10; }
+  function actOf(x){ return carries(x) ? 0.82 + 0.14 * rnd() : 0.06 + 0.14 * rnd(); }
+  function answer(x, a){ return (Math.floor(x[0] / 10) + Math.floor(x[1] / 10) + (a > 0.5 ? 1 : 0)) * 10 + (x[0] + x[1]) % 10; }
+  var sums = [[17,25],[11,23],[28,14],[52,31],[36,19],[20,64],[45,38],[43,26]];
+  var acts = sums.map(actOf);
+  var aSrc = Math.round(actOf([30,47]) * 100) / 100;   // a on 30 + 47, the slide's patch source
+  var st = { t: aSrc, pick: 0 };
+  function $(id){ return document.getElementById(id); }
+  function f2(v){ return v.toFixed(2); }
+  function name(x){ return x[0] + " + " + x[1]; }
+
+  // one radio button per row picks rung 3's input
+  var tb = $("rows");
+  sums.forEach(function(x, i){
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td class="pick"><input type="radio" name="pick" id="p' + i + '" aria-label="use ' + name(x) + ' as the one input of rung 3"' + (i === 0 ? " checked" : "") + '></td>' +
+      '<td><label for="p' + i + '">' + name(x) + '</label></td><td>' + (carries(x) ? "yes" : "no") + '</td>' +
+      '<td><span class="abar" aria-hidden="true"><span class="afill" style="width:' + Math.round(acts[i] * 100) + '%"></span></span>' + f2(acts[i]) + '</td>' +
+      '<td>' + answer(x, acts[i]) + '</td><td class="set"></td>';
+    tb.appendChild(tr);
+    tr.querySelector("input").addEventListener("change", function(){ st.pick = i; render(); });
+  });
+
+  // ticks under and over the slider; the thumb travels between half a thumb (8px) from each end
+  function at(v){ return "calc(" + v + " * (100% - 16px) + 8px)"; }
+  $("tickLo").style.left = at(aSrc);
+  $("tickHi").style.left = at(0.5);
+
+  function render(){
+    var t = st.t;
+    $("atv").innerHTML = "<i>&atilde;</i> = " + f2(t);
+    var changed = 0;
+    tb.querySelectorAll("tr").forEach(function(tr, i){
+      var x = sums[i], y0 = answer(x, acts[i]), y1 = answer(x, t);
+      if (y1 !== y0) changed++;
+      tr.classList.toggle("focus", i === st.pick);
+      tr.querySelector("td.set").innerHTML = y1 !== y0 ? '<span class="old">' + y0 + '</span><span class="chg">' + y1 + '</span>' : String(y1);
+    });
+    var x = sums[st.pick], y0 = answer(x, acts[st.pick]), y1 = answer(x, t);
+    var nc = sums.filter(carries).length;
+    $("a1").innerHTML = "the " + nc + " sums with <i>a</i> above 0.5 are the " + nc + " that carry; the slider does not change this";
+    $("a2").innerHTML = "<b>" + changed + " of " + sums.length + "</b> answers change with <i>a</i> set to " + f2(t);
+    $("a3").innerHTML = name(x) + " would have produced <b>" + y1 + "</b> had <i>a</i> been " + f2(t) + " (it produced " + y0 + ")";
+    $("status").textContent = "a set to " + f2(t) + ": " + changed + " of " + sums.length + " answers change; " + name(x) + " would have produced " + y1 + ".";
+  }
+  $("at").addEventListener("input", function(e){ st.t = +e.target.value; render(); });
+  $("at").value = aSrc;
+  render();
+})();
+</script>
+</body>
+</html>

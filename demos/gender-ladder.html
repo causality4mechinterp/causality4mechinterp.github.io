@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gender at each rung · EMNLP 2026 tutorial demo</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+  * { margin: 0; }
+  .bio { background: var(--paper-2); border: 1px solid var(--line); padding: .5rem .8rem; font-size: .9rem; margin-bottom: .8rem; }
+  .bio .m { color: var(--muted); }
+  .bio span { display: block; }
+
+  /* the two sliders */
+  .ctrls { display: grid; grid-template-columns: 1fr; gap: .7rem; margin-bottom: .9rem; }
+  .ctrl { background: var(--card); border: 1px solid var(--line); padding: .55rem .8rem; }
+  .ctrl label { display: block; font-weight: 600; font-size: .9rem; }
+  .ctrl .row { display: flex; align-items: center; gap: .7rem; }
+  .ctrl input { flex: 1; min-width: 0; }
+  .ctrl output { font-variant-numeric: tabular-nums; font-weight: 700; font-size: .9rem; min-width: 6.5rem; }
+
+  /* the rungs × worlds grid */
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 12.5rem 12.5rem; background: var(--card); border: 1px solid var(--line); overflow: hidden; font-variant-numeric: tabular-nums; }
+  .grid > * { padding: .32rem .7rem; }
+  .wh { font-weight: 700; font-size: .92rem; line-height: 1.3; padding-top: .55rem; padding-bottom: .45rem; border-bottom: 1px solid var(--line); }
+  .wh small { display: block; font-weight: 400; font-size: .76rem; color: var(--ink-soft); }
+  .rh { grid-column: 1 / -1; border-top: 1px solid var(--line); border-left: 5px solid var(--rc); padding-top: .55rem; padding-bottom: .1rem; }
+  .rh:first-of-type { border-top: 0; }
+  .r1 { --rc: var(--l1); } .r2 { --rc: var(--l2); } .r3 { --rc: var(--l3); }
+  .rtag { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rc); }
+  .rq { display: block; font-size: .84rem; color: var(--ink-soft); font-style: italic; }
+  .ml, .v { border-left: 5px solid var(--rc); }
+  .v { border-left: 0; font-size: .92rem; white-space: nowrap; }
+  .ml { font-size: .86rem; }
+  .ml .sub { display: block; font-size: .78rem; color: var(--muted); }
+  .v b { font-weight: 700; }
+  .tg { display: inline-block; font-size: .72rem; font-weight: 700; padding: 0 .45rem; margin-left: .3rem; border: 1px solid currentColor; }
+  .tg.eq { color: var(--gap-green); }
+  .tg.ne { color: var(--muted); }
+  .vd { grid-column: 1 / -1; border-left: 5px solid var(--rc); font-size: .86rem; font-weight: 600; padding-bottom: .55rem !important; }
+  .wl { display: none; font-size: .7rem; color: var(--muted); font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .ctrls { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .grid > * { padding-left: .55rem; padding-right: .55rem; }
+    .v { white-space: normal; }
+    .grid > .corner { display: none; }
+    .ml { grid-column: 1 / -1; padding-bottom: 0; }
+    .v { padding-top: .1rem; }
+    .v.va { border-left: 5px solid var(--rc); }
+    .wl { display: block; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <a class="back" href="./index.html">← All demos</a>
+    <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
+    <h1>The same gender question reads differently at each rung</h1>
+    <p class="dek">Rung 1: the probe scores the same in both hidden worlds. Rung 2: INLP moves the predictions in both. Rung 3: one bio, and which rerun equals the target.</p>
+  </header>
+
+  <div class="stage">
+    <p class="bio">
+      <span>“She has worked in hospitals for ten years. <span class="m" style="display:inline">… This person works as a”</span></span>
+      <span>Swapped bio: “He has worked in hospitals for ten years. <span class="m" style="display:inline">…”</span></span>
+    </p>
+
+    <div class="ctrls">
+      <div class="ctrl">
+        <label for="del">How far the swap also moves the cue</label>
+        <div class="row"><input type="range" id="del" min="0" max="1" step="0.05" value="0"><output id="delV" for="del"></output></div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid" aria-live="polite">
+      <div class="wh corner"></div>
+      <div class="wh">World A<small>readout uses gender, and the cue weakly</small></div>
+      <div class="wh">World B<small>readout uses only the cue</small></div>
+
+      <div class="rh r1"><span class="rtag">Rung 1 · Association</span><span class="rq">Do these activations correlate with gender?</span></div>
+      <div class="ml r1">Probe accuracy<span class="sub">linear probe reading gender from <i>a</i>, on 100 held-out bios</span></div>
+      <div class="v va r1"><span class="wl">World A</span><b id="accA"></b></div>
+      <div class="v r1"><span class="wl">World B</span><b id="accB"></b></div>
+      <div class="vd r1" id="vd1"></div>
+
+      <div class="rh r2"><span class="rtag">Rung 2 · Intervention</span><span class="rq">Does setting these activations change the profession the model predicts?</span></div>
+      <div class="ml r2">Predictions that change after INLP<span class="sub" id="dirs"></span></div>
+      <div class="v va r2"><span class="wl">World A</span><b id="flA"></b></div>
+      <div class="v r2"><span class="wl">World B</span><b id="flB"></b></div>
+      <div class="vd r2" id="vd2"></div>
+
+      <div class="rh r3"><span class="rtag">Rung 3 · Counterfactual</span><span class="rq">Would the model have predicted surgeon?</span></div>
+      <div class="ml r3">This bio, unedited</div>
+      <div class="v va r3"><span class="wl">World A</span><span id="b0A"></span></div>
+      <div class="v r3"><span class="wl">World B</span><span id="b0B"></span></div>
+      <div class="ml r3">Target: gender flipped, nothing else<span class="sub">computable only in a toy</span></div>
+      <div class="v va r3"><span class="wl">World A</span><b id="tgA"></b></div>
+      <div class="v r3"><span class="wl">World B</span><b id="tgB"></b></div>
+      <div class="ml r3">Rerun of this bio, <i>a</i> zeroed along INLP's directions</div>
+      <div class="v va r3"><span class="wl">World A</span><span id="inA"></span></div>
+      <div class="v r3"><span class="wl">World B</span><span id="inB"></span></div>
+      <div class="ml r3">Rerun of the swapped bio</div>
+      <div class="v va r3"><span class="wl">World A</span><span id="swA"></span></div>
+      <div class="v r3"><span class="wl">World B</span><span id="swB"></span></div>
+      <div class="vd r3" id="vd3"></div>
+    </div>
+
+    <ul class="legend">
+      <li><i>a</i>: the activation at one layer for a bio; in this toy its coordinates are gender (she +1, he −1), the cue and profession content.</li>
+      <li>Cue: care words such as “comfort” or “families”, which travel with gender in these 200 toy bios.</li>
+      <li>The hidden worlds share every bio and every activation; only the readout from <i>a</i> to the prediction differs.</li>
+      <li>INLP (iterative nullspace projection): remove the probe's direction, train a new probe and remove its direction too, until no probe finds gender; then rerun.</li>
+      <li>Numbers under rung 3: p(nurse), the model's probability for nurse, which it predicts above 0.5; “= target” means equal to two decimals.</li>
+    </ul>
+  </div>
+
+</div>
+
+  <footer><div class="wrap"><p>
+    Questions from the deck's Part 2 gender frame; seeded toy, not Bias-in-Bios data or an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> &middot; tutorial demo &middot; CC-BY
+  </p></div></footer>
+
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  function mulberry32(a) { return function () { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const rng = mulberry32(19);
+  const gauss = () => { let u = 0; while (!u) u = rng(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rng()); };
+  const dot = (x, y) => x[0] * y[0] + x[1] * y[1] + x[2] * y[2];
+  const mv = (M, x) => [dot(M[0], x), dot(M[1], x), dot(M[2], x)];
+  function solve3(A, b) {
+    const M = A.map((r, i) => [...r, b[i]]);
+    for (let c = 0; c < 3; c++) {
+      let p = c; for (let r = c + 1; r < 3; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+      [M[c], M[p]] = [M[p], M[c]];
+      for (let r = 0; r < 3; r++) if (r !== c) { const f = M[r][c] / M[c][c]; for (let k = c; k < 4; k++) M[r][k] -= f * M[c][k]; }
+    }
+    return [M[0][3] / M[0][0], M[1][3] / M[1][1], M[2][3] / M[2][2]];
+  }
+
+  // Toy, seeded: a = (gender g, cue c, profession content p) + small noise; g = +1 she, -1 he.
+  // The cue tracks gender with correlation RHO = 0.90. The worlds share every a and differ only in the
+  // readout (nurse logit): World A uses gender and, weakly, the cue; World B only the cue.
+  const N = 200, STOP = 0.75;   // INLP stops once a fresh probe scores below 75% on held-out bios
+  const W = { A: [1.5, 0.5, 1], B: [0, 2, 1] };
+  const BIOS = [];
+  for (let i = 0; i < N; i++) BIOS.push({ g: i % 2 ? -1 : 1, z: gauss(), p: 0.7 * gauss(), e: [0.03 * gauss(), 0.03 * gauss(), 0.03 * gauss()], train: Math.floor(i / 2) % 2 === 0 });
+  const BIO = [1, 0.9, 0];                 // the deck's bio: she, care words, neutral profession content
+  const NAMES = ['gender', 'cue', 'profession content'];
+  const sig = x => 1 / (1 + Math.exp(-x));
+  const pn = (a, w) => sig(dot(w, a));
+
+  // probe: linear discriminant analysis on the training half, restricted to what P keeps
+  function lda(X, P) {
+    const m = { 1: [0, 0, 0], '-1': [0, 0, 0] }, n = { 1: 0, '-1': 0 };
+    BIOS.forEach((b, i) => { if (!b.train) return; n[b.g]++; for (let k = 0; k < 3; k++) m[b.g][k] += X[i][k]; });
+    for (const g of [1, -1]) for (let k = 0; k < 3; k++) m[g][k] /= n[g];
+    const S = [[1e-4, 0, 0], [0, 1e-4, 0], [0, 0, 1e-4]];
+    BIOS.forEach((b, i) => { if (!b.train) return; const d = [0, 1, 2].map(k => X[i][k] - m[b.g][k]); for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) S[r][c] += d[r] * d[c] / (N / 2 - 2); });
+    let w = mv(P, solve3(S, [0, 1, 2].map(k => m[1][k] - m[-1][k])));
+    const L = Math.hypot(w[0], w[1], w[2]); w = w.map(v => v / L);
+    const t = (dot(w, m[1]) + dot(w, m[-1])) / 2;
+    let ok = 0, tot = 0;
+    BIOS.forEach((b, i) => { if (b.train) return; tot++; if ((dot(w, X[i]) > t ? 1 : -1) === b.g) ok++; });
+    return { w, acc: ok / tot };
+  }
+  const RHO = 0.9;
+  function model(rho) {
+    const A = BIOS.map(b => [b.g + b.e[0], rho * b.g + Math.sqrt(1 - rho * rho) * b.z + b.e[1], b.p + b.e[2]]);
+    let P = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]; const dirs = []; let acc0 = null;
+    for (let k = 0; k < 3; k++) {
+      const pr = lda(A.map(a => mv(P, a)), P);
+      if (acc0 === null) acc0 = pr.acc;
+      if (pr.acc < STOP) break;
+      dirs.push(pr.w);
+      P = P.map((r, i) => r.map((v, j) => v - pr.w[i] * pr.w[j]));
+    }
+    const Aed = A.map(a => mv(P, a));
+    const flips = w => A.filter((a, i) => (dot(w, a) > 0) !== (dot(w, Aed[i]) > 0)).length;
+    return { acc0, dirs, P, flA: flips(W.A), flB: flips(W.B) };
+  }
+
+  const st = { del: 0 };
+  const M = model(RHO);
+  const f2 = v => v.toFixed(2);
+  const pred = v => f2(v) + ' ' + (v > 0.5 ? 'nurse' : 'surgeon');
+  const where = (a, b) => a && b ? 'in both worlds' : 'in neither world';
+
+  function render() {
+    $('delV').textContent = st.del === 0 ? '0, gender only' : f2(st.del) + ' on the cue';
+    // rung 1: the probe never sees the readout, so it scores the same in both worlds
+    const acc = Math.round(M.acc0 * 100) + '%';
+    $('accA').textContent = acc; $('accB').textContent = acc;
+    $('vd1').textContent = 'The probe scores the same in both worlds.';
+    // rung 2
+    $('flA').textContent = M.flA + ' of ' + N; $('flB').textContent = M.flB + ' of ' + N;
+    $('dirs').textContent = 'directions INLP removed: ' + M.dirs.map(d => NAMES[d.map(Math.abs).indexOf(Math.max(...d.map(Math.abs)))]).join(', ');
+    const moves = n => n >= N * 0.05;
+    $('vd2').textContent = 'INLP moves the predictions ' + where(moves(M.flA), moves(M.flB)) + '.';
+    // rung 3: one bio, the target and two reruns
+    const tgt = [-1, BIO[1], BIO[2]], inl = mv(M.P, BIO), sw = [-1, BIO[1] - st.del, BIO[2]];
+    const eq = {};
+    ['A', 'B'].forEach(k => {
+      const w = W[k], t = pn(tgt, w);
+      $('b0' + k).textContent = pred(pn(BIO, w));
+      $('tg' + k).textContent = pred(t);
+      [['in', inl], ['sw', sw]].forEach(([id, a]) => {
+        const v = pn(a, w), same = f2(v) === f2(t);
+        eq[id + k] = same;
+        $(id + k).innerHTML = pred(v) + '<span class="tg ' + (same ? 'eq' : 'ne') + '">' + (same ? '= target' : '≠ target') + '</span>';
+      });
+    });
+    $('vd3').textContent = 'Equals the target: the swapped bio ' + where(eq.swA, eq.swB) + ', the INLP rerun ' + where(eq.inA, eq.inB) + '.';
+  }
+  $('del').addEventListener('input', e => { st.del = +e.target.value; render(); });
+  render();
+})();
+</script>
+</body>
+</html>

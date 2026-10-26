@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Affordances Shrink the Equivalence Class — Causal Foundations for Interpretability</title>
+<style>
+/* shell: identical on all twelve pages; tokens, type and rules from the tutorial website (static/styles.css) */
+:root{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+    --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+    --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+    --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+    --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eef1f7; --ink-soft:#c3c9d6; --muted:#9aa3b5; --hero-text:#f5f7fb;
+  --paper:#151922; --paper-2:#1f2430; --card:#1a1e28; --hero:#2a3142; --line:#333b4c;
+  --accent:#7c9cff; --accent-deep:#a9bfff; --accent-soft:#1e2a4d;
+  --foot-bg:#0c0e14; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#7FA3D6; --l2:#D19A33; --l3:#D06A9E; --gap-green:#5FB37E; --no:#EF6B6B;
+}
+:root[data-theme="light"]{
+  --ink:#171a22; --ink-soft:#3d4454; --muted:#6b7285; --hero-text:#141824;
+  --paper:#f5f6f8; --paper-2:#e9ecf2; --card:#ffffff; --hero:#dde3ef; --line:#d3d8e2;
+  --accent:#1d4ed8; --accent-deep:#1e3a8a; --accent-soft:#dbe4ff;
+  --foot-bg:#12151e; --foot-ink:#9aa3b5; --foot-strong:#eef1f7;
+  --l1:#4A6FA5; --l2:#9E6A0C; --l3:#B0356B; --gap-green:#3E8E5A; --no:#C62828;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.head{padding-top:2.25rem}
+.head .back{display:inline-block;margin:0 0 1.5rem;font-size:.92rem;font-weight:500;text-decoration:none}
+.head .back:hover{text-decoration:underline}
+.kicker{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.head .kicker{display:block;margin:0 0 .75rem}
+.head h1{margin:0 0 .75rem;max-width:32ch;font-family:var(--font-display);font-size:clamp(1.85rem,3.5vw,2.5rem);font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--hero-text);text-wrap:balance}
+.head.home{padding-top:4rem}
+.head.home h1{max-width:20ch;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.03em}
+.head .dek{margin:0;max-width:42rem;font-size:1.15rem;line-height:1.55;color:var(--ink-soft)}
+.stage{margin:2rem 0 0;padding:1.25rem;background:var(--card);border:1px solid var(--line)}
+input[type=range]{accent-color:var(--ink)}
+.toggle{cursor:pointer;font:inherit;font-size:.9rem;padding:.35rem .9rem;border:1.5px solid var(--line);border-radius:0;background:var(--card);color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{border-color:var(--ink);background:var(--hero);color:var(--ink);font-weight:600}
+button.check,button.reveal{cursor:pointer;font:inherit;font-size:.92rem;font-weight:500;padding:.5rem 1.15rem;border:1.5px solid var(--ink);border-radius:0;background:var(--ink);color:var(--paper)}
+button.check.again{background:transparent;color:var(--ink)}
+.legend{margin:1rem 0 0;padding:.65rem 0 0;border-top:1px solid var(--line);list-style:none;font-size:.82rem;line-height:1.5;color:var(--ink-soft);max-width:80ch}
+.legend li,.legend p,.legend > div{margin:0}
+.legend li+li,.legend p+p,.legend > div+div{margin-top:.2rem}
+.legend b,.legend dt{color:var(--ink);font-weight:600}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+thead th{font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:bottom}
+thead tr:last-child th{border-bottom:2px solid var(--line)}
+footer{margin:3.5rem 0 0;padding:2.25rem 0;background:var(--foot-bg);color:var(--foot-ink);font-size:.88rem;line-height:1.55}
+footer p{margin:0;max-width:80ch}
+footer a{color:var(--foot-strong)}
+footer a:hover{color:var(--foot-strong)}
+@media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+/* end shell */
+/* page tokens: the pair colour and the toy inputs' dots */
+:root{ --pair:#3E8E5A; --dot:var(--muted); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --pair:#4AA06B; }
+}
+:root[data-theme="dark"]{ --pair:#4AA06B; }
+:root[data-theme="light"]{ --pair:#3E8E5A; }
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start}
+@media (max-width:720px){ .grid{grid-template-columns:minmax(0,1fr)} }
+.card{background:var(--card);border:1px solid var(--line);padding:.6rem}
+.card svg{width:100%;height:auto;display:block}
+#fig text{fill:var(--ink-soft);font-size:15px;font-family:inherit}
+.side{display:flex;flex-direction:column;gap:.9rem}
+.lab{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.sub{font-size:.85rem;color:var(--ink-soft)}
+fieldset.affs{border:0;margin:0;padding:0;min-width:0}
+fieldset.affs legend{padding:0;margin-bottom:.4rem}
+.toggles{display:flex;flex-wrap:wrap;gap:.45rem}
+.count{font-size:1.02rem;color:var(--ink)}
+.count b{font-size:2rem;font-variant-numeric:tabular-nums;color:var(--ink);font-family:var(--font-display);font-weight:500}
+#verdict{margin:.1rem 0 0;font-weight:600}
+.slider label{display:flex;justify-content:space-between;gap:.5rem;font-size:.92rem}
+.slider output{font-variant-numeric:tabular-nums;font-weight:600}
+.slider input{width:100%}
+ul.checks{list-style:none;margin:0;padding:0;font-size:.9rem;display:flex;flex-direction:column;gap:.3rem}
+ul.checks li{background:var(--card);border:1px solid var(--line);padding:.35rem .6rem}
+ul.checks .m{font-weight:700;margin-right:.35rem}
+.ok{color:var(--gap-green)} .bad{color:var(--no)} .open{color:var(--muted)}
+@media (max-width:600px){ .card{padding:.4rem} #fig text{font-size:20px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="head">
+  <a class="back" href="./index.html">&larr; All demos</a>
+  <div class="kicker">EMNLP 2026 Tutorial &middot; Causal Foundations for Interpretability</div>
+  <h1>Affordances Shrink the Equivalence Class</h1>
+  <p class="dek">CRL, causal representation learning, pins <i>z</i> down with contrastive pairs, interventions on concepts and natural experiments.</p>
+</header>
+
+<div class="stage">
+  <div class="grid">
+    <div class="card">
+      <svg id="fig" viewBox="0 0 400 400" role="img" aria-labelledby="fig-label">
+        <title id="fig-label">Activations of toy inputs, with every candidate pair of concept axes drawn through them.</title>
+        <defs>
+          <clipPath id="clip"><rect x="0" y="0" width="400" height="400"/></clipPath>
+          <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--pair)"/></marker>
+          <marker id="km" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+        </defs>
+        <g clip-path="url(#clip)">
+          <g id="g-fan"></g>
+          <g id="g-dots2"></g>
+          <g id="g-dots"></g>
+          <g id="g-pairs"></g>
+          <g id="g-yours"></g>
+        </g>
+        <line x1="16" y1="386" x2="56" y2="386" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#km)"/>
+        <line x1="16" y1="386" x2="16" y2="346" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#km)"/>
+        <text x="60" y="391"><tspan font-style="italic">h</tspan><tspan font-size="11" dy="3">1</tspan></text>
+        <text x="22" y="350"><tspan font-style="italic">h</tspan><tspan font-size="11" dy="3">2</tspan></text>
+      </svg>
+    </div>
+
+    <div class="side">
+      <fieldset class="affs">
+        <legend class="lab">Your affordances: what you can vary or observe</legend>
+        <div class="toggles">
+          <button type="button" class="toggle" data-aff="pairs" aria-pressed="false">Contrastive pairs</button>
+          <button type="button" class="toggle" data-aff="interv" aria-pressed="false">Interventions on concepts</button>
+          <button type="button" class="toggle" data-aff="natural" aria-pressed="false">Natural experiments</button>
+        </div>
+      </fieldset>
+
+      <div aria-live="polite">
+        <div class="lab">Equivalence class</div>
+        <div class="sub">the explanations the data cannot tell apart</div>
+        <div class="count"><b id="n">18</b> of 18 candidate axis pairs fit</div>
+        <p id="verdict"></p>
+      </div>
+
+      <div class="slider">
+        <label for="phi"><span>Your axes, angle from <i>h</i><sub>1</sub></span><output id="phi-out" for="phi">40°</output></label>
+        <input type="range" id="phi" min="0" max="85" step="5" value="40">
+      </div>
+
+      <ul class="checks" aria-live="polite">
+        <li><span class="m ok">&#10003;</span>Activations alone: your axes fit</li>
+        <li id="c-pairs" hidden></li>
+        <li id="c-interv" hidden><span class="m open">?</span>Interventions on concepts: patching sets <i>h</i>; learning <i>z</i> from patched runs is open.</li>
+        <li id="c-natural" hidden></li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="legend">
+    <li><i>z</i>: the concepts, here gender and tense; <i>g</i>: the mixing that writes <i>z</i> into the activation <i>h</i>.</li>
+    <li>Dots: inputs, in two coordinates of <i>h</i>; lines: candidate concept axes, 18 pairs at right angles, 5° apart; each pair is one explanation.</li>
+    <li id="lg-pairs" hidden>Arrows: contrastive pairs, two inputs that differ in one concept.</li>
+    <li id="lg-natural" hidden>Hollow dots: the same inputs in a second checkpoint, a natural experiment whose <i>g</i> writes gender in twice as strongly.</li>
+  </ul>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+  <p>Provenance: the equivalence-class drawing and the three affordance rows of the tutorial deck (Part 3). Toy values: the inputs, pairs, checkpoint and angles are computed in this page, not an experiment from the paper &middot; tutorial demo &middot; CC-BY.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+/* Toy model. Two concepts z = (gender, tense), independent, unit variance. The mixing g is linear:
+   h = A z with A a rotation by TRUE degrees, so on observed activations alone every rotation of the
+   concept axes fits equally well. A candidate explanation is a pair of orthogonal axes in h at angle
+   phi (0..85 in 5-degree steps; phi and phi+90 are the same axes renamed).
+   Contrastive pairs: each pair changes one concept, so a candidate fits only if every pair's shift
+   moves just one of its axes. Natural experiment: a second checkpoint with mixing A diag(2,1) on the
+   same inputs; the concepts are independent there too, so a candidate fits only if its two axes stay
+   uncorrelated under that checkpoint's covariance. Interventions on concepts: the deck marks
+   learning z from patched runs as open, so nothing is computed for that row.
+   Seeded PRNG (mulberry32), so every load draws the same dots. No animation, so nothing to reduce. */
+var TRUE = 25, CX = 200, CY = 200, S = 46, R = 280;
+var $ = function(id){ return document.getElementById(id); };
+var NS = "http://www.w3.org/2000/svg";
+function el(tag, a, parent){ var e = document.createElementNS(NS, tag); setA(e, a); parent.appendChild(e); return e; }
+function setA(e, a){ for (var k in a) e.setAttribute(k, a[k]); }
+function mulberry32(seed){ return function(){ seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+  var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+var rnd = mulberry32(20261026);
+function gauss(){ var u = 1 - rnd(), v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+var ca = Math.cos(TRUE * Math.PI / 180), sa = Math.sin(TRUE * Math.PI / 180);
+/* h = A diag(s1, 1) z */
+function mix(z, s1){ var a = z[0] * s1, b = z[1]; return [ca * a - sa * b, sa * a + ca * b]; }
+function P(h){ return [CX + h[0] * S, CY - h[1] * S]; }
+
+/* six pair inputs spread round the cloud, so their arrows do not overlap; then 40 seeded inputs */
+var Z = [0, 1, 2, 3, 4, 5].map(function(j){ var a = (20 + 60 * j) * Math.PI / 180; return [1.9 * Math.cos(a), 1.9 * Math.sin(a)]; });
+for (var i = 0; i < 40; i++) Z.push([gauss(), gauss()]);
+/* six pairs: the partner of input j changes gender (even j) or tense (odd j) by one unit */
+var PAIRS = [0, 1, 2, 3, 4, 5].map(function(j){ return {z: Z[j], k: j % 2}; });
+var DH = PAIRS.map(function(p){ return mix(p.k ? [0, 1] : [1, 0], 1); });
+/* covariance of h in the second checkpoint: A diag(4,1) A^T */
+var S2 = [[4 * ca * ca + sa * sa, 3 * ca * sa], [3 * ca * sa, 4 * sa * sa + ca * ca]];
+
+function axes(phi){ var r = phi * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [[c, s], [-s, c]]; }
+function dot(a, b){ return a[0] * b[0] + a[1] * b[1]; }
+function quad(u, v){ return u[0] * (S2[0][0] * v[0] + S2[0][1] * v[1]) + u[1] * (S2[1][0] * v[0] + S2[1][1] * v[1]); }
+function pairsFit(phi){ var u = axes(phi);
+  return DH.every(function(d){ return Math.min(Math.abs(dot(d, u[0])), Math.abs(dot(d, u[1]))) < 1e-6; }); }
+function corr(phi){ var u = axes(phi); return quad(u[0], u[1]) / Math.sqrt(quad(u[0], u[0]) * quad(u[1], u[1])); }
+
+var on = {pairs: false, interv: false, natural: false};
+function fits(phi){
+  if (on.pairs && !pairsFit(phi)) return false;
+  if (on.natural && Math.abs(corr(phi)) > 1e-6) return false;
+  return true;
+}
+
+/* static layers: dots, hollow dots (second checkpoint), pair arrows, the fan of candidates */
+Z.forEach(function(z){ var p = P(mix(z, 1));
+  el("circle", {cx: p[0], cy: p[1], r: 3.2, fill: "var(--dot)", "fill-opacity": .85}, $("g-dots")); });
+Z.forEach(function(z){ var p = P(mix(z, 2));
+  el("circle", {cx: p[0], cy: p[1], r: 3.4, fill: "none", stroke: "var(--ink-soft)", "stroke-width": 1.2}, $("g-dots2")); });
+PAIRS.forEach(function(pr, i){ var a = P(mix(pr.z, 1)), d = DH[i];
+  el("line", {x1: a[0], y1: a[1], x2: a[0] + d[0] * S, y2: a[1] - d[1] * S, stroke: "var(--pair)", "stroke-width": 2.6,
+    "stroke-linecap": "round", "marker-end": "url(#ah)"}, $("g-pairs")); });
+var fan = [];
+for (var phi = 0; phi <= 85; phi += 5){
+  var g = el("g", {}, $("g-fan"));
+  axes(phi).forEach(function(v){ el("line", {x1: CX - v[0] * R, y1: CY + v[1] * R, x2: CX + v[0] * R, y2: CY - v[1] * R}, g); });
+  fan.push({phi: phi, g: g});
+}
+var yours = el("g", {}, $("g-yours")), yl = [el("line", {"stroke-width": 3.2}, yours), el("line", {"stroke-width": 3.2}, yours)];
+var ylab = el("text", {"font-weight": 600, stroke: "var(--card)", "stroke-width": 4, "paint-order": "stroke", "stroke-linejoin": "round"}, yours);
+ylab.textContent = "your axes";
+
+var slider = $("phi"), out = $("phi-out");
+var buttons = Array.prototype.slice.call(document.querySelectorAll(".toggle"));
+
+function render(){
+  var mine = +slider.value, n = 0;
+  fan.forEach(function(f){ f.ok = fits(f.phi); if (f.ok) n++; });
+  fan.forEach(function(f){
+    var only = f.ok && n === 1;
+    setA(f.g, {stroke: only ? "var(--ink)" : "var(--muted)", "stroke-width": only ? 2.4 : 1.1,
+      "stroke-opacity": f.ok ? (only ? 1 : .55) : .12, "stroke-dasharray": f.ok ? "none" : "2 6"});
+  });
+
+  var ok = fits(mine), u = axes(mine), col = ok ? "var(--ink)" : "var(--no)";
+  u.forEach(function(v, i){ setA(yl[i], {x1: CX - v[0] * 175, y1: CY + v[1] * 175, x2: CX + v[0] * 175, y2: CY - v[1] * 175, stroke: col}); });
+  /* label beside the end of whichever axis points up and to the right, kept inside the frame */
+  var e = u[0][0] >= 0 ? u[0] : u[1];
+  /* offset to the lower right of the line, off the stroke */
+  setA(ylab, {x: Math.min(CX + e[0] * 150 + 10, 300), y: Math.max(24, CY - e[1] * 150 + 20), fill: col});
+
+  out.textContent = mine + "°";
+  $("n").textContent = n;
+  var only = fan.filter(function(f){ return f.ok; })[0];
+  $("verdict").textContent = n === 1 ? "One answer, up to names and scale: the axes at " + only.phi + "°."
+                                     : "Every candidate fits: the data cannot pick.";
+
+  var cp = $("c-pairs"), cn = $("c-natural");
+  cp.hidden = $("lg-pairs").hidden = !on.pairs; $("g-pairs").style.display = on.pairs ? "" : "none";
+  cn.hidden = $("lg-natural").hidden = !on.natural; $("g-dots2").style.display = on.natural ? "" : "none";
+  $("c-interv").hidden = !on.interv;
+  var pf = pairsFit(mine);
+  cp.innerHTML = '<span class="m ' + (pf ? 'ok">&#10003;' : 'bad">&#10007;') + '</span>Contrastive pairs: ' +
+    (pf ? "each pair moves one of your axes" : "each pair moves both of your axes");
+  var r = Math.abs(corr(mine)), nf = r < 1e-6;
+  cn.innerHTML = '<span class="m ' + (nf ? 'ok">&#10003;' : 'bad">&#10007;') + '</span>Natural experiments: ' +
+    (nf ? "your axes stay uncorrelated in the second checkpoint"
+        : "your axes correlate in the second checkpoint (correlation " + r.toFixed(2) + ")");
+}
+
+buttons.forEach(function(b){
+  b.addEventListener("click", function(){
+    var k = b.dataset.aff; on[k] = !on[k]; b.setAttribute("aria-pressed", String(on[k])); render();
+  });
+});
+slider.addEventListener("input", render);
+render();
+})();
+</script>
+</body>
+</html>
