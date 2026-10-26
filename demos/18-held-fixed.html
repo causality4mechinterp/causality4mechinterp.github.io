@@ -61,7 +61,6 @@
   .seg { display: flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); }
   .seg button { font: inherit; font-size: .8rem; padding: .32rem .7rem; border: none; cursor: pointer; background: transparent; color: var(--ink-soft); }
   .seg button[aria-pressed="true"] { background: var(--purple); color: var(--paper); font-weight: 600; }
-  .hint { flex-basis: 100%; font-size: .74rem; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
   @media (max-width: 560px) { .pair { grid-template-columns: 1fr; } }
   .op { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .5rem; min-width: 0; }
@@ -71,9 +70,6 @@
   .res { font-size: .9rem; font-variant-numeric: tabular-nums; margin-top: .8rem; }
   .res p + p { margin-top: .45rem; }
   .res b.i { color: var(--l2); } .res b.c { color: var(--l3); }
-  .below { max-width: 70ch; margin: 1.2rem auto 0; }
-  .below p { margin-bottom: .6rem; }
-  .below .try { background: var(--hero); border-left: 3px solid var(--purple); border-radius: 0 10px 10px 0; padding: .55rem .85rem; }
   footer { max-width: 70ch; margin: 2rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
   footer a { color: var(--purple); }
 
@@ -104,7 +100,7 @@
     <div>
       <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
       <h1>Re-running a forward pass answers counterfactuals about heads but not about concepts</h1>
-      <p class="dek">On one biography with greedy decoding, zero-and-rerun and path patching are both exact and cheap, and each computes the counterfactual about activations as well as the intervention: they differ only in what they hold fixed. Rung three differs once the variable is gender read through a probe's direction, because the same rerun then answers a question about that direction, and only the alignment ties it to gender.</p>
+      <p class="dek">Both reruns use one bio; each keeps different nodes fixed.</p>
     </div>
     <a class="back" href="./index.html">← All demos</a>
   </header>
@@ -112,7 +108,7 @@
   <div class="stage">
     <section class="part" aria-label="What a rerun holds fixed">
       <div class="kicker">Level 1 · raw activations</div>
-      <p class="sub">Both reruns use one bio; each keeps different nodes fixed. Unedited run on x₀: a = 1.00, MLP = 1.30, backup = 0.00, y = 1.02 → nurse (y is the nurse logit; y &gt; 0 means nurse, otherwise surgeon).</p>
+      <p class="sub">Unedited run on x₀: y = 1.02 → nurse</p>
       <div class="ctl">
         <label for="beta">Backup head strength</label>
         <input type="range" id="beta" min="0" max="15" step="1" value="10">
@@ -122,13 +118,12 @@
         <div class="op"><svg id="dag1" viewBox="0 0 290 172" role="img" aria-label="a zeroed and rerun: the MLP and the backup recompute from the zeroed a."></svg>
           <div class="y" id="y1"></div><p class="capt" id="c1"></p></div>
         <div class="op"><svg id="dag2" viewBox="0 0 290 172" role="img" aria-label="Path patching: only a's path to y carries zero; the MLP and the backup keep their unedited-run values."></svg>
-          <div class="y" id="y2"></div><p class="capt">path patching: only a's path to y zeroed, grey nodes held at their unedited-run values; prediction changes (direct effect of a)</p></div>
+          <div class="y" id="y2"></div><p class="capt">path patching: only a's path to y zeroed, grey nodes held at their unedited-run values</p></div>
       </div>
     </section>
 
     <section class="part" aria-label="Removing the probe direction">
-      <div class="kicker">Level 2 · a concept: where rung three differs</div>
-      <p class="sub">The rerun is exact; the direction decides what it is about. h is a separate two-coordinate toy activation of the same bio (Part 3 writes h for a), with gender and another cue that travels with it both at 1; a linear probe reads gender along its direction.</p>
+      <div class="kicker">Level 2 · a concept</div>
       <div class="split">
       <div class="op"><svg id="plane" viewBox="0 0 260 200" role="img" aria-label="The bio's activation h in the plane of gender and another cue, the probe direction, h-prime after removing the probe direction, and h-star with gender alone removed."></svg></div>
       <div>
@@ -138,29 +133,23 @@
           <button id="rdA" aria-pressed="true">Moves for the wrong reason</button>
           <button id="rdB" aria-pressed="false">Stays put though gender mattered</button>
         </div>
-        <span class="hint" id="rd-hint"></span>
       </div>
       <div class="ctl">
-        <label for="phi">Probe direction, degrees from gender</label>
+        <label for="phi">Probe direction</label>
         <input type="range" id="phi" min="0" max="90" step="5" value="50">
         <output id="phi-out" for="phi">50°</output>
       </div>
       <div class="res" aria-live="polite">
-        <p><b class="i">h′</b>, h without the probe direction (the rerun): <span id="yp"></span></p>
-        <p><b class="c">h*</b>, the same bio without gender (the claim): <span id="ys"></span></p>
+        <p><b class="i">h′</b> (the rerun): <span id="yp"></span></p>
+        <p><b class="c">h*</b> (the claim): <span id="ys"></span></p>
       </div>
       </div>
       </div>
     </section>
   </div>
 
-  <div class="below">
-    <p>Both reruns in Level 1 are exact, and a sentence about this bio has to say which nodes stayed fixed. When the probe's direction mixes gender with a cue that travels with it, h′ removes both, so the prediction can move for the wrong reason, or stay put when gender mattered. Nothing in the rerun shows which.</p>
-    <p class="try"><b>Try this:</b> set the backup to 0, then raise it to 0.9 or more and watch the two reruns part ways; then pick “Stays put though gender mattered” and drag the probe direction to 70° or more.</p>
-  </div>
-
   <footer>
-    Toy values, deterministic: MLP = relu(1.2a + 0.1), backup = strength · relu(1 − a), y = 1.5a + 0.4·MLP + 1.2·backup − 1.0; the readouts on the right are the two formulas shown. An original illustration of the position paper's “what is held fixed” and the alignment gap (<a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>) on the tutorial's Bias-in-Bios example, not an experiment from the paper. tutorial demo · CC-BY
+    An original illustration of the position paper's “what is held fixed” (<a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>), not an experiment from the paper · tutorial demo · CC-BY
   </footer>
 </div>
 
@@ -213,8 +202,8 @@
 
   // ---------- Level 2: the probe direction (figures/concept-counterfactual.tex) ----------
   const READ = {
-    A: { f: (g, c) => 0.4 * g + 1.2 * c - 0.58, txt: 'Toy readout y = 0.4·gender + 1.2·cue − 0.58: the prediction leans on the cue.' },
-    B: { f: (g, c) => 1.2 * g + 0.4 * c - 0.58, txt: 'Toy readout y = 1.2·gender + 0.4·cue − 0.58: the prediction leans on gender.' }
+    A: { f: (g, c) => 0.4 * g + 1.2 * c - 0.58 },
+    B: { f: (g, c) => 1.2 * g + 0.4 * c - 0.58 }
   };
   let rd = 'A';
   const plane = $('plane'), O = [52, 166], S = 92, xy = (g, c) => [O[0] + S * g, O[1] - S * c];
@@ -247,7 +236,7 @@
     d1.V.a.textContent = '= 0'; d1.V.m.textContent = fmt(m1); d1.V.g.textContent = fmt(g1); d1.V.y.textContent = fmt(y1);
     d1.E.gy.setAttribute('class', 'edge' + (g1 > 0 ? ' thick' : ' off'));
     $('y1').textContent = 'y = ' + fmt(y1) + ' → ' + pred(y1);
-    $('c1').textContent = 'a zeroed, rerun: ' + (y1 > 0 ? 'the backup restores the prediction' : 'the backup is too weak to restore the prediction') + ' (total effect of a)';
+    $('c1').textContent = 'a zeroed, rerun';
     // path patching: a → y carries 0, MLP and backup held at the unedited run
     const m0 = mOf(1), g0 = gOf(1, B), y2 = yOf(0, m0, g0);
     d2.V.a.textContent = '1.00'; d2.V.m.textContent = fmt(m0); d2.V.g.textContent = fmt(g0); d2.V.y.textContent = fmt(y2);
@@ -263,9 +252,8 @@
     P.pt.setAttribute('cx', q[0]); P.pt.setAttribute('cy', q[1]);
     P.ptlab.setAttribute('x', q[0] + 7); P.ptlab.setAttribute('y', q[1] + 14);
     const yp = f(hp[0], hp[1]), ys = f(0, 1);
-    $('rd-hint').textContent = READ[rd].txt;
     $('yp').textContent = 'gender ' + fmt(hp[0]) + ', cue ' + fmt(hp[1]) + ', y = ' + fmt(yp) + ' → ' + pred(yp);
-    $('ys').textContent = 'gender 0.00, cue 1.00, y = ' + fmt(ys) + ' → ' + pred(ys) + (pred(yp) === pred(ys) ? ' (same prediction)' : ' (the rerun disagrees)');
+    $('ys').textContent = 'gender 0.00, cue 1.00, y = ' + fmt(ys) + ' → ' + pred(ys) ;
   }
   $('beta').addEventListener('input', render);
   $('phi').addEventListener('input', render);

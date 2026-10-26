@@ -80,12 +80,7 @@
   .gap-line { stroke: var(--ink-mute); stroke-width: 1.2; stroke-dasharray: 3 3; }
   .bracket { stroke: var(--ink); stroke-width: 1.4; fill: none; }
   .active { font-weight: 700; }
-  .status { font-size: .85rem; color: var(--ink-soft); margin-top: .3rem; font-variant-numeric: tabular-nums; }
 
-  .after { max-width: 70ch; margin: 0 auto; }
-  .after p { margin-bottom: .7rem; }
-  .after .try { background: var(--hero); border: 1px solid var(--purple-soft); border-radius: 10px; padding: .55rem .8rem; }
-  .after .try strong { color: var(--purple); }
   footer { max-width: 70ch; margin: 1.8rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
   footer a { color: var(--purple); }
 
@@ -110,38 +105,28 @@
   </header>
 
   <div class="stage">
-    <div class="kicker">Train the probe on</div>
     <div class="seg" role="group" aria-label="Labels the probe is trained on">
       <button id="btn-pos" aria-pressed="true">Part-of-speech tags</button>
       <button id="btn-ctrl" aria-pressed="false">Control task: random tags</button>
     </div>
 
     <svg id="bars" viewBox="0 0 560 300" role="img">
-      <text class="muted" id="cap" x="330" y="22" font-size="13">ELMo layer 1, linear probe</text>
       <line class="base" x1="20" y1="250" x2="330" y2="250"></line>
       <rect class="slot" id="slot-ctrl" x="190" y="50" width="100" height="200"></rect>
       <rect class="bar-pos" id="bar-pos" x="40" y="250" width="100" height="0"></rect>
       <rect class="bar-ctrl" id="bar-ctrl" x="190" y="250" width="100" height="0"></rect>
       <text class="lbl" id="lbl-pos" x="90" y="272" text-anchor="middle" font-size="13">Part of speech, 97.2%</text>
-      <text class="lbl" id="lbl-ctrl" x="240" y="272" text-anchor="middle" font-size="13">Control task, not run yet</text>
+      <text class="lbl" id="lbl-ctrl" x="240" y="272" text-anchor="middle" font-size="13">Control task</text>
       <g id="sel" visibility="hidden">
         <line class="gap-line" x1="140" y1="55.6" x2="318" y2="55.6"></line>
         <polyline class="bracket" points="300,107.6 318,107.6 318,55.6"></polyline>
         <text id="sel-t" x="330" y="78" font-size="14" font-weight="700">Selectivity, 26.0 points</text>
-        <text id="sel-d1" class="muted" x="330" y="98" font-size="12">part-of-speech accuracy minus</text>
-        <text id="sel-d2" class="muted" x="330" y="114" font-size="12">control-task accuracy</text>
       </g>
     </svg>
-    <p class="status" id="status" role="status" aria-live="polite"></p>
-  </div>
-
-  <div class="after">
-    <p class="try"><strong>Try this:</strong> before you switch to the control task, guess how much of the 97.2% a probe can score on random tags.</p>
-    <p>Both bars come from the same linear probe on the same activations of ELMo's first layer; only the labels change. The control task gives each word type a fixed random tag, so its 71.2% is what the probe scores by memorising alone, and the 26.0-point difference, which Hewitt and Liang call the selectivity, is the number to report. For gender, the corresponding control gives each first name a random label and keeps it fixed across biographies.</p>
   </div>
 
   <footer>
-    Numbers from Hewitt and Liang (2019), Table 1; original illustration for the tutorial, not an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> · tutorial demo · CC-BY
+    Numbers from Hewitt and Liang (2019), Table 1; original illustration for the tutorial &middot; tutorial demo &middot; CC-BY
   </footer>
 
 </div>
@@ -155,15 +140,10 @@ const NARROW = window.matchMedia('(max-width: 560px)');
 const $ = id => document.getElementById(id);
 const run = { pos: false, ctrl: false };
 
-/* below 560 px the text to the right of the bars moves above and below them, so it stays readable */
 function layout() {
-  const n = NARROW.matches;
-  const at = (id, x, y, anchor) => { $(id).setAttribute('x', x); $(id).setAttribute('y', y); $(id).setAttribute('text-anchor', anchor); };
-  $('bars').setAttribute('viewBox', n ? '0 0 340 322' : '0 0 560 300');
-  at('cap', n ? 20 : 330, 22, 'start');
-  at('sel-t', n ? 318 : 330, n ? 45 : 78, n ? 'end' : 'start');
-  at('sel-d1', n ? 20 : 330, n ? 298 : 98, 'start');
-  at('sel-d2', n ? 20 : 330, n ? 314 : 114, 'start');
+  const n = NARROW.matches, t = $('sel-t');
+  $('bars').setAttribute('viewBox', n ? '0 26 340 274' : '0 40 560 260');
+  t.setAttribute('x', n ? 318 : 330); t.setAttribute('y', n ? 45 : 78); t.setAttribute('text-anchor', n ? 'end' : 'start');
 }
 
 function setBar(id, v) {
@@ -187,17 +167,13 @@ function setMode(m) {
   if (!run[m]) { run[m] = true; grow(m); }
   const both = run.pos && run.ctrl;
   $('slot-ctrl').setAttribute('visibility', run.ctrl ? 'hidden' : 'visible');
-  $('lbl-ctrl').textContent = run.ctrl ? 'Control task, 71.2%' : 'Control task, not run yet';
+  $('lbl-ctrl').textContent = run.ctrl ? 'Control task, 71.2%' : 'Control task';
   $('lbl-pos').classList.toggle('active', m === 'pos');
   $('lbl-ctrl').classList.toggle('active', m === 'ctrl');
   $('sel').setAttribute('visibility', both ? 'visible' : 'hidden');
   $('bars').setAttribute('aria-label', both
     ? 'Accuracy of the same linear probe on ELMo layer 1: 97.2% on part of speech, 71.2% on the control task; the difference, 26.0 points, is the selectivity.'
     : 'Accuracy of the same linear probe on ELMo layer 1: 97.2% on part of speech; the control task has not run yet.');
-  $('status').textContent = (m === 'pos'
-    ? 'Trained on part-of-speech tags: 97.2% of words tagged correctly.'
-    : 'Trained on random tags: 71.2% of words tagged correctly, by memorising alone.')
-    + (both ? ' Selectivity: 97.2 − 71.2 = 26.0 points.' : '');
 }
 
 $('btn-pos').addEventListener('click', () => setMode('pos'));

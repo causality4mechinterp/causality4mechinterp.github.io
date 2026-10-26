@@ -57,8 +57,8 @@
   .claim .cite { color: var(--ink-mute); font-weight: 400; }
   .claim .ev { font-size: .84rem; color: var(--ink-soft); margin-top: .4rem; max-width: 80ch; }
 
-  /* the worksheet row of the deck: estimand, two ladders, mismatch */
-  .ws { display: grid; grid-template-columns: 1fr 1.6fr 1.6fr 1fr; gap: 1rem; }
+  /* the worksheet row of the deck: two ladders, mismatch */
+  .ws { display: grid; grid-template-columns: 1.4fr 1.4fr 1fr; gap: 1rem; }
   @media (max-width: 760px) { .ws { grid-template-columns: 1fr; } }
   .cell .kicker { min-height: 2.2em; display: flex; align-items: flex-end; text-transform: none; letter-spacing: .02em; font-size: .78rem; }
   .cell .rule { border-top: 1px solid var(--line); margin: .35rem 0 .55rem; }
@@ -68,9 +68,8 @@
     border: 1px solid var(--line); border-top: 5px solid var(--rc); border-radius: 4px; padding: .35rem .55rem .4rem; position: relative; }
   .ladder button:hover { background: var(--hero); }
   .ladder button .nm { font-weight: 700; color: var(--rc); font-size: .86rem; }
-  .ladder button .tx { display: block; font-size: .76rem; color: var(--ink-soft); line-height: 1.35; }
   .ladder button[aria-pressed="true"] { background: var(--rc); border-color: var(--rc); }
-  .ladder button[aria-pressed="true"] .nm, .ladder button[aria-pressed="true"] .tx { color: var(--paper); }
+  .ladder button[aria-pressed="true"] .nm { color: var(--paper); }
   .ladder button.deck { outline: 2px dashed var(--ink); outline-offset: 2px; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .ladder button.deck::after { content: "key"; position: absolute; top: -.7rem; right: .4rem; font-size: .62rem; font-weight: 700;
@@ -85,13 +84,8 @@
   button.reveal { font: inherit; font-size: .88rem; padding: .45rem 1rem; cursor: pointer;
     border: 1px solid var(--purple); border-radius: 10px; background: var(--purple); color: var(--paper); font-weight: 600; }
   button.reveal:disabled { opacity: .45; cursor: not-allowed; }
-  .debrief { margin-top: .8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .7rem .9rem; font-size: .88rem; color: var(--ink-soft); max-width: 82ch; }
 
-  .text { max-width: 70ch; margin: 0 auto; }
-  .text p { margin-bottom: .7rem; }
-  .text .try { color: var(--ink-soft); }
   footer { max-width: 70ch; margin: 1.6rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
-  footer a { color: var(--purple); }
 </style>
 </head>
 <body>
@@ -114,7 +108,6 @@
     </div>
 
     <div class="ws">
-      <div class="cell"><span class="kicker">Estimand</span><div class="rule"></div><div class="body" id="est"></div></div>
       <div class="cell"><span class="kicker">Rung the method reaches</span><div class="rule"></div>
         <div class="ladder" id="mlad" role="group" aria-label="Rung the method reaches"></div></div>
       <div class="cell"><span class="kicker">Rung the claim asserts</span><div class="rule"></div>
@@ -124,16 +117,10 @@
     </div>
 
     <div class="actions"><button type="button" class="reveal" id="reveal" disabled>Reveal the answer key</button></div>
-    <div class="debrief" id="debrief" hidden aria-live="polite"></div>
-  </div>
-
-  <div class="text">
-    <p>A claim’s rung is the strongest reading its verb admits. The method’s rung is what the experiment did to the model: a probe only observes it (L1), and a rerun with an activation set intervenes (L2), which with the input given and greedy decoding also computes the counterfactual about activations. A claim reaches L3 when it names the concept an activation stands for, which no rerun verifies on its own.</p>
-    <p class="try"><strong>Try this:</strong> code the gender claim before you reveal it, then find the one word that lifts it from rung 2 to rung 3.</p>
   </div>
 
   <footer>
-    Exercise built for this tutorial from the verb ladder and the worksheet frames of Part 4; the verbs follow the annotation codebook of <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; the gender claim is the tutorial’s running example (a thought experiment), the IOI claim paraphrases Wang et al. (2023); not an experiment from the paper · tutorial demo · CC-BY
+    Exercise built for this tutorial from the verb ladder and the worksheet frames of Part 4 · tutorial demo · CC-BY
   </footer>
 
 </div>
@@ -143,47 +130,36 @@
    frames, IOI frames) and figures/causal-ladder.tex (default method texts). */
 const $ = id => document.getElementById(id);
 const NAME = { 1: 'Association', 2: 'Intervention', 3: 'Counterfactual' };
-const METHOD_TX = { 1: 'typically: probing, correlational analysis',
-                    2: 'typically: patching, ablation, steering, over many inputs',
-                    3: 'what this input would have produced; claims about concepts' };
-const CLAIM_TX = { 1: 'correlates with, is decodable from',
-                   2: 'causally affects, mediates, is sufficient for',
-                   3: 'encodes, represents, computes, uses it to do the task, the circuit' };
-
 const CLAIMS = [
   { text: '“The model represents gender at this layer, and the prediction relies on it”',
-    cite: '(the running example)',
-    ev: 'Evidence: on Bias-in-Bios biographies (nurse vs surgeon), a linear probe on the activation <i>h</i> at layer ℓ reads gender with 100% accuracy (a thought experiment). Nothing in the model is changed.',
-    est: 'the effect of gender in <i>h</i> on the prediction',
-    m: 1, mtx: 'L1 association (linear probe)',
+    cite: '',
+    ev: 'Evidence: a linear probe on the activation <i>h</i> at layer ℓ reads gender with 100% accuracy (a thought experiment).',
+    m: 1,
     c: 3, ctx: 'L3: “relies on” is an L2 verb, and “represents” attaches a concept to it',
-    mis: 'identifiability gap; rung gap',
-    debrief: 'The worksheet reads the claim as rung 2 plus a concept, and the concept is what puts it at rung 3. The probe’s direction is one of many that fit the gender labels: that is the identifiability gap, which Part 3’s contrastive pairs narrow. The probe reaches only rung 1 against the claim’s verbs: that is the rung gap, and Part 2’s projection rerun lifts the evidence to rung 2 for the tested bios.' },
+    mis: 'identifiability gap; rung gap' },
   { text: 'A name-mover head (9.6 in GPT-2 small) contributes to the IOI behaviour',
     cite: '(Wang et al., 2023)',
-    ev: 'Evidence: path patching in GPT-2 small on indirect-object identification (IOI: completing a sentence with the name of the person who receives something), 15 sentence templates in both name orders. Head 9.6 is layer 9, head 6.',
-    est: 'the effect of head 9.6 on the indirect-object prediction',
-    m: 2, mtx: 'L2 intervention (path patching)',
-    c: 2, ctx: 'L2 intervention (“contributes to”)',
-    mis: 'none: the claim’s verb matches the rung',
-    debrief: 'Wang and colleagues write that patching 9.6, 9.9 and 10.0 causes a large drop in the logit difference (the correct name’s logit minus the other name’s), and “contributes to” reads as an interventional verb. They also report backup name movers that take over when the name movers are knocked out: “necessary for this output on these inputs” would stay at rung 2, while “necessary for the behaviour” is a rung-3 claim that the backups count against.' }
+    ev: 'Evidence: path patching in GPT-2 small.',
+    m: 2,
+    c: 2,
+    mis: 'none' }
 ];
 
 const state = { i: 0, m: 0, c: 0, revealed: false };
 
-function buildLadder(el, key, tx) {
+function buildLadder(el, key) {
   el.innerHTML = '';
   [3, 2, 1].forEach(r => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'r' + r; b.dataset.rung = r;
     b.setAttribute('aria-pressed', 'false');
-    b.innerHTML = '<span class="nm">L' + r + ' ' + NAME[r] + '</span><span class="tx">' + tx[r] + '</span><span class="sr-only"></span>';
+    b.innerHTML = '<span class="nm">L' + r + ' ' + NAME[r] + '</span><span class="sr-only"></span>';
     b.addEventListener('click', () => { state[key] = r; render(); });
     el.appendChild(b);
   });
 }
-buildLadder($('mlad'), 'm', METHOD_TX);
-buildLadder($('clad'), 'c', CLAIM_TX);
+buildLadder($('mlad'), 'm');
+buildLadder($('clad'), 'c');
 
 function mark(el, picked, deck) {
   el.querySelectorAll('button').forEach(b => {
@@ -197,9 +173,8 @@ function mark(el, picked, deck) {
 function render() {
   const k = CLAIMS[state.i];
   $('count').textContent = 'Claim ' + (state.i + 1) + ' of ' + CLAIMS.length;
-  $('claim').innerHTML = k.text + ' <span class="cite">' + k.cite + '</span>';
+  $('claim').innerHTML = k.text + (k.cite ? ' <span class="cite">' + k.cite + '</span>' : '');
   $('ev').innerHTML = k.ev;
-  $('est').innerHTML = k.est;
   mark($('mlad'), state.m, state.revealed ? k.m : 0);
   mark($('clad'), state.c, state.revealed ? k.c : 0);
   const gap = $('gap');
@@ -209,15 +184,11 @@ function render() {
     gap.className = 'gapv ' + (g > 0 ? 'bad' : 'ok');
   } else { gap.textContent = '–'; gap.className = 'gapv'; }
   if (state.revealed) {
-    $('deckans').innerHTML = '<b>Answer key:</b> ' + k.mis + (k.c > k.m ? ' (gap +' + (k.c - k.m) + ')' : '') +
-      '<br><b>Method:</b> ' + k.mtx + '<br><b>Claim:</b> ' + k.ctx;
-    $('debrief').textContent = k.debrief;
-    $('debrief').hidden = false;
+    $('deckans').innerHTML = '<b>Answer key:</b> ' + k.mis + (k.c > k.m ? ' (gap +' + (k.c - k.m) + ')' : '') + (k.ctx ? '<br><b>Claim:</b> ' + k.ctx : '');
     $('reveal').textContent = state.i + 1 < CLAIMS.length ? 'Next claim →' : 'Back to the first claim';
     $('reveal').disabled = false;
   } else {
-    $('deckans').textContent = state.m && state.c ? '' : 'Pick a rung on both ladders.';
-    $('debrief').hidden = true;
+    $('deckans').textContent = '';
     $('reveal').textContent = 'Reveal the answer key';
     $('reveal').disabled = !(state.m && state.c);
   }

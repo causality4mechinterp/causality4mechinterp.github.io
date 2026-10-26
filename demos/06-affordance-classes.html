@@ -53,11 +53,6 @@ fieldset.controls legend{float:left;margin-right:.4rem;font-size:.72rem;letter-s
   border:1px solid var(--line);background:var(--card);color:var(--ink-soft)}
 .toggle[aria-pressed="true"]{border-color:var(--purple);color:var(--ink);font-weight:600}
 .toggle:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
-.readout{max-width:70ch;margin:.9rem 0 0;color:var(--ink-soft)}
-.readout b{color:var(--ink)}
-.text{max-width:70ch;margin:.6rem 0 0;color:var(--ink-soft)}
-.try{max-width:70ch;margin:.6rem 0 0;font-size:.92rem}
-.try b{color:var(--ink)}
 footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
 footer p{margin:.3rem 0}
 @media (max-width:600px){ #fig text{font-size:17px} .stage{padding:.7rem} .card{padding:.4rem} }
@@ -89,14 +84,10 @@ footer p{margin:.3rem 0}
     <button type="button" class="toggle" data-aff="interv" aria-pressed="false">Interventions on concepts</button>
     <button type="button" class="toggle" data-aff="natural" aria-pressed="false">Natural experiments</button>
   </fieldset>
-  <p class="readout" id="readout" aria-live="polite"></p>
-  <p class="text">What a method can identify is bounded by the interactions it affords.</p>
-  <p class="try"><b>Try this:</b> press each row and see where its ring ends up, then ask which row your own method has.</p>
 </div>
 
 <footer>
-  <p>Provenance: the equivalence-class drawing and the three affordance rows of the tutorial deck (Part 3), after the identifiability discussion and the &ldquo;Concepts as Affordances&rdquo; box of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>); the ring sizes are schematic, not measured, and not an experiment reported in the paper.</p>
-  <p>tutorial demo &middot; CC-BY</p>
+  <p>Provenance: the equivalence-class drawing and the three affordance rows of the tutorial deck (Part 3); the ring sizes are schematic, not measured &middot; tutorial demo &middot; CC-BY.</p>
 </footer>
 </div>
 
@@ -110,17 +101,13 @@ footer p{margin:.3rem 0}
 var OUTER = {cx:172, rx:168, ry:60}, INNER = {cx:284, rx:40, ry:20};
 var CY = 84;
 var STATES = {
-  none: {ring: OUTER, label: '', dot: false,
-    text: 'With activations alone, every explanation in this set fits the data as well as the others, so the data cannot pick.'},
-  pairs: {ring: INNER, label: 'contrastive pairs', dot: true,
-    text: '<b>Pairs differing in a few concepts identify them.</b> What is left is one answer, up to names and scale, if concepts add linearly in <i>h</i> and the changed concepts vary enough across pairs.'},
-  interv: {ring: OUTER, label: 'interventions on concepts (open)', dot: false,
-    text: '<b>Patching sets <i>h</i>; learning <i>z</i> from patched runs is open.</b>'},
-  natural: {ring: INNER, label: 'natural experiments', dot: false,
-    text: '<b>Languages or checkpoints: same concepts, several mixings <i>g</i>.</b> Comparing checkpoints, as model diffing does, is a natural experiment.'}
+  none: {ring: OUTER, label: '', dot: false},
+  pairs: {ring: INNER, label: 'contrastive pairs', dot: true},
+  interv: {ring: OUTER, label: 'interventions on concepts (open)', dot: false},
+  natural: {ring: INNER, label: 'natural experiments', dot: false}
 };
 var $ = function(id){ return document.getElementById(id); };
-var svg = $('fig'), cls = $('cls'), readout = $('readout');
+var svg = $('fig'), cls = $('cls');
 var buttons = Array.prototype.slice.call(document.querySelectorAll('.toggle'));
 var narrow = window.matchMedia('(max-width:600px)');
 var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -164,7 +151,6 @@ function go(next){
   key = next;
   var s = STATES[key];
   buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.aff === key)); });
-  readout.innerHTML = s.text;
   svg.setAttribute('aria-label', 'Nested sets of explanations. Outer: fits the data.' +
     (s.label ? ' Ring for ' + s.label + '.' : ''));
   var from = {cx: cur.cx, rx: cur.rx, ry: cur.ry}, to = s.ring, t0 = performance.now();

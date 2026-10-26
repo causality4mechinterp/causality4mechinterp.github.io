@@ -56,8 +56,6 @@
   [role="tab"][aria-selected="true"] { background: var(--card); color: var(--ink); font-weight: 700; border-bottom: 1px solid var(--card); }
   [role="tab"] .rk { font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-right: .35rem; }
   #tab1 .rk { color: var(--l1); } #tab2 .rk { color: var(--l2); } #tab3 .rk { color: var(--l3); }
-  button.reveal { font: inherit; font-size: .84rem; padding: .35rem .85rem; margin-bottom: .4rem; cursor: pointer; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink-soft); }
-  button.reveal[aria-pressed="true"] { background: var(--purple); color: var(--paper); border-color: var(--purple); }
 
   .bio { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .7rem; font-size: .9rem; margin-bottom: .8rem; font-variant-numeric: tabular-nums; }
   .bio .m { color: var(--ink-mute); }
@@ -69,10 +67,8 @@
   .ax { stroke: var(--line); stroke-width: 1.2; }
   .axl { fill: var(--ink-soft); font-size: 11px; font-weight: 600; }
   .lab { fill: var(--ink); font-size: 11.5px; font-weight: 700; }
-  .lab, .rlab, .axl { paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+  .lab, .axl { paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
   .probe { stroke: var(--ink-mute); stroke-width: 1.4; stroke-dasharray: 5 4; }
-  .readout { stroke: var(--magenta); stroke-width: 1.6; }
-  .rlab { fill: var(--magenta); font-size: 11px; font-weight: 700; }
   .arrow { stroke: var(--ink); stroke-width: 1.6; fill: none; }
 
   .metric .v { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
@@ -82,13 +78,7 @@
   .row.q .t { font-style: italic; }
   .row.no .t { color: var(--ink-mute); }
   @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
-  .revealed { margin-top: .6rem; font-size: .86rem; background: var(--hero); border-left: 3px solid var(--magenta); border-radius: 0 10px 10px 0; padding: .45rem .7rem; }
-  .revealed[hidden] { display: none; }
 
-  .after { max-width: 70ch; margin: 0 auto; }
-  .after p { margin-bottom: .7rem; }
-  .after .try { background: var(--hero); border: 1px solid var(--purple-soft); border-radius: 10px; padding: .55rem .8rem; }
-  .after .try strong { color: var(--purple); }
   footer { max-width: 70ch; margin: 1.8rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
   footer a { color: var(--purple); }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -101,7 +91,7 @@
     <div>
       <div class="kicker">EMNLP 2026 Tutorial · Causal Foundations for Interpretability</div>
       <h1>The same gender question reads differently at each rung</h1>
-      <p class="dek">A probe reads gender from the activation a, zeroing a along the probe's directions moves the model's predictions, and rerunning one bio with a changed computes that bio's counterfactual about a. Each tab shows the sentence its evidence supports and what it takes to move that sentence up one rung.</p>
+      <p class="dek">One question, three rungs, one click each.</p>
     </div>
     <a class="back" href="./index.html">← All demos</a>
   </header>
@@ -113,7 +103,6 @@
         <button role="tab" id="tab2" aria-selected="false" aria-controls="panel" tabindex="-1"><span class="rk">Rung 2</span>set a</button>
         <button role="tab" id="tab3" aria-selected="false" aria-controls="panel" tabindex="-1"><span class="rk">Rung 3</span>had it been about a man</button>
       </div>
-      <button class="reveal" id="reveal" aria-pressed="false">Reveal the readout</button>
     </div>
 
     <div id="panel" role="tabpanel" aria-labelledby="tab1">
@@ -126,19 +115,13 @@
           <div class="row"><span class="l">Supports</span><span class="t" id="rs"></span></div>
           <div class="row no"><span class="l">Does not support</span><span class="t" id="rn"></span></div>
           <div id="up"></div>
-          <p class="revealed" id="rv" aria-live="polite" hidden></p>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="after">
-    <p>All three numbers are exact for this toy; what changes from rung to rung is the sentence they support. The grey line is the one that often gets written, and Reveal shows which coordinate of a the toy's readout reads, which none of the three numbers can show. With the input given and greedy decoding, the rung-3 rerun of the swapped bio is exact; the sentence about gender also needs the swap to change gender and nothing else.</p>
-    <p class="try"><strong>Try this.</strong> Before pressing Reveal, decide on each tab whether the grey line could be false while the number stays the same.</p>
-  </div>
-
   <footer>
-    Rows from the deck's Part 2 frames; seeded toy with a two-coordinate a and a difference-of-means probe, not Bias-in-Bios data or an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> · tutorial demo · CC-BY
+    Rows from the deck's Part 2 frames; seeded toy, not Bias-in-Bios data or an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> &middot; tutorial demo &middot; CC-BY
   </footer>
 
 </div>
@@ -174,19 +157,16 @@
   const ROWS = {
     1: { q: 'Do these activations correlate with gender?', s: 'gender is decodable from this layer.', n: 'the model represents gender here, or uses it for the prediction.',
          up: [['L1 to L2', 'Patch or ablate a instead of watching it.']],
-         v: Math.round(acc * 100) + '%', k: 'probe accuracy on the 100 held-out bios; nothing inside the model is changed',
-         rv: 'Revealed: this toy reads only a₂, a feature that travels with gender, and never a₁, the gender coordinate. The probe still scores ' + Math.round(acc * 100) + '%, so its score cannot tell which coordinate the prediction uses.' },
+         v: Math.round(acc * 100) + '%', k: 'probe accuracy on the 100 held-out bios' },
     2: { q: 'Does setting these activations change the profession the model predicts?', s: 'intervening here changes the prediction, on the tested bios.', n: 'the gender mechanism; bios unlike the tested ones.',
          up: [['L2 to L3, activations', 'Rerun this input with a set: without sampling, that is the counterfactual.'],
               ['L2 to L3, sampled token or concept', 'A sampled token needs its random draw; a concept, an activation shown to play it.']],
-         v: flips + ' of ' + BIOS.length, k: 'predictions that change when a is zeroed along the probe direction and each bio is rerun',
-         rv: 'Revealed: the probe direction also carries part of a₂, and that part moved the predictions. The edit changes the prediction without showing a gender mechanism.' },
+         v: flips + ' of ' + BIOS.length, k: 'predictions that change when a is zeroed along the probe direction' },
     3: { q: 'Had this bio been about a man, would the model have predicted surgeon?', s: 'if the swapped bio changes gender and nothing else: this bio would have been predicted surgeon.', n: 'other bios; “this layer encodes gender”.',
          up: [],
-         v: f2(pn(BIO)) + ' → ' + f2(pn(SWAP)), k: 'p(nurse): this bio, then the swapped bio, rerun with greedy decoding',
-         rv: 'Revealed: the readout reads only a₂, and the swap moved a₂ from ' + f2(BIO[1]) + ' to ' + f2(SWAP[1]).replace('-', '−') + '; a₁, the gender coordinate, plays no part. The surgeon answer holds for this bio and says nothing about other bios or about what this layer encodes.' }
+         v: f2(pn(BIO)) + ' → ' + f2(pn(SWAP)), k: 'p(nurse): this bio, then the swapped bio' }
   };
-  const st = { rung: 1, revealed: false };
+  const st = { rung: 1 };
 
   // scatter
   const X0 = 52, X1 = 428, Y0 = 14, Y1 = 290, XR = 1.7, YR = 2.1;
@@ -214,11 +194,10 @@
     const df = el('defs', {}, s), mk = el('marker', { id: 'hd', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, df);
     el('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--ink)' }, mk);
     el('line', { class: 'ax', x1: X0, y1: Y1, x2: X1, y2: Y1 }, s); el('line', { class: 'ax', x1: X0, y1: Y0, x2: X0, y2: Y1 }, s);
-    el('text', { class: 'axl', x: (X0 + X1) / 2, y: Y1 + 22, 'text-anchor': 'middle' }, s, st.revealed ? 'a₁: gender (← he · she →)' : 'a₁, first coordinate of a at layer ℓ');
-    el('text', { class: 'axl', x: 16, y: (Y0 + Y1) / 2, 'text-anchor': 'middle', transform: 'rotate(-90 16 ' + (Y0 + Y1) / 2 + ')' }, s, st.revealed ? 'a₂: travels with gender' : 'a₂, second coordinate');
+    el('text', { class: 'axl', x: (X0 + X1) / 2, y: Y1 + 22, 'text-anchor': 'middle' }, s, 'a₁, first coordinate of a at layer ℓ');
+    el('text', { class: 'axl', x: 16, y: (Y0 + Y1) / 2, 'text-anchor': 'middle', transform: 'rotate(-90 16 ' + (Y0 + Y1) / 2 + ')' }, s, 'a₂, second coordinate');
     el('text', { class: 'axl', x: X0, y: Y1 + 42, style: 'fill:var(--she)' }, s, '● she-bios');
     el('text', { class: 'axl', x: X0 + 84, y: Y1 + 42, style: 'fill:var(--he)' }, s, '● he-bios');
-    if (st.revealed) el('line', { class: 'readout', x1: X0, y1: Y(0), x2: X1, y2: Y(0) }, s);
     if (st.rung === 1) {
       BIOS.forEach(b => dotAt(s, b.a, b.g));
       line(s, 'probe', thr, 1.9);
@@ -235,10 +214,6 @@
       arrow(s, BIO, SWAP, 8);
       mark(s, BIO, 1, 'this bio', 10); mark(s, SWAP, -1, 'swapped bio', 10);
     }
-    if (st.revealed) {
-      el('text', { class: 'rlab', x: X1 - 4, y: Y(0) - 6, 'text-anchor': 'end' }, s, 'readout: nurse ↑');
-      el('text', { class: 'rlab', x: X1 - 4, y: Y(0) + 15, 'text-anchor': 'end' }, s, 'surgeon ↓');
-    }
   }
   function render() {
     const R = ROWS[st.rung];
@@ -251,7 +226,6 @@
       r.append(a, b); up.append(r);
     });
     $('mv').textContent = R.v; $('mk').textContent = R.k;
-    $('rv').hidden = !st.revealed; $('rv').textContent = st.revealed ? R.rv : '';
     const b = $('bio'); b.textContent = '';
     b.append('“She has worked in hospitals for ten years. ');
     const m = document.createElement('span'); m.className = 'm'; m.textContent = '… This person works as a”'; b.append(m);
@@ -278,12 +252,6 @@
       const k = { ArrowRight: j === 2 ? 1 : j + 2, ArrowLeft: j === 0 ? 3 : j, Home: 1, End: 3 }[e.key];
       if (k) { e.preventDefault(); select(k, true); }
     });
-  });
-  $('reveal').addEventListener('click', () => {
-    st.revealed = !st.revealed;
-    $('reveal').setAttribute('aria-pressed', st.revealed);
-    $('reveal').textContent = st.revealed ? 'Hide the readout' : 'Reveal the readout';
-    render();
   });
   render();
 })();

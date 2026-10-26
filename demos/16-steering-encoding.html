@@ -87,9 +87,6 @@
   .tile .lbl { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); font-weight: 600; }
   .tile .val { font-size: 1.32rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--purple); }
 
-  .text { max-width: 68ch; margin: 0 auto; }
-  .text p { margin-bottom: .7rem; }
-  .text .try { color: var(--ink-soft); }
   footer { max-width: 68ch; margin: 1.6rem auto 0; font-size: .78rem; color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: .9rem; }
   footer a { color: var(--purple); }
 </style>
@@ -135,12 +132,9 @@
         <text class="lb" id="lbl-grey">grey, centre</text>
         <line class="proj" id="proj-pos"/>
         <line class="proj" id="proj-col"/>
-        <text class="lb" id="lbl-pos">position moved</text>
-        <text class="lb" id="lbl-col">colour moved</text>
         <line class="steer" id="arrow" x1="0" y1="0" marker-end="url(#head-bold)"/>
         <circle class="pt" id="ball" r="12"/>
       </g>
-      <text class="cap" id="cap" x="14" y="320">steer along axis 1</text>
       <line class="track trk" x1="150" y1="370" x2="410" y2="370"/>
       <text class="lb" x="150" y="394" text-anchor="middle">left</text>
       <text class="lb" x="280" y="394" text-anchor="middle">centre</text>
@@ -158,13 +152,8 @@
     </div>
   </div>
 
-  <div class="text">
-    <p>The activation <i>h</i> has two true axes, the ball’s position and its colour, and each dot is one picture of the ball. An encoder whose axes are rotated by 63° fits these balls equally well, because a linear head can rotate back (demo 15). Steering the grey ball along that encoder’s learned axis 1 moves its position and its colour at once.</p>
-    <p class="try"><strong>Try this:</strong> drag α to 11 and read the two tiles: position moved by 4.99 and colour by 9.80, the figure’s two dashed lines.</p>
-  </div>
-
   <footer>
-    Toy values in the units of the rotation drawing in Part 3 of the tutorial (drawing after a 2025 talk by Sridhar), the steering build of that part’s rotation frame; related reading: the “Steering ≠ Encoding” box of <a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em> (arXiv:2602.16698)</a>; not an experiment from the paper · tutorial demo · CC-BY
+    Toy values in the units of the rotation drawing in Part 3 of the tutorial (drawing after a 2025 talk by Sridhar) &middot; tutorial demo &middot; CC-BY
   </footer>
 
 </div>
@@ -193,15 +182,13 @@ const set = (el, attrs) => { for (const k in attrs) el.setAttribute(k, attrs[k])
 function update() {
   const p = state.alpha * D.x, c = state.alpha * D.y;   /* position and colour after steering */
   const X = p * U, Y = -c * U;
-  const vis = Math.abs(state.alpha) > 0.01 ? 'visible' : 'hidden', up = state.alpha > 0;
+  const vis = Math.abs(state.alpha) > 0.01 ? 'visible' : 'hidden';
   set($('arrow'), { x2: X, y2: Y, visibility: vis });
   set($('ball'), { cx: X, cy: Y, fill: ballColour(c) });
   set($('proj-pos'), { x1: X, y1: Y, x2: X, y2: 0, visibility: vis });
   set($('proj-col'), { x1: X, y1: Y, x2: 0, y2: Y, visibility: vis });
-  set($('lbl-pos'), { x: up ? X + 6 : X - 6, y: up ? 24 : -10, 'text-anchor': up ? 'start' : 'end', visibility: vis });
   /* grey label sits in the quadrant the steering never enters */
   set($('lbl-grey'), state.alpha < 0 ? { x: 22, y: -16, 'text-anchor': 'start' } : { x: -16, y: 32, 'text-anchor': 'end' });
-  set($('lbl-col'), { x: up ? -8 : 8, y: Y + 4, 'text-anchor': up ? 'end' : 'start', visibility: vis });
   set($('ball2'), { cx: 280 + p * U, fill: ballColour(c) });
   $('t-pos').textContent = fmt(p);
   $('t-col').textContent = fmt(c);

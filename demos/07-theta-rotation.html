@@ -53,13 +53,6 @@ a{color:var(--purple)}
   border:1px solid var(--line);background:var(--card);color:var(--ink-soft)}
 .toggle[aria-pressed="true"]{border-color:var(--c-paired);color:var(--ink);font-weight:600}
 input:focus-visible,.toggle:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
-.chips{display:flex;flex-wrap:wrap;gap:.3rem 1rem;margin-top:.55rem;font-size:.86rem;color:var(--ink-soft)}
-.chips b{color:var(--ink);font-variant-numeric:tabular-nums}
-.chips [hidden]{display:none}
-.sw{display:inline-block;width:.75em;height:.75em;border-radius:3px;margin-right:.35em;vertical-align:-.05em}
-.text{max-width:70ch;margin:1rem 0 0;color:var(--ink-soft)}
-.try{max-width:70ch;margin:.6rem 0 0;font-size:.92rem}
-.try b{color:var(--ink)}
 footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
 footer p{margin:.3rem 0}
 @media (max-width:560px){ #chart text{font-size:19px} .stage{padding:.7rem} .card{padding:.4rem} }
@@ -78,12 +71,7 @@ footer p{margin:.3rem 0}
 <div class="stage">
     <div class="card">
       <svg id="chart" viewBox="0 0 560 300" role="img"
-        aria-label="Objective against theta. Grey, reconstruction: flat at 1. Orange, sparsity with co-occurring concepts: lowest at 40 degrees, 0.78. Purple, with paired inputs: lowest at 0 and 90 degrees, 0.5."></svg>
-      <div class="chips" aria-live="polite">
-        <span><i class="sw" style="background:var(--c-recon)"></i>reconstruction <b id="v-recon">1.00</b></span>
-        <span><i class="sw" style="background:var(--c-sparse)"></i>sparsity, with co-occurring concepts <b id="v-sparse"></b></span>
-        <span id="chip-paired" hidden><i class="sw" style="background:var(--c-paired)"></i>with paired inputs <b id="v-paired"></b></span>
-      </div>
+        aria-label="Objective against theta"></svg>
     </div>
   <div class="controls">
     <div class="sliderrow">
@@ -94,13 +82,10 @@ footer p{margin:.3rem 0}
     </div>
     <button type="button" class="toggle" id="paired" aria-pressed="false">Add paired inputs</button>
   </div>
-  <p class="text">Reconstruction is flat: it cannot see the angle. Sparsity sees it, but where no input carries a single concept it prefers a wrong angle, near 40 degrees here. Add paired inputs that differ in a few concepts, and the loss is lowest at the true axes, 0 and 90 degrees.</p>
-  <p class="try"><b>Try this:</b> drag &theta; to the bottom of the orange curve, then add paired inputs. Which angle does each curve prefer now?</p>
 </div>
 
 <footer>
-  <p>Provenance: a schematic after the &ldquo;Same loss, different story&rdquo; plot on the poster of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>), with the curve values read off that plot every 5&deg; as in the deck&rsquo;s drawing; the curves are illustrative, not measured, and not an experiment reported in the paper.</p>
-  <p>tutorial demo &middot; CC-BY</p>
+  <p>Provenance: a schematic after the &ldquo;Same loss, different story&rdquo; plot on the poster of <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> (<em>Causality is Key for Interpretability Claims to Generalise</em>), as in the deck&rsquo;s drawing; the curves are illustrative, not measured &middot; tutorial demo &middot; CC-BY.</p>
 </footer>
 </div>
 
@@ -150,7 +135,7 @@ footer p{margin:.3rem 0}
   [0,30,45,60,90].forEach(function(t){
     el("text",txt({x:X(t),y:H-MB+18,"text-anchor":"middle",fill:"var(--chart-axis)"}),chart,t+"°");
   });
-  el("text",txt({x:ML+pw/2,y:H-8,"text-anchor":"middle","font-style":"italic"}),chart,"θ, rotation of the learned basis");
+  el("text",txt({x:ML+pw/2,y:H-8,"text-anchor":"middle","font-style":"italic"}),chart,"θ");
   el("text",txt({x:14,y:MT+ph/2,"text-anchor":"middle","font-style":"italic",transform:"rotate(-90 14 "+(MT+ph/2)+")"}),chart,"objective");
   [0,90].forEach(function(t){
     el("line",{x1:X(t),y1:Y(1.55),x2:X(t),y2:Y(0.35),stroke:"var(--c-paired)","stroke-width":1.2,"stroke-dasharray":"1 3",opacity:.7},chart);
@@ -173,8 +158,7 @@ footer p{margin:.3rem 0}
 
   /* ---- interaction ---- */
   var slider=document.getElementById("theta"), out=document.getElementById("theta-out");
-  var btn=document.getElementById("paired"), chip=document.getElementById("chip-paired");
-  var vS=document.getElementById("v-sparse"), vP=document.getElementById("v-paired");
+  var btn=document.getElementById("paired");
   function update(){
     var t=+slider.value, on=btn.getAttribute("aria-pressed")==="true";
     out.textContent=t+"°";
@@ -182,8 +166,7 @@ footer p{margin:.3rem 0}
     [[mR,fRecon],[mS,fSparse],[mP,fPaired]].forEach(function(m){
       m[0].setAttribute("cx",X(t)); m[0].setAttribute("cy",Y(m[1](t)));
     });
-    pairedG.style.display=on?"":"none"; mP.style.display=on?"":"none"; chip.hidden=!on;
-    vS.textContent=fSparse(t).toFixed(2); vP.textContent=fPaired(t).toFixed(2);
+    pairedG.style.display=on?"":"none"; mP.style.display=on?"":"none";
   }
   slider.addEventListener("input",update);
   btn.addEventListener("click",function(){

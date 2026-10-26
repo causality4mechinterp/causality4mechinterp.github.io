@@ -77,10 +77,6 @@ td.fx{color:var(--gap-green);font-weight:600}
 .loss{margin:.7rem 0 0;font-size:.9rem}
 .loss b{color:var(--gap-green);font-variant-numeric:tabular-nums}
 
-.after{max-width:70ch;margin:0}
-.after p{margin:0 0 .7rem}
-.after .try{background:var(--hero);border:1px solid var(--purple-soft);border-radius:10px;padding:.55rem .8rem}
-.after .try strong{color:var(--purple)}
 footer{border-top:1px solid var(--line);margin-top:1.8rem;padding-top:.9rem;font-size:.78rem;color:var(--ink-mute);max-width:70ch}
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
 </style>
@@ -119,11 +115,6 @@ footer{border-top:1px solid var(--line);margin-top:1.8rem;padding-top:.9rem;font
       <p class="loss" id="loss" aria-live="polite"></p>
     </div>
   </div>
-</div>
-
-<div class="after">
-  <p>Each dot is one picture of the ball, placed by the encoder in the two-dimensional activation <i>h</i>; the true axes read the ball&rsquo;s position and its colour. Turning the learned axes by <i>&theta;</i> changes every ball&rsquo;s coordinates on them, while a linear head that turns back by <i>&theta;</i> returns the same position and colour, so the loss (the squared error of that output) stays at zero. That is a symmetry, a change that leaves the loss unchanged, and nothing in the activations alone picks the true axes over the rotated ones.</p>
-  <p class="try"><strong>Try this:</strong> set <i>&theta;</i> to 63&deg;, the deck&rsquo;s angle, and read the pink ball&rsquo;s coordinate on learned axis 1: does it track position, colour, or both?</p>
 </div>
 
 <footer>
@@ -170,7 +161,6 @@ footer{border-top:1px solid var(--line);margin-top:1.8rem;padding-top:.9rem;font
     el("circle",{cx:p[0],cy:p[1],r:5.5,fill:"var(--ink)"});
     el("text",{x:p[0]+b.dx,y:p[1]+b.dy,"text-anchor":b.anchor,"font-size":11.5,fill:"var(--ink-soft)","paint-order":"stroke",stroke:"var(--card)","stroke-width":3},b.name);
   });
-  var cap = el("text",{x:12,y:22,"font-size":12,fill:"var(--ink)"});
 
   function placeAxis(line, label, ang){
     var u = [Math.cos(ang*DEG), Math.sin(ang*DEG)];
@@ -204,7 +194,6 @@ footer{border-top:1px solid var(--line);margin-top:1.8rem;padding-top:.9rem;font
     var t = +slider.value, c = Math.cos(t*DEG), s = Math.sin(t*DEG);
     out.textContent = t + "°";
     placeAxis(ax1, lab1, t); placeAxis(ax2, lab2, t+90);
-    cap.textContent = t===0 ? "true axes" : "rotated by "+t+"°: same loss";
     var sse = 0;
     BALLS.forEach(function(b, i){
       var h = b.z;                                   /* activation of this picture */
@@ -214,7 +203,7 @@ footer{border-top:1px solid var(--line);margin-top:1.8rem;padding-top:.9rem;font
       cells[i][1].textContent = fmt(e1); cells[i][2].textContent = fmt(e2);
       cells[i][3].textContent = fmt(p);  cells[i][4].textContent = fmt(q);
     });
-    lossEl.innerHTML = "loss at <i>&theta;</i> = "+t+"&deg;: <b>"+(sse/BALLS.length).toFixed(3)+"</b>"+(t===0 ? "" : ", the same as at 0&deg;");
+    lossEl.innerHTML = "loss at <i>&theta;</i> = "+t+"&deg;: <b>"+(sse/BALLS.length).toFixed(3)+"</b>";
   }
   slider.addEventListener("input", update);
   update();

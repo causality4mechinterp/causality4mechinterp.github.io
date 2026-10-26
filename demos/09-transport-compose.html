@@ -49,9 +49,6 @@ a{color:var(--purple)}
 button:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:.3rem 1rem;margin-top:.55rem;font-size:.86rem;color:var(--ink-soft)}
 .chips b{color:var(--ink);font-variant-numeric:tabular-nums}
-.text{max-width:70ch;margin:1rem 0 0;color:var(--ink-soft)}
-.try{max-width:70ch;margin:.6rem 0 0;font-size:.92rem}
-.try b{color:var(--ink)}
 footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
 footer p{margin:.3rem 0}
 @media (max-width:560px){ .stage{padding:.7rem} .card{padding:.4rem}
@@ -70,14 +67,13 @@ footer p{margin:.3rem 0}
 
 <div class="stage">
   <div class="card">
-    <svg id="fig" viewBox="0 0 640 270" role="img" aria-labelledby="fig-label">
-      <title id="fig-label">Two panels with a gender axis and a tense axis. Left, training data: the gender edit moves gender only. Right, new inputs.</title>
+    <svg id="fig" viewBox="0 0 640 240" role="img" aria-labelledby="fig-label">
+      <title id="fig-label">Two panels with a gender axis and a tense axis. Left, training data. Right, new inputs.</title>
     </svg>
   </div>
   <div class="chips" aria-live="polite">
     <span>New inputs: gender moves <b id="v-g">1.00</b></span>
     <span>tense moves <b id="v-t">0.00</b></span>
-    <span>(one unit = what the gender edit does to gender on training data)</span>
   </div>
   <div class="controls">
     <div class="seg" role="group" aria-label="New inputs">
@@ -85,13 +81,10 @@ footer p{margin:.3rem 0}
       <button type="button" id="share" aria-pressed="false">gender and tense share a direction</button>
     </div>
   </div>
-  <p class="text">The gender edit adds one direction to the activation <i>h</i>, found on training bios, where it moves gender and leaves tense alone. Same network, new inputs: if the new inputs mix gender into <i>h</i> the same way, the edit transports. If in the new texts gender and tense share a direction, the same edit moves both.</p>
-  <p class="try"><b>Try this:</b> switch the new inputs to a shared direction. How far does tense now move?</p>
 </div>
 
 <footer>
-  <p>Provenance: the deck&rsquo;s transport figure (Part 3, &ldquo;An identified direction transports when new inputs keep the mixing&rdquo;) made to move, for arXiv:2602.16698 (<a href="https://arxiv.org/abs/2602.16698"><em>Causality is Key for Interpretability Claims to Generalise</em></a>); the 35&deg; angle is the figure&rsquo;s and the readouts are its cosine and sine, toy values, not an experiment from the paper.</p>
-  <p>tutorial demo &middot; CC-BY</p>
+  <p>Provenance: the deck&rsquo;s transport figure (Part 3) made to move; toy values, not an experiment from the paper &middot; tutorial demo &middot; CC-BY.</p>
 </footer>
 </div>
 
@@ -123,17 +116,16 @@ footer p{margin:.3rem 0}
     var title = el("text", tx({x:OX - 30, y:22, fill:"var(--ink)", "font-weight":"600"}), g, top);
     var gArrow = el("line", {"stroke":"var(--ink)", "stroke-width":3.2, "stroke-linecap":"round", "marker-end":"url(#hg)"}, g);
     var gLab = el("text", tx({"font-size":"12"}), g, "gender edit");
-    var bottom = el("text", tx({x:OX - 30, y:OY + 44}), g, "");
     var mark = el("text", {x:OX + AX - 4, y:44, "text-anchor":"end", "font-size":"26", "font-weight":"700"}, g, "");
-    return {box:g, title:title, g:gArrow, gl:gLab, bottom:bottom, mark:mark};
+    return {box:g, title:title, g:gArrow, gl:gLab, mark:mark};
   }
   var left = panel("training data"), right = panel("");
 
   /* side by side when wide; stacked at phone width, so the text stays at its drawn size */
   var narrow = window.matchMedia("(max-width:560px)");
   function layout(){
-    svg.setAttribute("viewBox", narrow.matches ? "0 0 320 540" : "0 0 640 270");
-    right.box.setAttribute("transform", narrow.matches ? "translate(0,270)" : "translate(330,0)");
+    svg.setAttribute("viewBox", narrow.matches ? "0 0 320 480" : "0 0 640 240");
+    right.box.setAttribute("transform", narrow.matches ? "translate(0,240)" : "translate(330,0)");
   }
 
   /* concept coordinates (gender, tense) -> svg */
@@ -160,8 +152,6 @@ footer p{margin:.3rem 0}
     var m = draw(right, phi);
     vG.textContent = m[0].toFixed(2); vT.textContent = m[1].toFixed(2);
     right.title.textContent = changed ? "new inputs, changed mixing" : "new inputs, same mixing";
-    left.bottom.textContent = "the edit moves gender";
-    right.bottom.textContent = changed ? "moves gender and tense" : "still moves gender";
     right.mark.textContent = changed ? "×" : "✓";
     right.mark.setAttribute("fill", changed ? "var(--magenta)" : "var(--gap-green)");
   }

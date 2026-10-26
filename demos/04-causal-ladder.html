@@ -69,7 +69,6 @@ tr.focus td{background:var(--hero);font-weight:600}
 .abar{display:inline-block;vertical-align:middle;width:min(120px,20vw);height:9px;border-radius:999px;background:var(--purple-faint);margin-right:.45rem}
 .afill{display:block;height:100%;border-radius:999px;background:var(--purple-mid);transition:width .3s}
 .setv{border:1.5px solid var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink);border-radius:7px;padding:0 .3rem}
-.tens{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .old{color:var(--ink-mute);text-decoration:line-through;margin-right:.35rem;font-weight:400}
 .src{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
@@ -80,19 +79,15 @@ tr.focus td{background:var(--hero);font-weight:600}
 .cell.setv{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
 .arrow{color:var(--ink-mute);line-height:1}
 .colhead{font-weight:600}
-.capt{font-size:.82rem;color:var(--ink-soft)}
 .btn{cursor:pointer;font:inherit;font-size:.9rem;border-radius:8px;padding:.45rem .9rem;margin-top:.8rem;
   background:var(--purple);border:1px solid var(--purple);color:var(--paper);font-weight:600}
 .btn:disabled{opacity:.45;cursor:default}
-.verdicts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.9rem;transition:opacity .3s}
-.verdicts.waiting{opacity:.35}
-.verdicts.waiting .vcard span:not(.vhead){visibility:hidden}
+.verdicts{display:grid;grid-template-columns:1fr;gap:.7rem;margin-top:.9rem;transition:opacity .3s}
+.verdicts.waiting{display:none}
 .vcard{border-radius:10px;padding:.6rem .8rem;background:var(--card);border:1px solid var(--line);font-size:.88rem}
 .vcard.sup{border-left:4px solid var(--gap-green)}
-.vcard.nosup{border-left:4px solid var(--ink-mute)}
 .vhead{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink-mute)}
 .vcard.sup .vhead{color:var(--gap-green)}
-section.prose{margin:1.4rem 0;max-width:70ch}
 footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-size:.8rem;color:var(--ink-mute);max-width:70ch}
 @media (max-width:720px){
   .wrap{padding-left:1rem;padding-right:1rem}
@@ -135,27 +130,24 @@ footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-s
       <thead><tr><th>sum</th><th>carries?</th><th><i>a</i> at layer &#8467;</th><th>answer <i>y</i></th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
-    <p class="src" id="srcLine" hidden><i>&atilde;</i> is the value of <i>a</i> on 30 + 47, a sum that does not carry: <b id="srcVal"></b></p>
+    <p class="src" id="srcLine" hidden><i>&atilde;</i> is the value of <i>a</i> on 30 + 47: <b id="srcVal"></b></p>
   </div>
 
   <div class="scene" id="sceneCf" hidden>
     <div class="cols">
       <div class="col" id="c1">
-        <span class="capt">nothing to infer</span>
         <span class="cell">17 + 25</span><span class="arrow" aria-hidden="true">&uarr;</span>
         <span class="cell"><i>a</i> = <span id="aObs"></span></span><span class="arrow" aria-hidden="true">&uarr;</span>
         <span class="cell">42</span>
         <span class="colhead">abduction</span>
       </div>
       <div class="col dim" id="c2">
-        <span class="capt">set <i>a</i> := <i>&atilde;</i></span>
         <span class="cell">17 + 25</span><span class="arrow" aria-hidden="true">&uarr;</span>
         <span class="cell setv"><i>&atilde;</i> = <span class="tval"></span></span><span class="arrow" aria-hidden="true">&uarr;</span>
         <span class="cell">?</span>
         <span class="colhead">action</span>
       </div>
       <div class="col dim" id="c3">
-        <span class="capt">rerun</span>
         <span class="cell">17 + 25</span><span class="arrow" aria-hidden="true">&uarr;</span>
         <span class="cell setv"><i>&atilde;</i> = <span class="tval"></span></span><span class="arrow" aria-hidden="true">&uarr;</span>
         <span class="cell setv" id="cfOut">?</span>
@@ -168,18 +160,11 @@ footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-s
 
   <div class="verdicts" id="verdicts">
     <div class="vcard sup"><span class="vhead">Supports</span><span id="vSup"></span></div>
-    <div class="vcard nosup"><span class="vhead">Does not support</span><span id="vNo"></span></div>
   </div>
 </div>
 
-<section class="prose">
-  <p>The network is a toy: <i>a</i> is one number at layer &#8467;, the network adds 1 to the tens digit of its answer when <i>a</i> is above 0.5, and every value of <i>a</i> is a toy value. With greedy decoding (the model always outputs its most likely token) the input and the weights fix every activation, so the rung-3 rerun has nothing left to infer and computes the counterfactual about <i>a</i>; it is also the rung-2 intervention on this one input, so it gives the same 32 as the first row of rung 2&rsquo;s table. A sampled token would also need the random draw that picked it, and &ldquo;had the carry been 0&rdquo; needs an alignment between <i>a</i> and the carry, which Part 4 tests.</p>
-  <p><b>Try this:</b> before you rerun at rung 3, say what 17&nbsp;+&nbsp;25 will give.</p>
-</section>
-
 <footer>
-  <p>Provenance: tutorial illustration of Part 2&rsquo;s ladder frame and its carry example (17 + 25 = 42, patch source 30 + 47, the abduction, action, prediction figure); the network and the values of <i>a</i> are toy values, not an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a>.</p>
-  <p>tutorial demo &middot; CC-BY</p>
+  <p>Provenance: tutorial illustration of Part 2&rsquo;s ladder frame and its carry example; the network and the values of <i>a</i> are toy values &middot; tutorial demo &middot; CC-BY.</p>
 </footer>
 </div>
 
@@ -201,20 +186,16 @@ footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-s
   function $(id){ return document.getElementById(id); }
   function fmt(v){ return v.toFixed(2); }
   var TEXT = {
-    1: {sup: "on these sums, <i>y</i> goes with <i>a</i>: where <i>a</i> is high, the sum carries and the tens digit of <i>y</i> (underlined) includes the carried 1.",
-        no: "setting <i>a</i> changes <i>y</i>."},
+    1: {sup: "on these sums, <i>y</i> goes with <i>a</i>."},
     2: {btn: "Set a := ã on every sum and rerun",
-        sup: "copying <i>a</i> in changes the answer on the tested sums that carry.",
-        no: "<i>a</i> is the carry; sums unlike the tested ones."},
+        sup: "copying <i>a</i> in changes the answer on the tested sums that carry."},
     3: {btn: "Rerun 17 + 25 with a := ã",
-        sup: "on 17 + 25, had <i>a</i> been its 30 + 47 value, the answer would have been 32.",
-        no: "had the carry been 0; that needs the alignment."}
+        sup: "on 17 + 25, had <i>a</i> been its 30 + 47 value, the answer would have been 32."}
   };
   function renderTable(){
     var set = rung === 2 && done;
     $("rows").innerHTML = sums.map(function(x, i){
       var a = set ? aTilde : acts[i], y0 = answer(x, acts[i]), y = answer(x, a), ys = String(y);
-      if (rung === 1 && carries(x)) ys = '<span class="tens">' + ys.slice(0, -1) + '</span>' + ys.slice(-1);
       return '<tr' + (i === 0 ? ' class="focus"' : '') + '><td>' + x[0] + ' + ' + x[1] + '</td><td>' +
         (carries(x) ? 'yes' : 'no') + '</td><td><span class="abar"><span class="afill" style="width:' +
         Math.round(a * 100) + '%"></span></span>' + (set ? '<span class="setv">' + fmt(a) + '</span>' : fmt(a)) + '</td><td>' +
@@ -242,7 +223,6 @@ footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:.9rem;font-s
     $("act").hidden = rung === 1;
     if (t.btn){ $("act").textContent = t.btn; $("act").disabled = done; }
     $("vSup").innerHTML = t.sup;
-    $("vNo").innerHTML = t.no;
     $("verdicts").classList.toggle("waiting", rung !== 1 && !done);
     renderTable();
     $("status").textContent = status();

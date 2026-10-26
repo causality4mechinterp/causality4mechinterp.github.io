@@ -57,25 +57,16 @@
   .ghost .arr-head{fill:var(--ink-mute);}
   .lab{fill:var(--ink); font-size:15px;}
   .ghost .lab{fill:var(--ink-mute);}
-  .note{fill:var(--ink-mute); font-size:14px;}
 
   table{border-collapse:collapse; margin:.6rem 0 .4rem; font-size:.9rem; font-variant-numeric:tabular-nums;}
   th, td{padding:.25rem .8rem .25rem 0; text-align:left;}
   td.num, th.num{text-align:right; padding-left:.8rem; white-space:nowrap;}
   thead th{color:var(--ink-mute); font-weight:600; border-bottom:1px solid var(--line);}
   .cur{color:var(--purple); font-weight:700;}
-  .gloss{display:block; font-size:.75rem; color:var(--ink-mute); font-weight:400;}
-  .status{font-size:.88rem; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
-
-  .after{max-width:70ch;}
-  .after p{margin-bottom:.7rem;}
-  .after .try{background:var(--hero); border:1px solid var(--purple-soft); border-radius:10px; padding:.55rem .8rem;}
-  .after .try strong{color:var(--purple);}
   footer{border-top:1px solid var(--line); padding-top:.9rem; margin-top:1.6rem; font-size:.78rem; color:var(--ink-mute); max-width:78ch;}
   footer a{color:var(--purple);}
   @media (max-width: 560px){
     .lab{font-size:19px;}
-    .note{font-size:17px;}
   }
 </style>
 </head>
@@ -91,34 +82,26 @@
 </header>
 
 <section class="stage" aria-label="Interactive demo: one dictionary per training seed">
-  <div class="kicker">Train the dictionary from</div>
   <div class="seg" role="group" aria-label="Training seed">
     <button type="button" id="btn-1" aria-pressed="true">Seed 1</button>
     <button type="button" id="btn-2" aria-pressed="false">Seed 2</button>
   </div>
-  <svg id="plot" viewBox="50 20 550 305" role="img" aria-label="">
+  <svg id="plot" viewBox="50 20 550 280" role="img" aria-label="">
     <g id="pts"></g>
     <g id="ghost" class="ghost"></g>
     <g id="cur"></g>
-    <text class="note" x="60" y="318">same activations, same objective: reconstruction + sparsity</text>
   </svg>
   <table aria-label="Objective terms for both seeds">
     <thead><tr><th></th><th class="num" id="h-1">seed 1</th><th class="num" id="h-2">seed 2</th></tr></thead>
     <tbody>
-      <tr><th>Reconstruction error<span class="gloss">mean squared distance from each dot to its rebuilt copy</span></th><td class="num" id="r-1"></td><td class="num" id="r-2"></td></tr>
-      <tr><th>Sparsity cost<span class="gloss">mean of |z<sub>1</sub>| + |z<sub>2</sub>|, the sizes of the two feature activations</span></th><td class="num" id="s-1"></td><td class="num" id="s-2"></td></tr>
+      <tr><th>Reconstruction error</th><td class="num" id="r-1"></td><td class="num" id="r-2"></td></tr>
+      <tr><th>Sparsity cost</th><td class="num" id="s-1"></td><td class="num" id="s-2"></td></tr>
     </tbody>
   </table>
-  <p class="status" id="status" role="status" aria-live="polite"></p>
 </section>
 
-<div class="after">
-  <p class="try"><strong>Try this:</strong> before you switch to seed 2, guess whether its two arrows will land on seed 1&rsquo;s.</p>
-  <p>Each dot is one activation h and each arrow is one feature of the dictionary; every dot is rebuilt exactly as a weighted sum of the two arrows, so both seeds reconstruct with error 0. Seed 1&rsquo;s arrows carry the names of the two SAE features on the previous slide, and seed 2, trained on the same dots with the same objective, ends on different arrows. Both seeds train until the sparsity cost stops falling and end at two different minima whose costs differ by about half a percent, with the named seed 1 slightly higher, so the random start decides which pair of arrows, and so which names, you get.</p>
-</div>
-
 <footer>
-  Toy illustration: the 20 dots of the slide&rsquo;s drawing (coordinates scaled by 1/10), a two-feature dictionary that rebuilds each dot exactly (so its activations can be negative, unlike a ReLU SAE), 2000 gradient steps on the sparsity cost from a seeded random start, enough for both seeds to reach a minimum, all computed by this page. It illustrates Paulo and Belrose (2025, <a href="https://arxiv.org/abs/2501.16615">arXiv:2501.16615</a>), who train SAEs on the same activations with different seeds and get different features; not an experiment from <a href="https://arxiv.org/abs/2602.16698">arXiv:2602.16698</a> · tutorial demo · CC-BY
+  Toy illustration: the 20 dots of the slide&rsquo;s drawing. It illustrates Paulo and Belrose (2025, <a href="https://arxiv.org/abs/2501.16615">arXiv:2501.16615</a>), who train SAEs on the same activations with different seeds and get different features · tutorial demo · CC-BY
 </footer>
 
 <script>
@@ -208,7 +191,6 @@ function draw(seed, angles){
   $('cur').innerHTML = labels(seed, angles).map(([d, l]) => arrow(d, l)).join('');
 }
 
-const pct = 100 * Math.abs(RUN[2].sparsity - RUN[1].sparsity) / RUN[1].sparsity;
 for (const s of [1, 2]){
   $('r-' + s).textContent = RUN[s].recon.toFixed(3);
   $('s-' + s).textContent = RUN[s].sparsity.toFixed(3);
@@ -220,21 +202,15 @@ function setSeed(seed){
   $('btn-2').setAttribute('aria-pressed', seed === 2);
   for (const s of [1, 2]) for (const p of ['h-', 'r-', 's-']) $(p + s).classList.toggle('cur', s === seed);
   $('ghost').innerHTML = seed === 2 ? order1.map((i, k) => arrow(RUN[1].end[i], NAMES[k])).join('') : '';
-  const gaps = [];
-  for (const [j, k] of match()) gaps[k] = gap(RUN[2].end[j], RUN[1].end[order1[k]]).toFixed(0);
-  const msg = seed === 1
-    ? 'Seed 1 after ' + STEPS + ' steps: reconstruction error ' + RUN[1].recon.toFixed(3) + ', sparsity cost ' + RUN[1].sparsity.toFixed(3) + '.'
-    : 'Seed 2 after ' + STEPS + ' steps: its features sit ' + gaps[0] + '° from “women” and ' + gaps[1] + '° from “academia” (dashed); reconstruction error ' + RUN[2].recon.toFixed(3) + ' for both, sparsity costs ' + pct.toFixed(1) + '% apart.';
-  $('plot').setAttribute('aria-label', 'Twenty toy activations with the two dictionary arrows of seed ' + seed + '. ' + msg);
+  $('plot').setAttribute('aria-label', 'Twenty toy activations with the two dictionary arrows of seed ' + seed + '.');
   cancelAnimationFrame(anim);
   const path = RUN[seed].path;
-  if (REDUCED){ draw(seed, path[STEPS]); $('status').textContent = msg; return; }
-  $('status').textContent = 'Training seed ' + seed + '…';
+  if (REDUCED){ draw(seed, path[STEPS]); return; }
   const t0 = performance.now(), dur = 450;
   (function frame(t){
     const p = Math.min(1, Math.max(0, (t - t0) / dur));
     draw(seed, path[Math.round(STEPS * (1 - Math.pow(1 - p, 2)))]);
-    if (p < 1) anim = requestAnimationFrame(frame); else $('status').textContent = msg;
+    if (p < 1) anim = requestAnimationFrame(frame);
   })(t0);
 }
 $('btn-1').addEventListener('click', () => setSeed(1));
