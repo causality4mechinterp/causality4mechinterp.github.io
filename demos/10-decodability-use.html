@@ -261,7 +261,7 @@
   <section>
     <h2>What this shows</h2>
     <p>Both models carry concept <i>c</i> in their hidden state, and a linear probe decodes it from either one at roughly 97–98% held-out accuracy. The probe view of the two models is indistinguishable, yet their causal structure differs: Model B’s output readout consumes the <i>c</i>-direction, whereas in Model A the same direction is a bystander correlate that the data injected and the computation ignores. A probe targets an associational estimand (is the information present?), so it cannot separate these two worlds.</p>
-    <p>The ablation asks the intervention-effect question: remove the direction the probe found, then watch behaviour. Task accuracy falls to chance only in Model B, while a fresh probe on the ablated states sits near chance in <em>both</em> models (<span id="fp-a">≈51%</span> / <span id="fp-b">≈53%</span>), so no linear probe can recover <i>c</i> from either model; only the behavioural consequence differs. This is the logic of amnesic probing (Elazar et al., 2021) behind the paper’s BERT example: probes decode part-of-speech tags from BERT at &gt;97% accuracy (Hewitt &amp; Manning, 2019), yet removing that information barely affects language modelling. Decodable, and still unused.</p>
+    <p>The ablation asks the intervention-effect question: remove the direction the probe found, then watch behaviour. Task accuracy falls to chance only in Model B, while a fresh probe on the ablated states sits near chance in <em>both</em> models (<span id="fp-a">≈51%</span> / <span id="fp-b">≈53%</span>), so no linear probe can recover <i>c</i> from either model; only the behavioural consequence differs. This is the logic of amnesic probing (Elazar et al., 2021): on BERT, probe accuracy did not predict use. Phrase boundaries decode at over 83% accuracy, yet removing them leaves word prediction unchanged; removing part of speech, by contrast, costs most of it. Decodable, and still unused.</p>
   </section>
 
   <section>
@@ -269,10 +269,6 @@
     <blockquote>
       <p>“Probing shows <i>c</i> is decodable from <b>h</b> but claiming it is encoded by the model requires knowing that the model uses it.”</p>
       <cite>— arXiv:2602.16698, “Decodability ≠ Model Use” mismatch box (Takeaway)</cite>
-    </blockquote>
-    <blockquote>
-      <p>“A linear probe trained on BERT’s hidden states achieves &gt;97% accuracy at predicting POS tags (Hewitt &amp; Manning, 2019). […] More strikingly, Elazar et al. (2021) demonstrated that removing the information exploited by POS probes via causal intervention (‘amnesic probing’) had minimal effect on BERT’s language modeling performance”</p>
-      <cite>— arXiv:2602.16698, worked example on BERT and part-of-speech</cite>
     </blockquote>
   </section>
 
