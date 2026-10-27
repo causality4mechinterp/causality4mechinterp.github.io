@@ -76,13 +76,13 @@ footer a:hover{color:var(--foot-strong)}
 @media (max-width:560px){ .wrap{padding:0 1rem} .head{padding-top:1.5rem} .stage{padding:.75rem} }
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
 /* end shell */
-/* page token: the fill of a node held fixed (the captions call it grey) */
-:root{ --frz:#D9D9D9; }
+/* page tokens: --frz the fill of a node held fixed (the captions call it grey); --shade the readout's surgeon side in the Level 2 plane */
+:root{ --frz:#D9D9D9; --shade:#e9ecf2; }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --frz:#3a4150; }
+  :root:not([data-theme="light"]){ --frz:#3a4150; --shade:#262c3a; }
 }
-:root[data-theme="dark"]{ --frz:#3a4150; }
-:root[data-theme="light"]{ --frz:#D9D9D9; }
+:root[data-theme="dark"]{ --frz:#3a4150; --shade:#262c3a; }
+:root[data-theme="light"]{ --frz:#D9D9D9; --shade:#e9ecf2; }
   * { margin: 0; }
   .stage { display: grid; gap: 1rem; }
   .split { display: grid; grid-template-columns: minmax(0, 400px) 1fr; gap: 1rem; align-items: start; }
@@ -105,10 +105,10 @@ footer a:hover{color:var(--foot-strong)}
   .key + .key { margin-top: .2rem; }
   .key b { color: var(--ink); }
   .res { font-size: .9rem; font-variant-numeric: tabular-nums; }
-  .res p + p { margin-top: .45rem; }
+  .res .y { margin-top: 0; }
+  .res .capt + .y { margin-top: .5rem; }
   .res b.i { color: var(--l2); } .res b.c { color: var(--l3); }
-  .res .def { color: var(--ink-soft); }
-  .verdict { font-weight: 600; border-left: 3px solid var(--muted); padding-left: .55rem; }
+  .verdict { font-weight: 600; border-left: 3px solid var(--muted); padding-left: .55rem; margin-top: .6rem; }
   .verdict.bad { border-left-color: var(--l3); }
 
   /* drawings: ink nodes, intervention colour (L2) for what the rerun sets, grey for nodes held fixed, L3 for the claim */
@@ -126,7 +126,10 @@ footer a:hover{color:var(--foot-strong)}
   .lab { fill: var(--ink); font-size: 10px; font-family: inherit; }
   .lab.tick { fill: var(--ink-soft); font-size: 9px; }
   .probe { stroke: var(--ink); stroke-width: 2.6; }
-  .pi { fill: var(--l2); } .pc { fill: var(--l3); }
+  .region { fill: var(--shade); }
+  .bound { stroke: var(--muted); stroke-width: 1.3; }
+  .perp { stroke: var(--l2); stroke-width: 1.3; }
+  .lab.reg { fill: var(--muted); font-style: italic; }  .pi { fill: var(--l2); } .pc { fill: var(--l3); }
   .di { stroke: var(--l2); stroke-width: 1.3; stroke-dasharray: 4 3; } .dc { stroke: var(--l3); stroke-width: 1.3; stroke-dasharray: 4 3; }
   .lab.i { fill: var(--l2); font-weight: 700; } .lab.c { fill: var(--l3); font-weight: 700; }
   marker path { fill: var(--ink-soft); } #pm path { fill: var(--ink); }
@@ -166,21 +169,24 @@ footer a:hover{color:var(--foot-strong)}
     <section class="part" aria-label="Removing the probe direction">
       <div class="kicker">Level 2 · concepts</div>
       <div class="split">
-      <div class="op"><svg id="plane" viewBox="0 0 260 200" role="img" aria-label="The bio's activation h in the plane of gender and another cue, the probe direction, h-prime after removing the probe direction, and h-star with gender alone removed."></svg></div>
+      <div class="op"><svg id="plane" viewBox="0 0 280 216" role="img" aria-label="The bio's activation a in the plane of gender and another cue, with the readout's nurse and surgeon sides. a-tilde is a projected onto the line where the probe direction is zero; a-star is a projected onto the cue axis, where gender is zero."></svg></div>
       <div>
-      <p class="sub">Unedited h: gender 1.00, cue 1.00, y = 1.02 → nurse</p>
+      <p class="sub">Unedited a: gender 1.00, cue 1.00, y = 1.02 → nurse</p>
       <div class="ctl">
         <label for="phi">Probe angle from gender</label>
         <input type="range" id="phi" min="0" max="90" step="5" value="50">
         <output id="phi-out" for="phi">50°</output>
       </div>
       <div class="res" aria-live="polite">
-        <p><b class="i">h′</b> <span class="def">h without the probe direction, what the rerun computes:</span> <span id="yp"></span></p>
-        <p><b class="c">h*</b> <span class="def">the same bio with gender alone removed, what the claim is about:</span> <span id="ys"></span></p>
+        <div class="y" id="yp"></div>
+        <p class="capt" id="cp"></p>
+        <div class="y" id="ys"></div>
+        <p class="capt" id="cs"></p>
         <p class="verdict" id="vd"></p>
       </div>
-      <p class="key"><b>h</b> the bio's activation vector at one layer · <b>gender</b>, <b>another cue</b> two directions in h that travel together in the bios; hidden: the analyst sees h and the probe, not these axes · <b>0°</b> the probe points exactly along gender.</p>
-      <p class="key">Toy readout: y = 0.4 × gender + 1.2 × cue − 0.58, above 0 reads nurse.</p>
+      <p class="key"><b>a</b> here the bio's activation vector at one layer · <b>gender</b>, <b>another cue</b> two directions in a that travel together in the bios; hidden: the analyst sees a and the probe, not these axes · <b>0°</b> the probe points exactly along gender.</p>
+      <p class="key"><b>probe = 0</b> the line where a has no probe component; the cue axis is where gender = 0 · <b>dashed</b> what each removal takes out of a.</p>
+      <p class="key">Toy readout: y = 0.4 × gender + 1.2 × cue − 0.58, above 0 reads nurse; shaded where it reads surgeon.</p>
       </div>
       </div>
     </section>
@@ -244,30 +250,45 @@ footer a:hover{color:var(--foot-strong)}
   // ---------- Level 2: the probe direction (figures/concept-counterfactual.tex) ----------
   // One toy readout, chosen so the gender-only counterfactual keeps "nurse": y(h) = 0.4·gender + 1.2·cue − 0.58.
   const f = (g, c) => 0.4 * g + 1.2 * c - 0.58;
-  const plane = $('plane'), O = [52, 166], S = 92, xy = (g, c) => [O[0] + S * g, O[1] - S * c];
-  const pm = el('marker', { id: 'pm', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, el('defs', {}, plane));
+  // The plane: gender along x, the cue along y. The shaded half is where the readout says surgeon;
+  // the L2 line is probe = 0 (where projecting out the probe puts h), the cue axis is gender = 0.
+  const plane = $('plane'), O = [62, 158], S = 86, xy = (g, c) => [O[0] + S * g, O[1] - S * c];
+  const CL = { x0: 14, y0: 12, x1: 234, y1: 206 };   // plot area; the axis names sit outside it
+  const defs = el('defs', {}, plane);
+  const pm = el('marker', { id: 'pm', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, defs);
   el('path', { d: 'M0,0 L10,5 L0,10 z' }, pm);
-  el('line', { class: 'axis', x1: 22, y1: O[1], x2: 248, y2: O[1] }, plane);
-  el('line', { class: 'axis', x1: O[0], y1: 196, x2: O[0], y2: 22 }, plane);
-  el('line', { class: 'axis', x1: O[0] + S, y1: O[1] - 3, x2: O[0] + S, y2: O[1] + 3 }, plane);
-  el('text', { class: 'lab tick', x: O[0] + S, y: O[1] + 13, 'text-anchor': 'middle' }, plane, '1');
-  el('line', { class: 'axis', x1: O[0] - 3, y1: O[1] - S, x2: O[0] + 3, y2: O[1] - S }, plane);
-  el('text', { class: 'lab tick', x: O[0] - 6, y: O[1] - S - 8, 'text-anchor': 'end' }, plane, '1');
-  el('text', { class: 'lab', x: 248, y: O[1] + 14, 'text-anchor': 'end' }, plane, 'gender (hidden)');
-  el('text', { class: 'lab', x: O[0] - 4, y: 14 }, plane, 'another cue (hidden)');
+  el('rect', { x: CL.x0, y: CL.y0, width: CL.x1 - CL.x0, height: CL.y1 - CL.y0 }, el('clipPath', { id: 'plotclip' }, defs));
+  // the probe = 0 line also stops short of the cue axis's name, which it would cross at small angles
+  el('path', { 'clip-rule': 'evenodd', d: `M${CL.x0},${CL.y0} H${CL.x1} V${CL.y1} H${CL.x0} Z M${CL.x0},${CL.y0} H${O[0] - 3} V37 H${CL.x0} Z` }, el('clipPath', { id: 'perpclip' }, defs));
+  const cB = g => (0.58 - 0.4 * g) / 1.2;             // the readout's y = 0 line
+  const bL = xy(-0.7, cB(-0.7)), bR = xy(2.2, cB(2.2));
+  el('polygon', { class: 'region', 'clip-path': 'url(#plotclip)', points: [bL, bR, [bR[0], 230], [bL[0], 230]].map(p => p.join(',')).join(' ') }, plane);
+  el('line', { class: 'bound', 'clip-path': 'url(#plotclip)', x1: bL[0], y1: bL[1], x2: bR[0], y2: bR[1] }, plane);
+  el('text', { class: 'lab reg', x: CL.x1 - 2, y: 22, 'text-anchor': 'end' }, plane, 'nurse (y > 0)');
+  // lower-left quadrant: no moving line ever crosses it
+  el('text', { class: 'lab reg', x: O[0] - 6, y: 192, 'text-anchor': 'end' }, plane, 'surgeon');
+  el('text', { class: 'lab reg', x: O[0] - 6, y: 203, 'text-anchor': 'end' }, plane, '(y < 0)');
+  el('line', { class: 'axis', x1: CL.x0, y1: O[1], x2: CL.x1, y2: O[1] }, plane);
+  el('line', { class: 'axis', x1: O[0], y1: CL.y1, x2: O[0], y2: CL.y0 + 2 }, plane);
+  el('text', { class: 'lab', x: CL.x1 + 4, y: O[1] + 3 }, plane, 'gender');
+  el('text', { class: 'lab tick', x: CL.x1 + 4, y: O[1] + 14 }, plane, '(hidden)');
   const hP = xy(1, 1), sP = xy(0, 1);
   const P = {
+    perp: el('line', { class: 'perp', 'clip-path': 'url(#perpclip)' }, plane),
+    perplab: el('text', { class: 'lab i' }, plane, 'probe = 0'),
     probe: el('line', { class: 'probe', x1: O[0], y1: O[1], 'marker-end': 'url(#pm)' }, plane),
     plab: el('text', { class: 'lab' }, plane, 'probe direction'),
     dc: el('line', { class: 'dc', x1: hP[0], y1: hP[1], x2: sP[0], y2: sP[1] }, plane),
     di: el('line', { class: 'di', x1: hP[0], y1: hP[1] }, plane)
   };
+  el('text', { class: 'lab', x: O[0] - 6, y: 22, 'text-anchor': 'end' }, plane, 'another cue');
+  el('text', { class: 'lab tick', x: O[0] - 6, y: 33, 'text-anchor': 'end' }, plane, '(hidden)');
   el('circle', { cx: hP[0], cy: hP[1], r: 4.5, fill: 'var(--ink)' }, plane);
-  el('text', { class: 'lab', x: hP[0] + 8, y: hP[1] + 4 }, plane, 'h, one bio');
-  el('circle', { class: 'pc', cx: sP[0], cy: sP[1], r: 4.5 }, plane);
-  el('text', { class: 'lab c', x: sP[0] - 7, y: sP[1] + 4, 'text-anchor': 'end' }, plane, 'h*');
-  P.pt = el('circle', { class: 'pi', r: 4.5 }, plane);
-  P.ptlab = el('text', { class: 'lab i' }, plane, 'h′');
+  P.hlab = el('text', { class: 'lab' }, plane, 'a, one bio');
+  el('circle', { class: 'pc', cx: sP[0], cy: sP[1], r: 5.5 }, plane);
+  el('text', { class: 'lab c', x: sP[0] + 7, y: sP[1] - 7 }, plane, 'a*');
+  P.pt = el('circle', { class: 'pi', r: 3.6 }, plane);
+  P.ptlab = el('text', { class: 'lab i' }, plane, 'ã');
 
   function render() {
     const B = +$('beta').value / 10, T = +$('phi').value;
@@ -288,21 +309,44 @@ footer a:hover{color:var(--foot-strong)}
 
     // remove the probe direction w from h = (1, 1): h' = h − (h·w) w
     const r = T * Math.PI / 180, w = [Math.cos(r), Math.sin(r)], dot = w[0] + w[1];
-    const hp = [1 - dot * w[0], 1 - dot * w[1]];
-    const tip = xy(1.55 * w[0], 1.55 * w[1]), q = xy(hp[0], hp[1]);
+    const hp = [1 - dot * w[0], 1 - dot * w[1]];       // = (cos − sin)·(−sin, cos): h on the probe = 0 line
+    const tip = xy(1.65 * w[0], 1.65 * w[1]), q = xy(hp[0], hp[1]);
     P.probe.setAttribute('x2', tip[0]); P.probe.setAttribute('y2', tip[1]);
-    P.plab.setAttribute('x', tip[0] + (T < 30 ? -40 : 6)); P.plab.setAttribute('y', tip[1] + (T < 30 ? -8 : T >= 75 ? 18 : 4));
+    // h sits at 45°: its label goes on the side of h the arrow does not pass
+    const hl = T < 45 ? [hP[0] - 7, hP[1] - 8, 'end'] : [hP[0] + 8, hP[1] + 4, 'start'];
+    P.hlab.setAttribute('x', hl[0]); P.hlab.setAttribute('y', hl[1]); P.hlab.setAttribute('text-anchor', hl[2]);
+    const pl = T < 25 ? [O[0] + 6, O[1] + 14] : T < 70 ? [tip[0] + 6, tip[1] + 4] : [tip[0] + 6, tip[1] + 14];
+    pl.push('start');
+    P.plab.setAttribute('x', pl[0]); P.plab.setAttribute('y', pl[1]); P.plab.setAttribute('text-anchor', pl[2]);
+    // the probe = 0 line through the origin, labelled where its lower half leaves the plot
+    const u = [-w[1], w[0]], a0 = xy(-2.5 * u[0], -2.5 * u[1]), a1 = xy(2.5 * u[0], 2.5 * u[1]);
+    P.perp.setAttribute('x1', a0[0]); P.perp.setAttribute('y1', a0[1]); P.perp.setAttribute('x2', a1[0]); P.perp.setAttribute('y2', a1[1]);
+    const dS = [w[1], w[0]];                           // screen direction of the lower half
+    const sx = (CL.x1 - O[0]) / Math.max(dS[0], 1e-9), sy = (CL.y1 - O[1]) / Math.max(dS[1], 1e-9), s = Math.min(sx, sy) - 6;
+    const ex = [O[0] + s * dS[0], O[1] + s * dS[1]], wS = [w[0], -w[1]];
+    // near horizontal, the lower half runs into the readout line and the axis names: label the upper half, left of the origin
+    const lp = T >= 75 ? [O[0] - 4, O[1] + 13] : [ex[0] + 6 * wS[0], ex[1] + 6 * wS[1]];
+    P.perplab.setAttribute('x', lp[0]); P.perplab.setAttribute('y', lp[1]); P.perplab.setAttribute('text-anchor', T >= 75 ? 'end' : 'start');
     P.di.setAttribute('x2', q[0]); P.di.setAttribute('y2', q[1]);
     P.pt.setAttribute('cx', q[0]); P.pt.setAttribute('cy', q[1]);
-    P.ptlab.setAttribute('x', q[0] + 7); P.ptlab.setAttribute('y', q[1] + 14);
+    // h′'s label points away from the circle h′ runs along (diameter from the origin to h)
+    const dx = hp[0] - 0.5, dy = -(hp[1] - 0.5), dn = Math.hypot(dx, dy) || 1;
+    const ux = dx / dn, anc = ux > 0.35 ? 'start' : ux < -0.35 ? 'end' : 'middle';
+    let lx = q[0] + 11 * ux + (anc === 'end' ? -4 : anc === 'start' ? 2 : 0), ly = q[1] + 11 * dy / dn + 4;
+    if (lx < O[0] + 2 && Math.abs(ly - 3.5 - O[1]) < 7) ly = O[1] - 4;   // keep "h′" off the gender axis
+    P.ptlab.setAttribute('x', lx); P.ptlab.setAttribute('y', ly); P.ptlab.setAttribute('text-anchor', anc);
     const yp = f(hp[0], hp[1]), ys = f(0, 1);
-    $('yp').textContent = 'gender ' + fmt(hp[0]) + ', cue ' + fmt(hp[1]) + ', y = ' + fmt(yp) + ' → ' + pred(yp);
-    $('ys').textContent = 'gender 0.00, cue 1.00, y = ' + fmt(ys) + ' → ' + pred(ys);
-    const same = Math.hypot(hp[0], hp[1] - 1) < 1e-6, vd = $('vd');
-    vd.className = 'verdict' + (pred(yp) !== pred(ys) ? ' bad' : '');
-    vd.textContent = same ? 'h′ = h*: the rerun answers the claim\'s question.'
-      : pred(yp) !== pred(ys) ? 'h′ ≠ h*: the rerun says ' + pred(yp) + ', the claim ' + pred(ys) + '; the prediction moves for the wrong reason.'
-      : 'h′ ≠ h*: same prediction here, but the rerun is about another direction.';
+    $('yp').innerHTML = '<b class="i">ã</b>: y = ' + fmt(yp) + ' → ' + pred(yp);
+    $('cp').textContent = 'the rerun, probe direction projected out: gender ' + fmt(hp[0]) + ', cue ' + fmt(hp[1]);
+    $('ys').innerHTML = '<b class="c">a*</b>: y = ' + fmt(ys) + ' → ' + pred(ys);
+    $('cs').textContent = 'the claim, the same bio with gender alone removed: gender 0.00, cue 1.00';
+    const same = Math.hypot(hp[0], hp[1] - 1) < 1e-6, flip = pred(yp) !== pred(ys), vd = $('vd');
+    const took = 'Projecting out the probe took gender ' + fmt(1 - hp[0]) + ' and cue ' + fmt(1 - hp[1]) + ' out of a';
+    vd.className = 'verdict' + (flip ? ' bad' : '');
+    vd.textContent = same ? 'ã = a*: the probe direction is the gender direction, so the rerun answers the claim\'s question.'
+      : took + (flip ? ': the rerun reads ' + pred(yp) + ', gender alone removed reads ' + pred(ys) + '.'
+                     : '; both read ' + pred(yp) + ' here, but ã ≠ a*.')
+        + ' The rerun answers a counterfactual about the probe direction, not about gender.';
   }
   $('beta').addEventListener('input', render);
   $('phi').addEventListener('input', render);
