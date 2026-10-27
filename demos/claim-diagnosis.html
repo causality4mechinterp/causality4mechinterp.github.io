@@ -88,6 +88,9 @@ footer a:hover{color:var(--foot-strong)}
     font-size: .78rem; color: var(--ink-soft); max-width: 80ch; line-height: 1.45; }
   .claim .terms li + li { margin-top: .15rem; }
   .claim .terms b { color: var(--ink); font-weight: 600; }
+  /* one warning for the whole page: red is the page's problem colour (the gap value uses it too) */
+  .warn { border-left: 4px solid var(--no); padding: .35rem .75rem; margin-bottom: 1rem; font-size: .88rem; line-height: 1.5; color: var(--ink-soft); max-width: 80ch; }
+  .warn b { color: var(--no); font-weight: 600; }
 
   /* the worksheet row of the deck: two ladders, mismatch */
   .ws { display: grid; grid-template-columns: 1.4fr 1.4fr 1fr; gap: 1rem; }
@@ -128,6 +131,7 @@ footer a:hover{color:var(--foot-strong)}
   </header>
 
   <div class="stage">
+    <p class="warn"><b>Warning</b>: a claim’s rung is the strongest reading its verb admits. That reading is the danger for a reader; the key does not say the cited authors meant it.</p>
     <div class="claim">
       <span class="kicker" id="count">Claim 1 of 9</span>
       <div class="ctext" id="claim"></div>
@@ -138,8 +142,8 @@ footer a:hover{color:var(--foot-strong)}
     <div class="ws">
       <div class="cell"><span class="kicker">Rung the method reaches</span><div class="rule"></div>
         <div class="ladder" id="mlad" role="group" aria-label="Rung the method reaches"></div></div>
-      <div class="cell"><span class="kicker">Rung the claim asserts</span><div class="rule"></div>
-        <div class="ladder" id="clad" role="group" aria-label="Rung the claim asserts"></div></div>
+      <div class="cell"><span class="kicker">Strongest rung the verb admits</span><div class="rule"></div>
+        <div class="ladder" id="clad" role="group" aria-label="Strongest rung the verb admits"></div></div>
       <div class="cell"><span class="kicker">Mismatch</span><div class="rule"></div>
         <div class="body" aria-live="polite"><div class="gapv" id="gap">–</div><div class="deckans" id="deckans"></div></div>
         <div class="legend">
@@ -164,10 +168,14 @@ footer a:hover{color:var(--foot-strong)}
 /* Deterministic: no random draws. Texts from the deck: blocks/block4.tex (verb frame, worksheet
    frames, IOI frames, SHIFT frame), blocks/block2.tex (the ladder's note, figures/method-rungs.tex,
    the running example at rung two), blocks/block1.tex (the carry, the probe, the SAE gloss) and
-   blocks/block3.tex (the rotated axis). Rung coding follows the verb ladder: "represents" and
-   "encodes" are L3, so the gender claim is L3 (Patrik's ruling of 2026-10-26); "relies on" and
-   "contributes to" are L2 (deck worksheet and IOI frames). The IOI sentence and the Layer.Head
-   notation are from Wang et al. (2023), checked against arXiv 2211.00593 on 2026-10-26. The
+   blocks/block3.tex (the rotated axis). Rung coding follows the verb ladder, where a claim's rung
+   is the strongest reading its verb admits (verb frame note, Part 4): "represents" and "encodes"
+   are L3 markers, so the gender claim codes at L3 (Patrik's ruling of 2026-10-26, commit fc1e7ad);
+   "relies on" and "contributes to" read as L2 (deck worksheet and IOI frames). The key marks the
+   reading a verb admits, never what the cited authors meant (position paper, "Scope and intended
+   use"). The IOI claim is the deck's paraphrase; Wang et al. (2023) write "patching 9.6, 9.9, and
+   10.0 causes a large drop (they thus contribute positively to the logit difference)" and the
+   Layer.Head notation, checked against the arXiv 2211.00593 PDF text on 2026-10-26. The
    Chaudhary and Geiger sentence is verbatim from the abstract of arXiv 2409.04478 (checked on
    2026-10-26); its L2/L2 coding is the deck's backup worksheet (main.tex). */
 const $ = id => document.getElementById(id);
@@ -190,9 +198,9 @@ const CLAIMS = [
     ev: 'Evidence: a linear probe on the activation <i>h</i> at layer ℓ reads gender with 100% accuracy (a thought experiment).',
     terms: [BIO, H, PROBE],
     m: 1, c: 3, mis: 'identifiability gap; rung gap',
-    why: '“Relies on” is an L2 verb, and “represents” attaches a concept to it, which is L3.' },
+    why: '“Relies on” reads as an L2 verb; “represents” admits an L3 reading, a claim about the concept, and the probe reaches L1.' },
   { text: 'A name-mover head (9.6 in GPT-2 small) contributes to the IOI behaviour',
-    cite: '(Wang et al., 2023)',
+    cite: '(paraphrased from Wang et al., 2023)',
     ev: 'Evidence: path patching in GPT-2 small.',
     terms: [['IOI', 'indirect-object identification: completing “When Mary and John went to the store, John gave a drink to” with “Mary”'],
             ['9.6', 'layer 9, head 6; GPT-2 small has 12 layers of 12 attention heads'],
@@ -204,21 +212,21 @@ const CLAIMS = [
     ev: 'Evidence: a linear probe on <i>h</i> reads gender with 100% accuracy (a thought experiment).',
     terms: [BIO, H, PROBE],
     m: 1, c: 1, mis: 'none',
-    why: '“Is decodable from” is an L1 verb, and a probe is L1 evidence.' },
+    why: '“Is decodable from” reads as an L1 verb, and a probe is L1 evidence.' },
   { text: 'This activation encodes the carry.',
     cite: '(constructed example)',
     ev: 'Evidence: copying this activation from the run on 30 + 47 into each tested sum changes the answers of the sums that carry (activation patching).',
     terms: [['carry', 'the 1 carried into the tens when the ones digits add up to ten or more, as in 17 + 25'],
             ['activation patching', 'copy an activation from the run on another input, and rerun']],
-    m: 2, c: 3, mis: 'rung gap',
-    why: '“Encodes” is an L3 verb: naming the carry needs many swapped pairs of sums to agree with schoolbook addition (Part 4).' },
+    m: 2, c: 3, mis: 'identifiability gap; rung gap',
+    why: '“Encodes” admits an L3 reading, that this activation is the carry; the patches reach L2, and naming the carry needs many swapped pairs of sums to agree with schoolbook addition (Part 4). Other activations could change the same answers.' },
   { text: 'The prediction relies on gender at this layer.',
     cite: '(constructed example)',
     ev: 'Evidence: remove the probe’s directions from <i>h</i> (INLP) and rerun many bios; the predictions change.',
     terms: [BIO, H,
             ['INLP', 'iterative nullspace projection: remove the probe’s direction, train a new probe, remove its direction too, until no probe finds gender']],
     m: 2, c: 2, mis: 'identifiability gap',
-    why: '“Relies on” is an L2 verb, but the removed directions are some of many that fit the gender labels.' },
+    why: '“Relies on” reads as an L2 verb, but the removed directions are some of many that fit the gender labels.' },
   { text: 'On 17 + 25, had this activation taken its value from 30 + 47, the answer would have been 32.',
     cite: '(constructed example)',
     ev: 'Evidence: copy the activation from the run on 30 + 47 into the run on 17 + 25 alone, and rerun with no sampling.',
@@ -230,7 +238,7 @@ const CLAIMS = [
     ev: 'Evidence: adding the vector to <i>h</i> shifts the predicted profession on these bios.',
     terms: [BIO, H, ['steering vector', 'a fixed vector added to <i>h</i> during the forward pass']],
     m: 2, c: 3, mis: 'identifiability gap; rung gap',
-    why: '“Represents” is an L3 verb, and a vector on a mixed axis can move gender and a second concept at once (Part 3).' },
+    why: '“Represents” admits an L3 reading, that the vector is gender; steering reaches L2, and a vector on a mixed axis can move gender and a second concept at once (Part 3).' },
   { text: 'Zeroing these SAE features changes the classifier’s predictions.',
     cite: '(constructed example)',
     ev: 'Evidence: SHIFT (Marks et al., 2025) zeroes the SAE features a person reads as gender in a classifier built so gender predicts profession; on balanced bios its predictions change.',

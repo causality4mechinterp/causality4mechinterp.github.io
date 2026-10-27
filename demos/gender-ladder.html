@@ -81,46 +81,63 @@ footer a:hover{color:var(--foot-strong)}
   .bio .m { color: var(--muted); }
   .bio span { display: block; }
 
-  /* the two sliders */
-  .ctrls { display: grid; grid-template-columns: 1fr; gap: .7rem; margin-bottom: .9rem; }
-  .ctrl { background: var(--card); border: 1px solid var(--line); padding: .55rem .8rem; }
-  .ctrl label { display: block; font-weight: 600; font-size: .9rem; }
-  .ctrl .row { display: flex; align-items: center; gap: .7rem; }
-  .ctrl input { flex: 1; min-width: 0; }
-  .ctrl output { font-variant-numeric: tabular-nums; font-weight: 700; font-size: .9rem; min-width: 6.5rem; }
-
-  /* the rungs × worlds grid */
-  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 12.5rem 12.5rem; background: var(--card); border: 1px solid var(--line); overflow: hidden; font-variant-numeric: tabular-nums; }
-  .grid > * { padding: .32rem .7rem; }
-  .wh { font-weight: 700; font-size: .92rem; line-height: 1.3; padding-top: .55rem; padding-bottom: .45rem; border-bottom: 1px solid var(--line); }
-  .wh small { display: block; font-weight: 400; font-size: .76rem; color: var(--ink-soft); }
-  .rh { grid-column: 1 / -1; border-top: 1px solid var(--line); border-left: 5px solid var(--rc); padding-top: .55rem; padding-bottom: .1rem; }
-  .rh:first-of-type { border-top: 0; }
+  /* the two controls: the rung buttons and the slider */
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.4rem; margin-bottom: .9rem; }
+  .tabs { display: flex; flex-wrap: wrap; gap: .4rem; }
   .r1 { --rc: var(--l1); } .r2 { --rc: var(--l2); } .r3 { --rc: var(--l3); }
-  .rtag { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rc); }
-  .rq { display: block; font-size: .84rem; color: var(--ink-soft); font-style: italic; }
-  .ml, .v { border-left: 5px solid var(--rc); }
-  .v { border-left: 0; font-size: .92rem; white-space: nowrap; }
-  .ml { font-size: .86rem; }
-  .ml .sub { display: block; font-size: .78rem; color: var(--muted); }
-  .v b { font-weight: 700; }
-  .tg { display: inline-block; font-size: .72rem; font-weight: 700; padding: 0 .45rem; margin-left: .3rem; border: 1px solid currentColor; }
+  .toggle[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--rc); }
+  .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .7rem; flex: 1 1 22rem; font-size: .9rem; }
+  .ctrl label { flex: 1 0 100%; font-weight: 600; }
+  .ctrl input { flex: 1 1 8rem; min-width: 0; }
+  .ctrl output { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 6.5rem; }
+
+  /* the rung's question, the two worlds, the verdict */
+  .rh, .vd { border-left: 5px solid var(--rc); padding: .1rem 0 .1rem .7rem; }
+  .rh { margin-bottom: .8rem; }
+  .rq { display: block; font-size: .92rem; color: var(--ink); font-style: italic; }
+  .rnote { display: block; font-size: .8rem; color: var(--muted); }
+  .vd { margin-top: .8rem; font-size: .9rem; font-weight: 600; }
+  .worlds { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .8rem; }
+  .world { border: 1px solid var(--line); padding: .6rem .7rem; min-width: 0; }
+  .wh { font-weight: 700; font-size: .95rem; line-height: 1.3; }
+  .wh small { display: block; font-weight: 400; font-size: .78rem; color: var(--ink-soft); }
+  .world svg.plane { display: block; width: 100%; max-width: 400px; height: auto; margin: .5rem auto .4rem; }
+  .nums { list-style: none; padding: 0; font-size: .88rem; font-variant-numeric: tabular-nums; }
+  .nums li { display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .45rem; }
+  .nums li + li { margin-top: .1rem; }
+  .nums .nm { min-width: 6.6rem; color: var(--ink-soft); }
+  .tg { display: inline-block; font-size: .72rem; font-weight: 700; padding: 0 .45rem; border: 1px solid currentColor; }
   .tg.eq { color: var(--gap-green); }
   .tg.ne { color: var(--muted); }
-  .vd { grid-column: 1 / -1; border-left: 5px solid var(--rc); font-size: .86rem; font-weight: 600; padding-bottom: .55rem !important; }
-  .wl { display: none; font-size: .7rem; color: var(--muted); font-weight: 600; }
+  .legend li { display: block; }
+  .legend li[hidden] { display: none; }
+  svg.gl { width: 1.35rem; height: .8rem; vertical-align: -.05rem; margin-right: .3rem; overflow: visible; }
+  @media (max-width: 720px) { .worlds { grid-template-columns: minmax(0, 1fr); } }
 
-  @media (max-width: 720px) {
-    .ctrls { grid-template-columns: 1fr; }
-    .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .grid > * { padding-left: .55rem; padding-right: .55rem; }
-    .v { white-space: normal; }
-    .grid > .corner { display: none; }
-    .ml { grid-column: 1 / -1; padding-bottom: 0; }
-    .v { padding-top: .1rem; }
-    .v.va { border-left: 5px solid var(--rc); }
-    .wl { display: block; }
-  }
+  /* the planes: ink for the bios and the readout, L1 the probe, L2 INLP, L3 the counterfactual */
+  .frame { fill: none; stroke: var(--ink-soft); stroke-width: 1; }
+  .zero { stroke: var(--line); stroke-width: 1; }
+  .tk { stroke: var(--ink-soft); stroke-width: 1; }
+  svg text { font-family: var(--font-body); }
+  .lab { fill: var(--ink); font-size: 10.5px; paint-order: stroke; stroke: var(--card); stroke-width: 3.5px; stroke-linejoin: round; }
+  .lab.tick { fill: var(--ink-soft); font-size: 9.5px; }
+  .lab.mute { fill: var(--muted); }
+  .lab.k1 { fill: var(--l1); font-weight: 700; } .lab.k2 { fill: var(--l2); font-weight: 700; } .lab.k3 { fill: var(--l3); font-weight: 700; }
+  .dot { color: var(--ink-soft); stroke: currentColor; stroke-width: 1.1; }
+  .dot.she { fill: currentColor; } .dot.he { fill: var(--card); }
+  .dot.chg { color: var(--l2); }
+  .faint { opacity: .2; }
+  .ray { stroke: var(--l2); stroke-width: .7; opacity: .22; }
+  .arr { fill: none; stroke-width: 2.4; }
+  .arr.ink { stroke: var(--ink); } .arr.c1 { stroke: var(--l1); }
+  .mv { fill: none; stroke-width: 1.4; stroke-dasharray: 4 3; }
+  .mv.c2 { stroke: var(--l2); } .mv.c3 { stroke: var(--l3); }
+  .nurse { fill: var(--hero); opacity: .75; }
+  .bnd { stroke: var(--ink-soft); stroke-width: 1.2; stroke-dasharray: 5 3; }
+  .pt { stroke: var(--card); stroke-width: 1.2; }
+  .pt.ink { fill: var(--ink); } .pt.c2 { fill: var(--l2); } .pt.c3 { fill: var(--l3); }
+  .tgt { fill: none; stroke: var(--l3); stroke-width: 2.2; }
+  .mk-ink { fill: var(--ink); } .mk-c1 { fill: var(--l1); } .mk-c2 { fill: var(--l2); } .mk-c3 { fill: var(--l3); }
 </style>
 </head>
 <body>
@@ -139,52 +156,47 @@ footer a:hover{color:var(--foot-strong)}
       <span>Swapped bio: “He has worked in hospitals for ten years. <span class="m" style="display:inline">…”</span></span>
     </p>
 
-    <div class="ctrls">
+    <div class="bar">
+      <div class="tabs" role="group" aria-label="Rung">
+        <button type="button" class="toggle r1" data-r="1" aria-pressed="true">Rung 1 · Association</button>
+        <button type="button" class="toggle r2" data-r="2" aria-pressed="false">Rung 2 · Intervention</button>
+        <button type="button" class="toggle r3" data-r="3" aria-pressed="false">Rung 3 · Counterfactual</button>
+      </div>
       <div class="ctrl">
         <label for="del">How far the swap also moves the cue</label>
-        <div class="row"><input type="range" id="del" min="0" max="1" step="0.05" value="0"><output id="delV" for="del"></output></div>
+        <input type="range" id="del" min="0" max="1" step="0.05" value="0"><output id="delV" for="del"></output>
       </div>
     </div>
 
-    <div class="grid" id="grid" aria-live="polite">
-      <div class="wh corner"></div>
-      <div class="wh">World A<small>readout uses gender, and the cue weakly</small></div>
-      <div class="wh">World B<small>readout uses only the cue</small></div>
+    <div class="rh" id="rh"><span class="rq" id="rq"></span><span class="rnote" id="rnote"></span></div>
 
-      <div class="rh r1"><span class="rtag">Rung 1 · Association</span><span class="rq">Do these activations correlate with gender?</span></div>
-      <div class="ml r1">Probe accuracy<span class="sub">linear probe reading gender from <i>a</i>, on 100 held-out bios</span></div>
-      <div class="v va r1"><span class="wl">World A</span><b id="accA"></b></div>
-      <div class="v r1"><span class="wl">World B</span><b id="accB"></b></div>
-      <div class="vd r1" id="vd1"></div>
-
-      <div class="rh r2"><span class="rtag">Rung 2 · Intervention</span><span class="rq">Does setting these activations change the profession the model predicts?</span></div>
-      <div class="ml r2">Predictions that change after INLP<span class="sub" id="dirs"></span></div>
-      <div class="v va r2"><span class="wl">World A</span><b id="flA"></b></div>
-      <div class="v r2"><span class="wl">World B</span><b id="flB"></b></div>
-      <div class="vd r2" id="vd2"></div>
-
-      <div class="rh r3"><span class="rtag">Rung 3 · Counterfactual</span><span class="rq">Would the model have predicted surgeon?</span></div>
-      <div class="ml r3">This bio, unedited</div>
-      <div class="v va r3"><span class="wl">World A</span><span id="b0A"></span></div>
-      <div class="v r3"><span class="wl">World B</span><span id="b0B"></span></div>
-      <div class="ml r3">Target: gender flipped, nothing else<span class="sub">computable only in a toy</span></div>
-      <div class="v va r3"><span class="wl">World A</span><b id="tgA"></b></div>
-      <div class="v r3"><span class="wl">World B</span><b id="tgB"></b></div>
-      <div class="ml r3">Rerun of this bio, <i>a</i> zeroed along INLP's directions</div>
-      <div class="v va r3"><span class="wl">World A</span><span id="inA"></span></div>
-      <div class="v r3"><span class="wl">World B</span><span id="inB"></span></div>
-      <div class="ml r3">Rerun of the swapped bio</div>
-      <div class="v va r3"><span class="wl">World A</span><span id="swA"></span></div>
-      <div class="v r3"><span class="wl">World B</span><span id="swB"></span></div>
-      <div class="vd r3" id="vd3"></div>
+    <div class="worlds">
+      <section class="world" aria-labelledby="whA">
+        <div class="wh" id="whA">World A<small>readout uses gender, and the cue weakly</small></div>
+        <svg class="plane" id="svgA" viewBox="0 0 300 302" role="img"></svg>
+        <ul class="nums" id="numA" aria-live="polite"></ul>
+      </section>
+      <section class="world" aria-labelledby="whB">
+        <div class="wh" id="whB">World B<small>readout uses only the cue</small></div>
+        <svg class="plane" id="svgB" viewBox="0 0 300 302" role="img"></svg>
+        <ul class="nums" id="numB" aria-live="polite"></ul>
+      </section>
     </div>
 
-    <ul class="legend">
-      <li><i>a</i>: the activation at one layer for a bio; in this toy its coordinates are gender (she +1, he −1), the cue and profession content.</li>
-      <li>Cue: care words such as “comfort” or “families”, which travel with gender in these 200 toy bios.</li>
-      <li>The hidden worlds share every bio and every activation; only the readout from <i>a</i> to the prediction differs.</li>
-      <li>INLP (iterative nullspace projection): remove the probe's direction, train a new probe and remove its direction too, until no probe finds gender; then rerun.</li>
-      <li>Numbers under rung 3: p(nurse), the model's probability for nurse, which it predicts above 0.5; “= target” means equal to two decimals.</li>
+    <p class="vd" id="vd"></p>
+
+    <ul class="legend" id="key">
+      <li data-r="123"><i>a</i>: the activation at one layer for a bio; in this toy its coordinates are gender (she +1, he −1), the cue and profession content. The plots show gender and the cue.</li>
+      <li data-r="123"><span data-g="she"></span><span data-g="he"></span>one of the 200 toy bios, she or he, at its <i>a</i>; the same dots in both worlds.</li>
+      <li data-r="123">Cue: care words such as “comfort” or “families”, which travel with gender in these 200 toy bios.</li>
+      <li data-r="123">The hidden worlds share every bio and every activation; only the readout from <i>a</i> to the prediction differs.</li>
+      <li data-r="123"><span data-g="readout"></span>readout: moving <i>a</i> along this arrow pushes the prediction toward nurse.</li>
+      <li data-r="1"><span data-g="probe"></span>probe: the direction a linear probe reads gender along, trained on 100 bios; its accuracy is on the other 100.</li>
+      <li data-r="23">INLP (iterative nullspace projection): remove the probe's direction, train a new probe and remove its direction too, until no probe finds gender; then rerun.</li>
+      <li data-r="2"><span data-g="chg"></span>a bio whose predicted profession changes after INLP; faint lines run to where INLP moves each bio in this plane.</li>
+      <li data-r="3">p(nurse): the model's probability for nurse, which it predicts above 0.5; “= target” means equal to two decimals.</li>
+      <li data-r="3"><span data-g="target"></span>target: this bio with gender flipped, nothing else; computable only in a toy.</li>
+      <li data-r="3"><span data-g="nurse"></span>shaded: where this bio would be predicted nurse; the dashed line is p(nurse) = 0.5.</li>
     </ul>
   </div>
 
@@ -252,42 +264,189 @@ footer a:hover{color:var(--foot-strong)}
     }
     const Aed = A.map(a => mv(P, a));
     const flips = w => A.filter((a, i) => (dot(w, a) > 0) !== (dot(w, Aed[i]) > 0)).length;
-    return { acc0, dirs, P, flA: flips(W.A), flB: flips(W.B) };
+    const chg = w => A.map((a, i) => (dot(w, a) > 0) !== (dot(w, Aed[i]) > 0));
+    const C = { A: chg(W.A), B: chg(W.B) };
+    const n = c => c.filter(Boolean).length;
+    return { acc0, dirs, P, A, Aed, C, flA: n(C.A), flB: n(C.B) };
   }
 
-  const st = { del: 0 };
+  const st = { del: 0, rung: 1 };
   const M = model(RHO);
   const f2 = v => v.toFixed(2);
   const pred = v => f2(v) + ' ' + (v > 0.5 ? 'nurse' : 'surgeon');
-  const where = (a, b) => a && b ? 'in both worlds' : 'in neither world';
+  const where = (a, b) => a && b ? 'in both worlds' : a ? 'only in World A' : b ? 'only in World B' : 'in neither world';
+
+  // drawing: one gender × cue plane per world, the same scale on both axes
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, at, parent, text) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in at) e.setAttribute(k, at[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  const GMIN = -2.4, GMAX = 2.4, CMIN = -2.5, CMAX = 2.5, S = 54, X0 = 36, Y0 = 8;
+  const XR = X0 + (GMAX - GMIN) * S, YB = Y0 + (CMAX - CMIN) * S;
+  const P = (g, c) => [X0 + (g - GMIN) * S, Y0 + (CMAX - c) * S];
+  const unit = v => { const L = Math.hypot(v[0], v[1]); return [v[0] / L, v[1] / L]; };
+  const lab = (g, x, y, t, cls, anchor) => el('text', { class: 'lab ' + (cls || ''), x, y, 'text-anchor': anchor || 'middle' }, g, t);
+  function line(g, a, b, cls, mk, k, trim) {
+    let [x2, y2] = b;
+    if (trim) { const d = Math.hypot(b[0] - a[0], b[1] - a[1]); if (d < trim + 2) return; x2 -= (b[0] - a[0]) * trim / d; y2 -= (b[1] - a[1]) * trim / d; }
+    const at = { class: cls, x1: a[0], y1: a[1], x2, y2 };
+    if (mk) at['marker-end'] = 'url(#m' + k + mk + ')';
+    return el('line', at, g);
+  }
+
+  const GLYPH = {
+    she: '<circle class="dot she" cx="11" cy="6" r="3.2"/>',
+    he: '<circle class="dot he" cx="11" cy="6" r="3.2"/>',
+    chg: '<circle class="dot she chg" cx="11" cy="6" r="3.2"/>',
+    readout: '<line class="arr ink" x1="1" y1="6" x2="15" y2="6"/><path class="mk-ink" d="M14 1.5 L21 6 L14 10.5 Z"/>',
+    probe: '<line class="arr c1" x1="1" y1="6" x2="15" y2="6"/><path class="mk-c1" d="M14 1.5 L21 6 L14 10.5 Z"/>',
+    target: '<circle class="tgt" cx="11" cy="6" r="5"/>',
+    nurse: '<rect class="nurse" x="1" y="-1" width="20" height="13"/><line class="bnd" x1="1" y1="12" x2="21" y2="12"/>',
+    bio: '<circle class="pt ink" cx="11" cy="6" r="4.2"/>',
+    inl: '<circle class="pt c2" cx="11" cy="6" r="4.2"/>',
+    sw: '<circle class="pt c3" cx="11" cy="6" r="4.2"/>'
+  };
+  const glyph = g => '<svg class="gl" viewBox="0 0 22 12" aria-hidden="true">' + GLYPH[g] + '</svg>';
+  document.querySelectorAll('[data-g]').forEach(s => { s.outerHTML = glyph(s.dataset.g); });
+
+  const V = {};
+  ['A', 'B'].forEach(k => {
+    const svg = $('svg' + k), defs = el('defs', {}, svg);
+    ['ink', 'c1', 'c2', 'c3'].forEach(c => {
+      const m = el('marker', { id: 'm' + k + c, viewBox: '0 0 10 10', refX: 7, refY: 5, markerWidth: 4.2, markerHeight: 4.2, orient: 'auto' }, defs);
+      el('path', { class: 'mk-' + c, d: 'M0 0 L10 5 L0 10 Z' }, m);
+    });
+    el('rect', { x: X0, y: Y0, width: XR - X0, height: YB - Y0 }, el('clipPath', { id: 'clip' + k }, defs));
+    const under = el('g', { 'clip-path': 'url(#clip' + k + ')' }, svg);
+    const O = P(0, 0);
+    el('line', { class: 'zero', x1: X0, y1: O[1], x2: XR, y2: O[1] }, svg);
+    el('line', { class: 'zero', x1: O[0], y1: Y0, x2: O[0], y2: YB }, svg);
+    const over = el('g', {}, svg);
+    el('rect', { class: 'frame', x: X0, y: Y0, width: XR - X0, height: YB - Y0 }, svg);
+    for (let c = -2; c <= 2; c++) {
+      const y = P(0, c)[1];
+      el('line', { class: 'tk', x1: X0 - 3, y1: y, x2: X0, y2: y }, svg);
+      lab(svg, X0 - 5, y + 3.3, c < 0 ? '−' + -c : String(c), 'tick', 'end');
+    }
+    [[-1, 'he'], [1, 'she']].forEach(([g, t]) => {
+      const x = P(g, 0)[0];
+      el('line', { class: 'tk', x1: x, y1: YB, x2: x, y2: YB + 3 }, svg);
+      lab(svg, x, YB + 14, t, 'tick');
+    });
+    lab(svg, XR, YB + 14, 'gender', '', 'end');
+    lab(svg, 0, 0, 'cue', '').setAttribute('transform', 'translate(10 ' + (Y0 + YB) / 2 + ') rotate(-90)');
+    V[k] = { svg, under, over };
+  });
+
+  const QUESTIONS = {
+    1: 'Do these activations correlate with gender?',
+    2: 'Does setting these activations change the profession the model predicts?',
+    3: 'Would the model have predicted surgeon?'
+  };
+  const tgt = [-1, BIO[1], BIO[2]], inl = mv(M.P, BIO);
+  const moves = c => c >= N * 0.05;
+
+  function draw(k, eq) {
+    const { svg, under, over } = V[k], w = W[k], r = st.rung;
+    under.replaceChildren(); over.replaceChildren();
+    if (r === 3) {
+      // this bio's profession content is 0, so its nurse side is the half-plane w·(gender, cue) > 0
+      const f = q => w[0] * q[0] + w[1] * q[1];
+      const R = [[GMIN, CMIN], [GMAX, CMIN], [GMAX, CMAX], [GMIN, CMAX]], poly = [];
+      R.forEach((q, i) => {
+        const nx = R[(i + 1) % 4];
+        if (f(q) >= 0) poly.push(q);
+        if ((f(q) >= 0) !== (f(nx) >= 0)) { const t = f(q) / (f(q) - f(nx)); poly.push([q[0] + t * (nx[0] - q[0]), q[1] + t * (nx[1] - q[1])]); }
+      });
+      el('polygon', { class: 'nurse', points: poly.map(q => P(...q).join(',')).join(' ') }, under);
+      const d = unit([-w[1], w[0]]);
+      line(under, P(-6 * d[0], -6 * d[1]), P(6 * d[0], 6 * d[1]), 'bnd');
+      let hi = R[0], lo = R[0];
+      R.forEach(q => { if (f(q) > f(hi)) hi = q; if (f(q) < f(lo)) lo = q; });
+      [[hi, 'nurse'], [lo, 'surgeon']].forEach(([q, t]) => lab(over, q[0] === GMIN ? X0 + 6 : XR - 6, q[1] === CMAX ? Y0 + 15 : YB - 7, t, 'mute', q[0] === GMIN ? 'start' : 'end'));
+    }
+    // the 200 bios; at rung 2, lines to where INLP moves each one
+    const dots = el('g', r === 3 ? { class: 'faint' } : {}, over);
+    if (r === 2) M.A.forEach((a, i) => line(dots, P(a[0], a[1]), P(M.Aed[i][0], M.Aed[i][1]), 'ray'));
+    const order = M.A.map((a, i) => i).sort((i, j) => (r === 2) * (M.C[k][i] - M.C[k][j]));
+    order.forEach(i => {
+      const a = M.A[i], q = P(a[0], a[1]);
+      el('circle', { class: 'dot ' + (BIOS[i].g > 0 ? 'she' : 'he') + (r === 2 && M.C[k][i] ? ' chg' : ''), cx: q[0], cy: q[1], r: 2.6 }, dots);
+    });
+    // the world's readout
+    const u = unit([w[0], w[1]]), tip = P(2 * u[0], 2 * u[1]);
+    line(over, P(0, 0), tip, 'arr ink', 'ink', k);
+    lab(over, tip[0], tip[1] - 8, 'readout');
+    if (r === 1) {
+      const p = unit([M.dirs[0][0], M.dirs[0][1]]), pt = P(2 * p[0], 2 * p[1]);
+      line(over, P(0, 0), pt, 'arr c1', 'c1', k);
+      lab(over, pt[0], pt[1] + 17, 'probe', 'k1');
+      svg.setAttribute('aria-label', 'World ' + k + ': the bios as two clouds, she on the right and he on the left; the probe arrow points from he to she; the readout arrow is this world\'s.');
+    }
+    if (r === 2) {
+      const O = P(0, 0);
+      el('circle', { class: 'pt c2', cx: O[0], cy: O[1], r: 4.5 }, over);
+      lab(over, O[0] + 10, O[1] + 22, 'every bio after INLP', 'k2', 'start');
+      svg.setAttribute('aria-label', 'World ' + k + ': ' + n(M.C[k]) + ' of ' + N + ' bios change prediction after INLP, which moves every bio to the centre of this plane.');
+    }
+    if (r === 3) {
+      const B = P(BIO[0], BIO[1]), T = P(tgt[0], tgt[1]), I = P(inl[0], inl[1]), Sw = P(-1, BIO[1] - st.del);
+      line(over, B, I, 'mv c2', 'c2', k, 7);
+      line(over, B, Sw, 'mv c3', 'c3', k, 7);
+      el('circle', { class: 'tgt', cx: T[0], cy: T[1], r: 8.5 }, over);
+      el('circle', { class: 'pt c2', cx: I[0], cy: I[1], r: 4.5 }, over);
+      el('circle', { class: 'pt c3', cx: Sw[0], cy: Sw[1], r: 4.5 }, over);
+      el('circle', { class: 'pt ink', cx: B[0], cy: B[1], r: 4.5 }, over);
+      lab(over, B[0], B[1] - 10, 'this bio');
+      lab(over, T[0], T[1] - 13, 'target', 'k3');
+      lab(over, Sw[0], Sw[1] + 22, 'swapped bio', 'k3');
+      lab(over, I[0] + 8, I[1] + 18, 'INLP rerun', 'k2', 'start');
+      svg.setAttribute('aria-label', 'World ' + k + ': this bio, the target, the INLP rerun and the swapped bio; the swapped bio ' + (eq['sw' + k] ? 'equals' : 'misses') + ' the target, the INLP rerun ' + (eq['in' + k] ? 'equals' : 'misses') + ' it.');
+    }
+  }
+  const n = c => c.filter(Boolean).length;
 
   function render() {
+    const r = st.rung;
     $('delV').textContent = st.del === 0 ? '0, gender only' : f2(st.del) + ' on the cue';
-    // rung 1: the probe never sees the readout, so it scores the same in both worlds
-    const acc = Math.round(M.acc0 * 100) + '%';
-    $('accA').textContent = acc; $('accB').textContent = acc;
-    $('vd1').textContent = 'The probe scores the same in both worlds.';
-    // rung 2
-    $('flA').textContent = M.flA + ' of ' + N; $('flB').textContent = M.flB + ' of ' + N;
-    $('dirs').textContent = 'directions INLP removed: ' + M.dirs.map(d => NAMES[d.map(Math.abs).indexOf(Math.max(...d.map(Math.abs)))]).join(', ');
-    const moves = n => n >= N * 0.05;
-    $('vd2').textContent = 'INLP moves the predictions ' + where(moves(M.flA), moves(M.flB)) + '.';
+    document.querySelectorAll('.tabs .toggle').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.r === r)));
+    $('rh').className = 'rh r' + r; $('vd').className = 'vd r' + r;
+    $('rq').textContent = QUESTIONS[r];
+    $('rnote').textContent = r === 2 ? 'directions INLP removed: ' + M.dirs.map(d => NAMES[d.map(Math.abs).indexOf(Math.max(...d.map(Math.abs)))]).join(', ') : '';
+    $('rnote').hidden = r !== 2;
+    document.querySelectorAll('#key li').forEach(li => { li.hidden = !li.dataset.r.includes(String(r)); });
+
     // rung 3: one bio, the target and two reruns
-    const tgt = [-1, BIO[1], BIO[2]], inl = mv(M.P, BIO), sw = [-1, BIO[1] - st.del, BIO[2]];
-    const eq = {};
+    const sw = [-1, BIO[1] - st.del, BIO[2]], eq = {}, rows = {};
     ['A', 'B'].forEach(k => {
       const w = W[k], t = pn(tgt, w);
-      $('b0' + k).textContent = pred(pn(BIO, w));
-      $('tg' + k).textContent = pred(t);
-      [['in', inl], ['sw', sw]].forEach(([id, a]) => {
-        const v = pn(a, w), same = f2(v) === f2(t);
-        eq[id + k] = same;
-        $(id + k).innerHTML = pred(v) + '<span class="tg ' + (same ? 'eq' : 'ne') + '">' + (same ? '= target' : '≠ target') + '</span>';
-      });
+      const tag = s => '<span class="tg ' + (s ? 'eq' : 'ne') + '">' + (s ? '= target' : '≠ target') + '</span>';
+      const vi = pn(inl, w), vs = pn(sw, w);
+      eq['in' + k] = f2(vi) === f2(t); eq['sw' + k] = f2(vs) === f2(t);
+      rows[k] = [['bio', 'this bio', pred(pn(BIO, w)), ''], ['target', 'target', pred(t), ''],
+        ['inl', 'INLP rerun', pred(vi), tag(eq['in' + k])], ['sw', 'swapped bio', pred(vs), tag(eq['sw' + k])]];
     });
-    $('vd3').textContent = 'Equals the target: the swapped bio ' + where(eq.swA, eq.swB) + ', the INLP rerun ' + where(eq.inA, eq.inB) + '.';
+
+    ['A', 'B'].forEach(k => {
+      draw(k, eq);
+      let h;
+      if (r === 1) h = '<li><span class="nm">Probe accuracy</span><b>' + Math.round(M.acc0 * 100) + '%</b></li>';
+      if (r === 2) h = '<li><span class="nm">Predictions that change after INLP</span><b>' + n(M.C[k]) + ' of ' + N + '</b></li>';
+      if (r === 3) h = rows[k].map(([g, nm, v, tg]) => '<li>' + glyph(g) + '<span class="nm">' + nm + '</span><span>' + v + '</span>' + tg + '</li>').join('');
+      $('num' + k).innerHTML = h;
+    });
+
+    if (r === 1) $('vd').textContent = 'The probe scores the same in both worlds.';
+    if (r === 2) $('vd').textContent = 'INLP moves the predictions ' + where(moves(M.flA), moves(M.flB)) + '.';
+    if (r === 3) $('vd').textContent = 'Equals the target: the swapped bio ' + where(eq.swA, eq.swB) + ', the INLP rerun ' + where(eq.inA, eq.inB) + '.';
   }
-  $('del').addEventListener('input', e => { st.del = +e.target.value; render(); });
+  document.querySelectorAll('.tabs .toggle').forEach(b => b.addEventListener('click', () => { st.rung = +b.dataset.r; render(); }));
+  // the slider is rung 3's control: moving it shows rung 3
+  $('del').addEventListener('input', e => { st.del = +e.target.value; st.rung = 3; render(); });
   render();
 })();
 </script>
